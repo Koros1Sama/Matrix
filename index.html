@@ -1,0 +1,1009 @@
+<!DOCTYPE html>
+<html lang="ar" dir="ltr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>🧮 طريقة جاوس - لعبة تعليمية</title>
+    <meta
+      name="description"
+      content="لعبة تعليمية تفاعلية لتعلم حل أنظمة المعادلات الخطية بطريقة جاوس"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800&family=Fira+Code:wght@400;500&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="css/style.css" />
+  </head>
+  <body>
+    <!-- الشاشة الرئيسية -->
+    <div id="home-screen" class="screen active">
+      <div class="container">
+        <div class="logo-section">
+          <div class="logo-icon">🧮</div>
+          <h1 class="title">طريقة جاوس</h1>
+          <p class="subtitle">تعلم حل المعادلات بطريقة تفاعلية ممتعة</p>
+        </div>
+
+        <div class="matrix-animation">
+          <div class="demo-matrix">
+            <div class="demo-row" style="--delay: 0">
+              <span class="demo-cell">2</span>
+              <span class="demo-cell">1</span>
+              <span class="demo-cell">3</span>
+              <span class="demo-divider">│</span>
+              <span class="demo-cell">9</span>
+            </div>
+            <div class="demo-row" style="--delay: 1">
+              <span class="demo-cell">1</span>
+              <span class="demo-cell">-2</span>
+              <span class="demo-cell">1</span>
+              <span class="demo-divider">│</span>
+              <span class="demo-cell">3</span>
+            </div>
+            <div class="demo-row" style="--delay: 2">
+              <span class="demo-cell">3</span>
+              <span class="demo-cell">1</span>
+              <span class="demo-cell">-2</span>
+              <span class="demo-divider">│</span>
+              <span class="demo-cell">4</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="menu-buttons">
+          <button
+            class="btn btn-primary btn-large"
+            onclick="game.showLevelSelect()"
+          >
+            <span class="btn-icon">🎮</span>
+            <span>ابدأ اللعب</span>
+          </button>
+          <button class="btn btn-secondary" onclick="game.showTutorial()">
+            <span class="btn-icon">📖</span>
+            <span>كيف تلعب؟</span>
+          </button>
+        </div>
+
+        <!-- كود الفتح السري -->
+        <div class="cheat-code-area">
+          <input
+            type="password"
+            id="cheat-code-input"
+            class="cheat-code-input"
+            placeholder="🔓"
+            maxlength="3"
+            onkeyup="game.checkCheatCode(event)"
+          />
+        </div>
+      </div>
+    </div>
+
+    <!-- شاشة اختيار المستوى -->
+    <div id="level-select-screen" class="screen">
+      <div class="container">
+        <div class="screen-header">
+          <button class="btn btn-back" onclick="game.showHome()">
+            <span>→</span> رجوع
+          </button>
+          <h2>اختر المستوى</h2>
+        </div>
+
+        <div class="levels-grid" id="levels-grid">
+          <!-- سيتم ملؤها بواسطة JavaScript -->
+        </div>
+      </div>
+    </div>
+
+    <!-- شاشة الشرح -->
+    <div id="tutorial-screen" class="screen">
+      <div class="container">
+        <div class="screen-header">
+          <button class="btn btn-back" onclick="game.showHome()">
+            <span>→</span> رجوع
+          </button>
+          <h2>كيف تلعب؟</h2>
+        </div>
+
+        <div class="tutorial-content">
+          <div class="tutorial-section">
+            <h3>🎯 الهدف</h3>
+            <p>
+              حوّل المصفوفة إلى الشكل المدرجي الصفي (Row Echelon Form) ثم أوجد
+              قيم المتغيرات.
+            </p>
+          </div>
+
+          <div class="tutorial-section">
+            <h3>🔄 العمليات المتاحة</h3>
+            <div class="operations-list">
+              <div class="operation-item">
+                <div class="op-icon">↕️</div>
+                <div class="op-text">
+                  <strong>تبديل صفين</strong>
+                  <p>اسحب وأفلت الصفوف لتبديلها</p>
+                </div>
+              </div>
+              <div class="operation-item">
+                <div class="op-icon">✕</div>
+                <div class="op-text">
+                  <strong>ضرب صف بعدد</strong>
+                  <p>اضرب جميع عناصر صف بعدد (يمكن أن يكون كسراً)</p>
+                </div>
+              </div>
+              <div class="operation-item">
+                <div class="op-icon">➕</div>
+                <div class="op-text">
+                  <strong>جمع صفين</strong>
+                  <p>أضف مضاعف صف إلى صف آخر</p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="tutorial-section">
+            <h3>✨ التلميحات</h3>
+            <ul>
+              <li>
+                العناصر <span class="highlight-green">الخضراء</span> في مكانها
+                الصحيح
+              </li>
+              <li>ابدأ بجعل العنصر الأول في الصف الأول = 1</li>
+              <li>اجعل جميع العناصر تحت القائد = 0</li>
+            </ul>
+          </div>
+
+          <button
+            class="btn btn-primary btn-large"
+            onclick="game.showLevelSelect()"
+          >
+            فهمت، لنبدأ! 🚀
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- شاشة الدرس التعليمي (Level 0) -->
+    <div id="lesson-screen" class="screen">
+      <div class="container">
+        <div class="screen-header">
+          <button class="btn btn-back" onclick="game.showLevelSelect()">
+            <span>→</span> رجوع
+          </button>
+          <h2>📚 تعلم طريقة جاوس</h2>
+        </div>
+
+        <div class="lesson-container">
+          <!-- الخطوة 1: ما هو الشكل المدرجي؟ -->
+          <div class="lesson-step active" id="lesson-step-1">
+            <h3 class="lesson-title">الخطوة 1: ما هو الشكل المدرجي الصفي؟</h3>
+            <p class="lesson-desc">
+              هدفنا تحويل المصفوفة إلى شكل خاص يسهّل إيجاد قيم المتغيرات:
+            </p>
+
+            <div class="lesson-matrix-demo">
+              <div class="demo-matrix echelon-form">
+                <div class="demo-row">
+                  <span class="demo-cell pivot">1</span>
+                  <span class="demo-cell">2</span>
+                  <span class="demo-cell">3</span>
+                  <span class="demo-divider"></span>
+                  <span class="demo-cell result">6</span>
+                </div>
+                <div class="demo-row">
+                  <span class="demo-cell zero">0</span>
+                  <span class="demo-cell pivot">1</span>
+                  <span class="demo-cell">-1</span>
+                  <span class="demo-divider"></span>
+                  <span class="demo-cell result">2</span>
+                </div>
+                <div class="demo-row">
+                  <span class="demo-cell zero">0</span>
+                  <span class="demo-cell zero">0</span>
+                  <span class="demo-cell pivot">1</span>
+                  <span class="demo-divider"></span>
+                  <span class="demo-cell result">3</span>
+                </div>
+              </div>
+
+              <div class="demo-annotations">
+                <div class="annotation pivot-line">
+                  <span class="arrow">↘</span>
+                  <span>كل قائد على <strong>يمين</strong> الذي قبله</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="lesson-points">
+              <div class="point">
+                <span class="point-icon">✅</span>
+                <span
+                  >كل <strong>قائد</strong> (أول عنصر غير صفري في الصف) =
+                  <strong>1</strong></span
+                >
+              </div>
+              <div class="point">
+                <span class="point-icon">✅</span>
+                <span
+                  >القائد في كل صف <strong>على يمين</strong> القائد الذي
+                  فوقه</span
+                >
+              </div>
+              <div class="point">
+                <span class="point-icon">✅</span>
+                <span
+                  >كل العناصر <strong>تحت</strong> أي قائد =
+                  <strong>0</strong></span
+                >
+              </div>
+              <div class="point">
+                <span class="point-icon">💡</span>
+                <span
+                  >القائد <strong>ليس شرطاً</strong> أن يكون على القطر
+                  الرئيسي!</span
+                >
+              </div>
+            </div>
+          </div>
+
+          <!-- الخطوة 2: العمليات الأولية -->
+          <div class="lesson-step" id="lesson-step-2">
+            <h3 class="lesson-title">الخطوة 2: العمليات المسموحة</h3>
+            <p class="lesson-desc">
+              يمكنك استخدام 3 عمليات فقط للوصول للشكل المدرجي:
+            </p>
+
+            <div class="operations-demo">
+              <div class="op-demo-item">
+                <div class="op-demo-icon">↕️</div>
+                <div class="op-demo-content">
+                  <strong>تبديل صفين</strong>
+                  <div class="op-demo-example">R₁ ↔ R₂</div>
+                </div>
+              </div>
+
+              <div class="op-demo-item">
+                <div class="op-demo-icon">✕</div>
+                <div class="op-demo-content">
+                  <strong>ضرب صف بعدد ≠ 0</strong>
+                  <div class="op-demo-example">R₁ → ½ × R₁</div>
+                </div>
+              </div>
+
+              <div class="op-demo-item">
+                <div class="op-demo-icon">➕</div>
+                <div class="op-demo-content">
+                  <strong>جمع مضاعف صف لآخر</strong>
+                  <div class="op-demo-example">R₂ → R₂ + (-3) × R₁</div>
+                </div>
+              </div>
+            </div>
+
+            <div class="lesson-tip">
+              💡 <strong>نصيحة:</strong> ابدأ دائماً بجعل القائد الأول = 1، ثم
+              اجعل ما تحته = 0
+            </div>
+          </div>
+
+          <!-- الخطوة 3: حالة الحل الوحيد -->
+          <div class="lesson-step" id="lesson-step-3">
+            <h3 class="lesson-title">الخطوة 3: حالة الحل الوحيد ✅</h3>
+            <p class="lesson-desc">
+              عندما يكون لكل متغير قائد خاص به، يوجد <strong>حل وحيد</strong>:
+            </p>
+
+            <div class="lesson-matrix-demo">
+              <div class="demo-matrix unique-solution">
+                <div class="demo-row">
+                  <span class="demo-cell pivot">1</span>
+                  <span class="demo-cell">2</span>
+                  <span class="demo-cell">1</span>
+                  <span class="demo-divider"></span>
+                  <span class="demo-cell result">9</span>
+                </div>
+                <div class="demo-row">
+                  <span class="demo-cell zero">0</span>
+                  <span class="demo-cell pivot">1</span>
+                  <span class="demo-cell">-1</span>
+                  <span class="demo-divider"></span>
+                  <span class="demo-cell result">1</span>
+                </div>
+                <div class="demo-row">
+                  <span class="demo-cell zero">0</span>
+                  <span class="demo-cell zero">0</span>
+                  <span class="demo-cell pivot">1</span>
+                  <span class="demo-divider"></span>
+                  <span class="demo-cell result">3</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="solution-box success">
+              <div class="solution-icon">✅</div>
+              <div class="solution-content">
+                <strong>الحل:</strong>
+                <div class="solution-vars">
+                  <span>z = 3</span>
+                  <span>y = 1 + z = 4</span>
+                  <span>x = 9 - 2y - z = -2</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- الخطوة 4: لا نهائي من الحلول -->
+          <div class="lesson-step" id="lesson-step-4">
+            <h3 class="lesson-title">الخطوة 4: لا نهائي من الحلول ♾️</h3>
+            <p class="lesson-desc">
+              إذا كان الصف الأخير <strong>كله أصفار</strong> (بما فيه الناتج):
+            </p>
+
+            <div class="lesson-matrix-demo">
+              <div class="demo-matrix infinite-solution">
+                <div class="demo-row">
+                  <span class="demo-cell pivot">1</span>
+                  <span class="demo-cell">2</span>
+                  <span class="demo-cell">1</span>
+                  <span class="demo-divider"></span>
+                  <span class="demo-cell result">5</span>
+                </div>
+                <div class="demo-row">
+                  <span class="demo-cell zero">0</span>
+                  <span class="demo-cell pivot">1</span>
+                  <span class="demo-cell">3</span>
+                  <span class="demo-divider"></span>
+                  <span class="demo-cell result">2</span>
+                </div>
+                <div class="demo-row warning-row">
+                  <span class="demo-cell zero">0</span>
+                  <span class="demo-cell zero">0</span>
+                  <span class="demo-cell zero">0</span>
+                  <span class="demo-divider"></span>
+                  <span class="demo-cell zero">0</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="solution-box warning">
+              <div class="solution-icon">♾️</div>
+              <div class="solution-content">
+                <strong>معنى ذلك:</strong>
+                <p>
+                  أحد المعادلات متكررة (أو تابعة). المتغير z حر يمكن أن يأخذ أي
+                  قيمة!
+                </p>
+                <div class="solution-vars">
+                  <span>z = t (أي عدد)</span>
+                  <span>y = 2 - 3t</span>
+                  <span>x = 5 - 2y - z = 1 + 5t</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- الخطوة 5: لا يوجد حل -->
+          <div class="lesson-step" id="lesson-step-5">
+            <h3 class="lesson-title">الخطوة 5: لا يوجد حل ❌</h3>
+            <p class="lesson-desc">
+              إذا كان الصف الأخير <strong>أصفار ما عدا الناتج</strong>:
+            </p>
+
+            <div class="lesson-matrix-demo">
+              <div class="demo-matrix no-solution">
+                <div class="demo-row">
+                  <span class="demo-cell pivot">1</span>
+                  <span class="demo-cell">2</span>
+                  <span class="demo-cell">1</span>
+                  <span class="demo-divider"></span>
+                  <span class="demo-cell result">5</span>
+                </div>
+                <div class="demo-row">
+                  <span class="demo-cell zero">0</span>
+                  <span class="demo-cell pivot">1</span>
+                  <span class="demo-cell">3</span>
+                  <span class="demo-divider"></span>
+                  <span class="demo-cell result">2</span>
+                </div>
+                <div class="demo-row error-row">
+                  <span class="demo-cell zero">0</span>
+                  <span class="demo-cell zero">0</span>
+                  <span class="demo-cell zero">0</span>
+                  <span class="demo-divider"></span>
+                  <span class="demo-cell error">5</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="solution-box error">
+              <div class="solution-icon">❌</div>
+              <div class="solution-content">
+                <strong>معنى ذلك:</strong>
+                <p>الصف الأخير يقول: <code>0 = 5</code> وهذا مستحيل!</p>
+                <p>المعادلات متناقضة، لا يوجد حل يحقق جميعها.</p>
+              </div>
+            </div>
+          </div>
+
+          <!-- الخطوة 6: شاهد الحل خطوة بخطوة -->
+          <div class="lesson-step" id="lesson-step-6">
+            <h3 class="lesson-title">الخطوة 6: 📽️ شاهد الحل خطوة بخطوة</h3>
+            <p class="lesson-desc">تابع كيف نحل هذه المصفوفة بالتفصيل:</p>
+
+            <div class="animated-example" id="animated-example">
+              <!-- المصفوفة المتحركة -->
+              <div class="example-step active" id="example-step-0">
+                <div class="step-label">المصفوفة الأصلية:</div>
+                <div class="demo-matrix">
+                  <div class="demo-row">
+                    <span class="demo-cell highlight">2</span>
+                    <span class="demo-cell">4</span>
+                    <span class="demo-divider"></span>
+                    <span class="demo-cell result">10</span>
+                  </div>
+                  <div class="demo-row">
+                    <span class="demo-cell">1</span>
+                    <span class="demo-cell">3</span>
+                    <span class="demo-divider"></span>
+                    <span class="demo-cell result">7</span>
+                  </div>
+                </div>
+              </div>
+
+              <div class="example-step" id="example-step-1">
+                <div class="step-label">
+                  الخطوة 1: R₁ → ½ × R₁ (لجعل القائد = 1)
+                </div>
+                <div class="demo-matrix">
+                  <div class="demo-row changed">
+                    <span class="demo-cell pivot">1</span>
+                    <span class="demo-cell">2</span>
+                    <span class="demo-divider"></span>
+                    <span class="demo-cell result">5</span>
+                  </div>
+                  <div class="demo-row">
+                    <span class="demo-cell">1</span>
+                    <span class="demo-cell">3</span>
+                    <span class="demo-divider"></span>
+                    <span class="demo-cell result">7</span>
+                  </div>
+                </div>
+              </div>
+
+              <div class="example-step" id="example-step-2">
+                <div class="step-label">
+                  الخطوة 2: R₂ → R₂ + (-1) × R₁ (لجعل ما تحت القائد = 0)
+                </div>
+                <div class="demo-matrix">
+                  <div class="demo-row">
+                    <span class="demo-cell pivot">1</span>
+                    <span class="demo-cell">2</span>
+                    <span class="demo-divider"></span>
+                    <span class="demo-cell result">5</span>
+                  </div>
+                  <div class="demo-row changed">
+                    <span class="demo-cell zero">0</span>
+                    <span class="demo-cell highlight">1</span>
+                    <span class="demo-divider"></span>
+                    <span class="demo-cell result">2</span>
+                  </div>
+                </div>
+              </div>
+
+              <div class="example-step" id="example-step-3">
+                <div class="step-label">🎉 تم! المصفوفة في الشكل المدرجي</div>
+                <div class="demo-matrix success-matrix">
+                  <div class="demo-row">
+                    <span class="demo-cell pivot">1</span>
+                    <span class="demo-cell">2</span>
+                    <span class="demo-divider"></span>
+                    <span class="demo-cell result">5</span>
+                  </div>
+                  <div class="demo-row">
+                    <span class="demo-cell zero">0</span>
+                    <span class="demo-cell pivot">1</span>
+                    <span class="demo-divider"></span>
+                    <span class="demo-cell result">2</span>
+                  </div>
+                </div>
+                <div class="solution-box success" style="margin-top: 20px">
+                  <div class="solution-icon">✅</div>
+                  <div class="solution-content">
+                    <strong>الآن نحل:</strong>
+                    <div class="solution-vars">
+                      <span>من R₂: y = 2</span>
+                      <span>من R₁: x + 2(2) = 5 → x = 1</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- أزرار التحكم -->
+            <div class="example-controls">
+              <button class="btn btn-control" onclick="game.prevExampleStep()">
+                ◀ السابق
+              </button>
+              <span class="example-progress" id="example-progress">1 / 4</span>
+              <button class="btn btn-control" onclick="game.nextExampleStep()">
+                التالي ▶
+              </button>
+            </div>
+            <button class="btn btn-play" onclick="game.playExample()">
+              ▶ تشغيل تلقائي
+            </button>
+          </div>
+
+          <!-- الخطوة 7: القائد ليس دائماً على القطر -->
+          <div class="lesson-step" id="lesson-step-7">
+            <h3 class="lesson-title">الخطوة 7: 💡 حالات خاصة للقادة</h3>
+            <p class="lesson-desc">
+              القائد يمكن أن يكون في أي عمود، ليس بالضرورة على القطر:
+            </p>
+
+            <div class="lesson-matrix-demo">
+              <div class="demo-matrix">
+                <div class="demo-row">
+                  <span class="demo-cell zero">0</span>
+                  <span class="demo-cell pivot">1</span>
+                  <span class="demo-cell">2</span>
+                  <span class="demo-cell">3</span>
+                  <span class="demo-divider"></span>
+                  <span class="demo-cell result">5</span>
+                </div>
+                <div class="demo-row">
+                  <span class="demo-cell zero">0</span>
+                  <span class="demo-cell zero">0</span>
+                  <span class="demo-cell zero">0</span>
+                  <span class="demo-cell pivot">1</span>
+                  <span class="demo-divider"></span>
+                  <span class="demo-cell result">3</span>
+                </div>
+                <div class="demo-row">
+                  <span class="demo-cell zero">0</span>
+                  <span class="demo-cell zero">0</span>
+                  <span class="demo-cell zero">0</span>
+                  <span class="demo-cell zero">0</span>
+                  <span class="demo-divider"></span>
+                  <span class="demo-cell zero">0</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="lesson-points">
+              <div class="point">
+                <span class="point-icon">✅</span>
+                <span>هذا شكل مدرجي صحيح! القادة في الأعمدة 2 و 4</span>
+              </div>
+              <div class="point">
+                <span class="point-icon">♾️</span>
+                <span>الصف الصفري يعني: متغيرات حرة = لا نهائي من الحلول</span>
+              </div>
+              <div class="point">
+                <span class="point-icon">🎯</span>
+                <span>المهم: كل قائد على <strong>يمين</strong> الذي قبله</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- أزرار التنقل -->
+          <div class="lesson-navigation">
+            <button
+              class="btn btn-nav"
+              id="btn-prev-lesson"
+              onclick="game.prevLesson()"
+              disabled
+            >
+              ◀ السابق
+            </button>
+
+            <div class="lesson-dots" id="lesson-dots">
+              <span class="dot active" onclick="game.goToLesson(1)"></span>
+              <span class="dot" onclick="game.goToLesson(2)"></span>
+              <span class="dot" onclick="game.goToLesson(3)"></span>
+              <span class="dot" onclick="game.goToLesson(4)"></span>
+              <span class="dot" onclick="game.goToLesson(5)"></span>
+              <span class="dot" onclick="game.goToLesson(6)"></span>
+              <span class="dot" onclick="game.goToLesson(7)"></span>
+            </div>
+
+            <button
+              class="btn btn-nav btn-primary"
+              id="btn-next-lesson"
+              onclick="game.nextLesson()"
+            >
+              التالي ▶
+            </button>
+          </div>
+
+          <!-- زر البدء (يظهر في آخر خطوة) -->
+          <button
+            class="btn btn-primary btn-large btn-start-game"
+            id="btn-start-after-lesson"
+            onclick="game.showLevelSelect()"
+            style="display: none"
+          >
+            🎮 ابدأ اللعب الآن!
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- شاشة اللعب -->
+    <div id="game-screen" class="screen">
+      <div class="container">
+        <!-- الشريط العلوي -->
+        <div class="game-header">
+          <button class="btn btn-back" onclick="game.confirmExit()">
+            <span>→</span> خروج
+          </button>
+          <div class="game-stats">
+            <div class="stat">
+              <span class="stat-label">المستوى</span>
+              <span class="stat-value" id="current-level">1</span>
+            </div>
+            <div class="stat">
+              <span class="stat-label">النقاط</span>
+              <span class="stat-value" id="current-score">0</span>
+            </div>
+            <div class="stat">
+              <span class="stat-label">الخطوات</span>
+              <span class="stat-value" id="current-steps">0</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- مؤشر المرحلة -->
+        <div class="phase-indicator">
+          <div class="phase" id="phase-2-indicator">
+            <span class="phase-num">2</span>
+            <span class="phase-text">إيجاد المتغيرات</span>
+          </div>
+          <div class="phase-arrow">→</div>
+          <div class="phase active" id="phase-1-indicator">
+            <span class="phase-num">1</span>
+            <span class="phase-text">الشكل المدرجي</span>
+          </div>
+        </div>
+
+        <!-- نظام المعادلات -->
+        <div class="equations-section" id="equations-section">
+          <h3>📝 نظام المعادلات:</h3>
+          <div class="equations-box" id="equations-display">
+            <!-- سيتم ملؤها بواسطة JavaScript -->
+          </div>
+        </div>
+
+        <!-- المرحلة الأولى: المصفوفة -->
+        <div id="phase-1" class="game-phase active">
+          <!-- قسم المعلم المساعد -->
+          <div class="tutor-section" id="tutor-section" style="display: none">
+            <div class="tutor-header">
+              <span class="tutor-icon">💡</span>
+              <span class="tutor-title">معلم المصفوفات</span>
+              <button
+                class="tutor-close"
+                onclick="game.hideTutor()"
+                title="إخفاء"
+              >
+                &times;
+              </button>
+            </div>
+            <div class="tutor-body">
+              <p class="tutor-hint" id="tutor-hint-text">
+                مرحباً! سأساعدك في حل المصفوفة.
+              </p>
+            </div>
+            <div class="tutor-actions">
+              <button
+                class="btn btn-tutor-apply"
+                id="btn-apply-hint"
+                onclick="game.applyTutorHint()"
+                style="display: none"
+              >
+                ✓ تطبيق التلميح
+              </button>
+            </div>
+          </div>
+
+          <div class="matrix-section">
+            <h3>🔢 المصفوفة الموسعة:</h3>
+            <div class="matrix-container" id="matrix-container">
+              <!-- سيتم ملؤها بواسطة JavaScript -->
+            </div>
+          </div>
+
+          <!-- أزرار العمليات -->
+          <div class="operations-bar">
+            <button
+              class="btn btn-operation"
+              id="btn-scale"
+              onclick="game.showScaleModal()"
+            >
+              <span class="op-icon">✕</span>
+              <span>ضرب صف</span>
+            </button>
+            <button
+              class="btn btn-operation"
+              id="btn-add"
+              onclick="game.showAddModal()"
+            >
+              <span class="op-icon">➕</span>
+              <span>جمع صفين</span>
+            </button>
+            <button
+              class="btn btn-undo"
+              id="btn-undo"
+              onclick="game.undo()"
+              disabled
+            >
+              <span class="op-icon">↩️</span>
+              <span>تراجع</span>
+            </button>
+            <button
+              class="btn btn-hint"
+              id="btn-show-hint"
+              onclick="game.toggleTutor()"
+              style="display: none"
+            >
+              <span class="op-icon">💡</span>
+              <span>تلميح</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- المرحلة الثانية: التعويض العكسي -->
+        <div id="phase-2" class="game-phase">
+          <div class="substitution-section">
+            <h3>🧩 أوجد قيم المتغيرات:</h3>
+            <div class="final-matrix" id="final-matrix">
+              <!-- المصفوفة النهائية -->
+            </div>
+            <div class="final-equations-section">
+              <h4>📝 المعادلات الناتجة:</h4>
+              <div
+                class="equations-box final-equations"
+                id="final-equations-display"
+              >
+                <!-- المعادلات الناتجة -->
+              </div>
+            </div>
+            <div class="variables-form" id="variables-form">
+              <!-- حقول إدخال المتغيرات -->
+            </div>
+            <button
+              class="btn btn-primary btn-large"
+              onclick="game.checkVariables()"
+            >
+              ✓ تحقق من الإجابة
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- شاشة الفوز -->
+    <div id="win-screen" class="screen">
+      <div class="container">
+        <div class="win-content">
+          <div class="win-icon">🎉</div>
+          <h2>أحسنت!</h2>
+          <p class="win-message" id="win-message">لقد أكملت المستوى بنجاح</p>
+
+          <div class="win-stats">
+            <div class="win-stat">
+              <span class="win-stat-value" id="final-score">0</span>
+              <span class="win-stat-label">النقاط</span>
+            </div>
+            <div class="win-stat">
+              <span class="win-stat-value" id="final-steps">0</span>
+              <span class="win-stat-label">الخطوات</span>
+            </div>
+          </div>
+
+          <div class="win-stars" id="win-stars">⭐⭐⭐</div>
+
+          <!-- قواعد التقييم -->
+          <div class="scoring-rules" id="scoring-rules">
+            <div class="rule-title">قواعد التقييم:</div>
+            <div class="rule-item">
+              ⭐⭐⭐ <span id="rule-3-stars">≤ 3 خطوات</span>
+            </div>
+            <div class="rule-item">
+              ⭐⭐☆ <span id="rule-2-stars">≤ 4 خطوات</span>
+            </div>
+            <div class="rule-item">
+              ⭐☆☆ <span id="rule-1-star">إكمال المستوى</span>
+            </div>
+          </div>
+
+          <div class="win-buttons">
+            <button class="btn btn-secondary" onclick="game.showLevelSelect()">
+              اختر مستوى آخر
+            </button>
+            <button class="btn btn-primary" onclick="game.nextLevel()">
+              المستوى التالي ←
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- نافذة ضرب صف -->
+    <div id="scale-modal" class="modal">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h3>✕ ضرب صف بعدد</h3>
+          <button class="modal-close" onclick="game.closeModals()">×</button>
+        </div>
+        <div class="modal-body">
+          <div class="form-group">
+            <label>اختر الصف:</label>
+            <select id="scale-row" class="form-select">
+              <!-- سيتم ملؤها بواسطة JavaScript -->
+            </select>
+          </div>
+
+          <!-- عرض قيم الصف الحالية -->
+          <div class="scale-row-preview">
+            <div class="preview-label">الصف الحالي:</div>
+            <div class="preview-row" id="scale-current-row">[ 1, 2, | 5 ]</div>
+          </div>
+
+          <div class="form-group">
+            <label>اضرب في k:</label>
+            <div class="fraction-input-vertical">
+              <input
+                type="number"
+                id="scale-num"
+                class="form-input frac-input-num"
+                value="1"
+                data-prev="1"
+                placeholder="البسط"
+                oninput="if(this.value==0){this.value=parseInt(this.dataset.prev)<0?1:-1;} this.dataset.prev=this.value; game.updateScalePreview();"
+                onkeydown="if(event.key==='Enter'){event.preventDefault(); document.getElementById('scale-den').focus();}"
+              />
+              <div class="frac-input-line"></div>
+              <input
+                type="number"
+                id="scale-den"
+                class="form-input frac-input-den"
+                value="1"
+                min="1"
+                placeholder="المقام"
+                onchange="if(this.value<1) this.value=1; game.updateScalePreview();"
+                onkeydown="if(event.key==='Enter'){event.preventDefault(); game.executeScale();}"
+              />
+            </div>
+            <div class="fraction-preview" id="scale-preview">k = 1</div>
+          </div>
+
+          <!-- معاينة النتيجة -->
+          <div class="result-preview">
+            <div class="preview-label">النتيجة:</div>
+            <div class="preview-row" id="scale-operation-preview">
+              [ 1, 2, | 5 ]
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button class="btn btn-secondary" onclick="game.closeModals()">
+            إلغاء
+          </button>
+          <button class="btn btn-primary" onclick="game.executeScale()">
+            تنفيذ
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- نافذة جمع صفين - مبسطة -->
+    <div id="add-modal" class="modal">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h3>➕ جمع صفين</h3>
+          <button class="modal-close" onclick="game.closeModals()">×</button>
+        </div>
+        <div class="modal-body">
+          <!-- عرض قيم الصفوف الفعلية -->
+          <div class="rows-preview">
+            <div class="row-preview-item" id="target-row-preview">
+              <span class="row-preview-label">R1:</span>
+              <span class="row-preview-values" id="target-row-values"
+                >[ 1, 2 | 5 ]</span
+              >
+            </div>
+            <div class="row-preview-item" id="source-row-preview">
+              <span class="row-preview-label">R2:</span>
+              <span class="row-preview-values" id="source-row-values"
+                >[ 2, 1 | 4 ]</span
+              >
+            </div>
+          </div>
+
+          <!-- صيغة العملية الواضحة -->
+          <div class="operation-formula">
+            <div class="formula-box">
+              <select id="add-target" class="inline-select"></select>
+              <span class="formula-symbol">←</span>
+              <span class="formula-text" id="formula-target-text">R1</span>
+              <span class="formula-symbol">+</span>
+              <span class="formula-bracket">(</span>
+              <div class="inline-frac-vertical">
+                <input
+                  type="number"
+                  id="add-num"
+                  class="inline-input frac-input-num"
+                  value="-1"
+                  data-prev="-1"
+                  oninput="if(this.value==0){this.value=parseInt(this.dataset.prev)<0?1:-1;} this.dataset.prev=this.value; game.updateAddPreview();"
+                  onkeydown="if(event.key==='Enter'){event.preventDefault(); document.getElementById('add-den').focus();}"
+                />
+                <div class="frac-input-line-small"></div>
+                <input
+                  type="number"
+                  id="add-den"
+                  class="inline-input frac-input-den"
+                  value="1"
+                  min="1"
+                  onchange="if(this.value<1) this.value=1; game.updateAddPreview();"
+                  onkeydown="if(event.key==='Enter'){event.preventDefault(); game.executeAdd();}"
+                />
+              </div>
+              <span class="formula-bracket">)</span>
+              <span class="formula-symbol">×</span>
+              <select id="add-source" class="inline-select"></select>
+            </div>
+          </div>
+
+          <!-- شرح مبسط -->
+          <div class="operation-explain">
+            <p id="operation-explain-text">
+              سيتم إضافة <strong>-1</strong> مضروب في <strong>R2</strong> إلى
+              <strong>R1</strong>
+            </p>
+          </div>
+
+          <!-- معاينة النتيجة -->
+          <div class="result-preview">
+            <div class="preview-label">النتيجة:</div>
+            <div class="preview-row" id="add-operation-preview">
+              <!-- سيتم ملؤها بواسطة JavaScript -->
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button class="btn btn-secondary" onclick="game.closeModals()">
+            إلغاء
+          </button>
+          <button class="btn btn-primary" onclick="game.executeAdd()">
+            تنفيذ
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- نافذة تأكيد الخروج -->
+    <div id="confirm-modal" class="modal">
+      <div class="modal-content modal-small">
+        <div class="modal-header">
+          <h3>⚠️ تأكيد الخروج</h3>
+        </div>
+        <div class="modal-body">
+          <p>هل أنت متأكد من الخروج؟ سيتم فقدان تقدمك في هذا المستوى.</p>
+        </div>
+        <div class="modal-footer">
+          <button class="btn btn-secondary" onclick="game.closeModals()">
+            البقاء
+          </button>
+          <button class="btn btn-danger" onclick="game.exitToLevelSelect()">
+            خروج
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <script src="js/matrix.js"></script>
+    <script src="js/levels.js"></script>
+    <script src="js/dragdrop.js"></script>
+    <script src="js/app.js"></script>
+  </body>
+</html>
