@@ -200,6 +200,88 @@ class Matrix {
         return true;
     }
     
+    // التحقق من الشكل المدرجي الصفي المختصر (جاوس-جوردن)
+    // الفرق: يجب أن تكون جميع العناصر فوق المحاور = 0 أيضاً
+    isReducedRowEchelon() {
+        let lastPivotCol = -1;
+        const pivotPositions = []; // لتخزين مواقع المحاور
+        
+        for (let i = 0; i < this.rows; i++) {
+            // إيجاد أول عنصر غير صفري في الصف
+            let pivotCol = -1;
+            for (let j = 0; j < this.cols - 1; j++) {
+                if (!this.data[i][j].isZero()) {
+                    pivotCol = j;
+                    break;
+                }
+            }
+            
+            // إذا كان الصف كله أصفار، نتخطاه
+            if (pivotCol === -1) continue;
+            
+            // يجب أن يكون المحور بعد المحور السابق
+            if (pivotCol <= lastPivotCol) return false;
+            
+            // يجب أن يكون المحور = 1
+            if (!this.data[i][pivotCol].isOne()) return false;
+            
+            // يجب أن تكون جميع العناصر تحت المحور = 0
+            for (let k = i + 1; k < this.rows; k++) {
+                if (!this.data[k][pivotCol].isZero()) return false;
+            }
+            
+            // جاوس-جوردن: يجب أن تكون جميع العناصر فوق المحور = 0 أيضاً
+            for (let k = 0; k < i; k++) {
+                if (!this.data[k][pivotCol].isZero()) return false;
+            }
+            
+            lastPivotCol = pivotCol;
+            pivotPositions.push({ row: i, col: pivotCol });
+        }
+        
+        return true;
+    }
+    
+    // التحقق من عدم وجود حل (صف متناقض: كل المعاملات = 0 لكن النتيجة ≠ 0)
+    hasNoSolution() {
+        for (let i = 0; i < this.rows; i++) {
+            let allZeros = true;
+            // فحص كل المعاملات (بدون عمود النتيجة)
+            for (let j = 0; j < this.cols - 1; j++) {
+                if (!this.data[i][j].isZero()) {
+                    allZeros = false;
+                    break;
+                }
+            }
+            // إذا كانت كل المعاملات = 0 والنتيجة ≠ 0
+            if (allZeros && !this.data[i][this.cols - 1].isZero()) {
+                return true;
+            }
+        }
+        return false;
+    }
+    
+    // التحقق من وجود عدد لا نهائي من الحلول (صف صفري بالكامل)
+    hasInfiniteSolutions() {
+        // أولاً: يجب ألا يكون هناك تناقض
+        if (this.hasNoSolution()) return false;
+        
+        let zeroRowCount = 0;
+        for (let i = 0; i < this.rows; i++) {
+            let allZeros = true;
+            // فحص كل الصف بما فيه النتيجة
+            for (let j = 0; j < this.cols; j++) {
+                if (!this.data[i][j].isZero()) {
+                    allZeros = false;
+                    break;
+                }
+            }
+            if (allZeros) zeroRowCount++;
+        }
+        // إذا كان عدد الصفوف الصفرية > 0 أو عدد المتغيرات > عدد المحاور
+        return zeroRowCount > 0;
+    }
+    
     // الحصول على موقع المحاور الصحيحة للشكل المدرجي
     getTargetPivots() {
         const pivots = [];

@@ -11,7 +11,19 @@ class GaussianGame {
         this.score = 0;
         this.steps = 0;
         this.phase = 1;
-        this.completedLevels = this.loadProgress();
+        
+        // نظام الأجزاء
+        this.currentPart = 1; // 1=جاوس, 2=جاوس-جوردن, 3=كرامر, 4=المعكوس
+        this.partsInfo = {
+            1: { name: 'طريقة جاوس', icon: '📐', unlockLevel: 0 },
+            2: { name: 'جاوس-جوردن', icon: '🎯', unlockLevel: 5 },
+            3: { name: 'كرامر', icon: '🧮', unlockLevel: 5 },
+            4: { name: 'طريقة المعكوس', icon: '🔄', unlockLevel: 5 }
+        };
+        
+        // تحميل التقدم المحفوظ
+        this.loadAllProgress();
+        
         this.dragDrop = new DragDropManager(this);
         this.devMode = false; // وضع فتح جميع المراحل بدون حفظ
         
@@ -22,7 +34,7 @@ class GaussianGame {
         
         // نظام الدروس التعليمية
         this.currentLessonStep = 1;
-        this.totalLessonSteps = 7;
+        this.totalLessonSteps = 8;
         
         // نظام المثال المتحرك
         this.currentExampleStep = 0;
@@ -41,6 +53,7 @@ class GaussianGame {
     cacheElements() {
         this.screens = {
             home: document.getElementById('home-screen'),
+            partsSelect: document.getElementById('parts-select-screen'),
             levelSelect: document.getElementById('level-select-screen'),
             tutorial: document.getElementById('tutorial-screen'),
             lesson: document.getElementById('lesson-screen'),
@@ -115,7 +128,45 @@ class GaussianGame {
         this.showScreen('home');
     }
     
+    showPartsSelect() {
+        this.updatePartsUI();
+        this.showScreen('partsSelect');
+    }
+    
+    selectPart(partNumber) {
+        if (!this.isPartUnlocked(partNumber) && !this.devMode) {
+            // الجزء مقفل
+            return;
+        }
+        this.currentPart = partNumber;
+        this.showLevelSelect();
+    }
+    
+    updatePartsUI() {
+        for (let i = 2; i <= 4; i++) {
+            const card = document.getElementById(`part-card-${i}`);
+            if (card) {
+                const isUnlocked = this.isPartUnlocked(i) || this.devMode;
+                card.classList.toggle('locked', !isUnlocked);
+                const statusEl = card.querySelector('.part-status');
+                if (statusEl) {
+                    if (isUnlocked) {
+                        statusEl.textContent = 'مفتوح ✓';
+                    } else {
+                        const prevPartName = this.partsInfo[i - 1].name;
+                        statusEl.textContent = `🔒 أكمل المرحلة 5 من ${prevPartName}`;
+                    }
+                }
+            }
+        }
+    }
+    
     showLevelSelect() {
+        // تحديث العنوان حسب الجزء الحالي
+        const titleEl = document.getElementById('level-select-title');
+        if (titleEl) {
+            titleEl.textContent = `${this.partsInfo[this.currentPart].name} - اختر المستوى`;
+        }
         this.populateLevelGrid();
         this.showScreen('levelSelect');
     }
@@ -130,23 +181,28 @@ class GaussianGame {
         const grid = this.elements.levelsGrid;
         grid.innerHTML = '';
         
-        // إضافة بطاقة التعلم (Level 0)
-        const learnCard = document.createElement('div');
-        learnCard.className = 'level-card learn-card';
-        learnCard.innerHTML = `
-            <span class="level-number">📚</span>
-            <span class="level-stars">تعلم</span>
-        `;
-        learnCard.addEventListener('click', () => this.showLesson());
-        grid.appendChild(learnCard);
+        // الحصول على المستويات المكتملة للجزء الحالي
+        const partCompletedLevels = this.completedLevels[this.currentPart] || [];
+        
+        // إضافة بطاقة التعلم (Level 0) - في الجزء الأول والثاني
+        if (this.currentPart === 1 || this.currentPart === 2) {
+            const learnCard = document.createElement('div');
+            learnCard.className = 'level-card learn-card';
+            learnCard.innerHTML = `
+                <span class="level-number">📚</span>
+                <span class="level-stars">تعلم</span>
+            `;
+            learnCard.addEventListener('click', () => this.showLesson());
+            grid.appendChild(learnCard);
+        }
         
         LEVELS.forEach((level, index) => {
             const card = document.createElement('div');
             card.className = 'level-card';
             
             // في وضع المطور جميع المراحل مفتوحة
-            const isUnlocked = this.devMode || index === 0 || this.completedLevels.includes(index);
-            const isCompleted = this.completedLevels.includes(level.id);
+            const isUnlocked = this.devMode || index === 0 || partCompletedLevels.includes(index);
+            const isCompleted = partCompletedLevels.includes(level.id);
             
             if (!isUnlocked) card.classList.add('locked');
             if (isCompleted) card.classList.add('completed');
@@ -688,7 +744,18 @@ class GaussianGame {
     // ==================== التحقق ====================
     
     checkPhase1Complete() {
-        if (this.matrix.isRowEchelon()) {
+        // استخدام الفحص المناسب حسب الجزء الحالي
+        let isComplete = false;
+        
+        if (this.currentPart === 2) {
+            // جاوس-جوردن: الشكل المدرجي المختصر
+            isComplete = this.matrix.isReducedRowEchelon();
+        } else {
+            // جاوس (والباقي حالياً): الشكل المدرجي العادي
+            isComplete = this.matrix.isRowEchelon();
+        }
+        
+        if (isComplete) {
             setTimeout(() => {
                 this.startPhase2();
             }, 500);
@@ -982,8 +1049,11 @@ class GaussianGame {
         
         // حفظ التقدم (فقط إذا لم يكن في وضع المطور)
         if (!this.devMode) {
-            if (!this.completedLevels.includes(this.currentLevel.id)) {
-                this.completedLevels.push(this.currentLevel.id);
+            if (!this.completedLevels[this.currentPart]) {
+                this.completedLevels[this.currentPart] = [];
+            }
+            if (!this.completedLevels[this.currentPart].includes(this.currentLevel.id)) {
+                this.completedLevels[this.currentPart].push(this.currentLevel.id);
             }
             this.saveProgress();
             this.saveStars(this.currentLevel.id, stars);
@@ -1032,25 +1102,62 @@ class GaussianGame {
     
     // ==================== التخزين ====================
     
+    loadAllProgress() {
+        const saved = localStorage.getItem('gaussian-game-progress');
+        if (saved) {
+            const data = JSON.parse(saved);
+            this.completedLevels = data.completedLevels || { 1: [], 2: [], 3: [], 4: [] };
+            this.levelScores = data.levelScores || { 1: {}, 2: {}, 3: {}, 4: {} };
+        } else {
+            this.completedLevels = { 1: [], 2: [], 3: [], 4: [] };
+            this.levelScores = { 1: {}, 2: {}, 3: {}, 4: {} };
+        }
+    }
+    
+    saveAllProgress() {
+        const data = {
+            completedLevels: this.completedLevels,
+            levelScores: this.levelScores
+        };
+        localStorage.setItem('gaussian-game-progress', JSON.stringify(data));
+    }
+    
+    // للتوافق مع الكود القديم
     loadProgress() {
-        const saved = localStorage.getItem('gaussian-completed');
-        return saved ? JSON.parse(saved) : [];
+        return this.completedLevels[this.currentPart] || [];
     }
     
     saveProgress() {
-        localStorage.setItem('gaussian-completed', JSON.stringify(this.completedLevels));
+        this.saveAllProgress();
+    }
+    
+    isPartUnlocked(partNumber) {
+        if (partNumber === 1) return true;
+        
+        // الجزء 2 يفتح بعد المرحلة 5 من الجزء 1
+        // الجزء 3 يفتح بعد المرحلة 5 من الجزء 2
+        // الجزء 4 يفتح بعد المرحلة 5 من الجزء 3
+        const previousPart = partNumber - 1;
+        const requiredLevel = this.partsInfo[partNumber].unlockLevel;
+        const completedInPrevious = this.completedLevels[previousPart] || [];
+        
+        return completedInPrevious.includes(requiredLevel);
     }
     
     getStars(levelId) {
-        const saved = localStorage.getItem(`gaussian-stars-${levelId}`);
-        const stars = saved ? parseInt(saved) : 0;
+        const scores = this.levelScores[this.currentPart] || {};
+        const stars = scores[levelId] || 0;
         return '⭐'.repeat(stars) + '☆'.repeat(3 - stars);
     }
     
     saveStars(levelId, stars) {
-        const current = localStorage.getItem(`gaussian-stars-${levelId}`) || 0;
-        if (stars > parseInt(current)) {
-            localStorage.setItem(`gaussian-stars-${levelId}`, stars);
+        if (!this.levelScores[this.currentPart]) {
+            this.levelScores[this.currentPart] = {};
+        }
+        const current = this.levelScores[this.currentPart][levelId] || 0;
+        if (stars > current) {
+            this.levelScores[this.currentPart][levelId] = stars;
+            this.saveAllProgress();
         }
     }
     
@@ -1105,6 +1212,7 @@ class GaussianGame {
     getTutorHint() {
         // تحليل المصفوفة وتقديم التلميح المناسب
         const n = this.matrix.rows;
+        const isGaussJordan = this.currentPart === 2;
         
         for (let col = 0; col < n && col < this.matrix.cols - 1; col++) {
             // التحقق من العمود الحالي
@@ -1145,10 +1253,31 @@ class GaussianGame {
                     };
                 }
             }
+            
+            // جاوس-جوردن: هل العناصر فوق المحور = 0؟
+            if (isGaussJordan) {
+                for (let i = 0; i < col; i++) {
+                    const abovePivot = this.matrix.get(i, col);
+                    if (!abovePivot.isZero()) {
+                        const factor = abovePivot.num < 0 ? 
+                            `${Math.abs(abovePivot.num)}/${abovePivot.den}` : 
+                            `-${abovePivot.num}/${abovePivot.den}`;
+                        return {
+                            message: `🎯 جاوس-جوردن: اجعل العنصر <strong>فوق</strong> المحور في <strong>R${i + 1}</strong> يساوي 0.<br>أضف <code>${factor}</code> × <strong>R${col + 1}</strong> إلى <strong>R${i + 1}</strong>`,
+                            action: { type: 'add', target: i, source: col, num: -abovePivot.num, den: abovePivot.den }
+                        };
+                    }
+                }
+            }
         }
         
         // المصفوفة في الشكل المدرجي
-        if (this.matrix.isRowEchelon()) {
+        if (isGaussJordan && this.matrix.isReducedRowEchelon()) {
+            return {
+                message: `🎉 ممتاز! وصلت للشكل المدرجي المختصر.<br>الحل واضح مباشرة!`,
+                action: null
+            };
+        } else if (this.matrix.isRowEchelon()) {
             return {
                 message: `🎉 ممتاز! وصلت للشكل المدرجي الصفي.<br>الآن أوجد قيم المتغيرات!`,
                 action: null
@@ -1392,7 +1521,17 @@ class GaussianGame {
     // ==================== نظام الدروس التعليمية ====================
     
     showLesson() {
-        this.currentLessonStep = 1;
+        // تحديد عدد الخطوات وبداية الدرس حسب الجزء الحالي
+        if (this.currentPart === 2) {
+            // الجزء 2 (جاوس-جوردن): يبدأ من الخطوة 8 مباشرة
+            this.totalLessonSteps = 8;
+            this.currentLessonStep = 8;
+        } else {
+            // الجزء 1 (جاوس): 7 خطوات من البداية
+            this.totalLessonSteps = 7;
+            this.currentLessonStep = 1;
+        }
+        
         this.updateLessonUI();
         this.showScreen('lesson');
     }
@@ -1419,18 +1558,28 @@ class GaussianGame {
     }
     
     updateLessonUI() {
-        // تحديث الخطوات
-        for (let i = 1; i <= this.totalLessonSteps; i++) {
+        // تحديث الخطوات - إخفاء الخطوات غير المتاحة
+        for (let i = 1; i <= 8; i++) {
             const stepEl = document.getElementById(`lesson-step-${i}`);
             if (stepEl) {
-                stepEl.classList.toggle('active', i === this.currentLessonStep);
+                if (i <= this.totalLessonSteps) {
+                    stepEl.classList.toggle('active', i === this.currentLessonStep);
+                } else {
+                    stepEl.classList.remove('active');
+                }
             }
         }
         
-        // تحديث النقاط
+        // تحديث النقاط - إخفاء النقاط غير المتاحة
         const dots = document.querySelectorAll('#lesson-dots .dot');
         dots.forEach((dot, index) => {
-            dot.classList.toggle('active', index + 1 === this.currentLessonStep);
+            const stepNum = index + 1;
+            if (stepNum <= this.totalLessonSteps) {
+                dot.style.display = 'inline-block';
+                dot.classList.toggle('active', stepNum === this.currentLessonStep);
+            } else {
+                dot.style.display = 'none';
+            }
         });
         
         // تحديث الأزرار

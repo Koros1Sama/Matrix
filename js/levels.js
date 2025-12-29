@@ -5,6 +5,8 @@
  * 5-9: مصفوفات 3×4
  * 10-14: مصفوفات 4×5
  * 15: مصفوفة 6×7
+ * 
+ * minSteps = الحد الأدنى الواقعي للخطوات (مع هامش بسيط)
  */
 
 const LEVELS = [
@@ -19,7 +21,7 @@ const LEVELS = [
             [2, 1, 4]
         ],
         solution: { x: 1, y: 2 },
-        minSteps: 2
+        minSteps: 3 // R2-2R1، R2×(-1/3) + هامش
     },
     {
         id: 2,
@@ -31,7 +33,7 @@ const LEVELS = [
             [1, 3, 11]
         ],
         solution: { x: 2, y: 3 },
-        minSteps: 3
+        minSteps: 4 // تبديل/ضرب + تصفير + ضرب
     },
     {
         id: 3,
@@ -43,7 +45,7 @@ const LEVELS = [
             [4, 1, 13]
         ],
         solution: { x: 2, y: 1 },
-        minSteps: 3
+        minSteps: 4
     },
     {
         id: 4,
@@ -67,10 +69,10 @@ const LEVELS = [
         matrix: [
             [1, 1, 1, 6],
             [2, 1, 0, 5],
-            [0, 1, 2, 7]
+            [1, 0, 1, 3]
         ],
         solution: { x: 1, y: 3, z: 2 },
-        minSteps: 4
+        minSteps: 5
     },
     {
         id: 6,

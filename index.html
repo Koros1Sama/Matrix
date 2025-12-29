@@ -20,7 +20,7 @@
       <div class="container">
         <div class="logo-section">
           <div class="logo-icon">🧮</div>
-          <h1 class="title">طريقة جاوس</h1>
+          <h1 class="title">حل المصفوفات</h1>
           <p class="subtitle">تعلم حل المعادلات بطريقة تفاعلية ممتعة</p>
         </div>
 
@@ -53,7 +53,7 @@
         <div class="menu-buttons">
           <button
             class="btn btn-primary btn-large"
-            onclick="game.showLevelSelect()"
+            onclick="game.showPartsSelect()"
           >
             <span class="btn-icon">🎮</span>
             <span>ابدأ اللعب</span>
@@ -78,14 +78,64 @@
       </div>
     </div>
 
-    <!-- شاشة اختيار المستوى -->
-    <div id="level-select-screen" class="screen">
+    <!-- شاشة اختيار الجزء -->
+    <div id="parts-select-screen" class="screen">
       <div class="container">
         <div class="screen-header">
           <button class="btn btn-back" onclick="game.showHome()">
             <span>→</span> رجوع
           </button>
-          <h2>اختر المستوى</h2>
+          <h2>اختر طريقة الحل</h2>
+        </div>
+
+        <div class="parts-grid" id="parts-grid">
+          <!-- الجزء 1: طريقة جاوس -->
+          <div class="part-card" onclick="game.selectPart(1)">
+            <div class="part-icon">📐</div>
+            <div class="part-name">طريقة جاوس</div>
+            <div class="part-desc">الشكل المدرجي الصفي</div>
+            <div class="part-status">مفتوح ✓</div>
+          </div>
+
+          <!-- الجزء 2: جاوس-جوردن -->
+          <div
+            class="part-card locked"
+            id="part-card-2"
+            onclick="game.selectPart(2)"
+          >
+            <div class="part-icon">🎯</div>
+            <div class="part-name">جاوس-جوردن</div>
+            <div class="part-desc">الشكل المدرجي المختصر</div>
+            <div class="part-status">🔒 أكمل المرحلة 5 من جاوس</div>
+          </div>
+
+          <!-- الجزء 3: كرامر -->
+          <div class="part-card locked coming-soon">
+            <div class="part-icon">🧮</div>
+            <div class="part-name">كرامر</div>
+            <div class="part-desc">استخدام المحددات</div>
+            <div class="part-status">قريباً ⏳</div>
+          </div>
+
+          <!-- الجزء 4: طريقة المعكوس -->
+          <div class="part-card locked coming-soon">
+            <div class="part-icon">🔄</div>
+            <div class="part-name">طريقة المعكوس</div>
+            <div class="part-desc">إيجاد معكوس المصفوفة</div>
+            <div class="part-status">قريباً ⏳</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- شاشة اختيار المستوى -->
+    <div id="level-select-screen" class="screen">
+      <div class="container">
+        <div class="screen-header">
+          <button class="btn btn-back" onclick="game.showPartsSelect()">
+            <span>→</span> رجوع
+          </button>
+          <h2 id="level-select-title">اختر المستوى</h2>
         </div>
 
         <div class="levels-grid" id="levels-grid">
@@ -629,6 +679,76 @@
             </div>
           </div>
 
+          <!-- الخطوة 8: جاوس-جوردن -->
+          <div class="lesson-step" id="lesson-step-8">
+            <h3 class="lesson-title">
+              الخطوة 8: 🎯 جاوس-جوردن (الشكل المختصر)
+            </h3>
+            <p class="lesson-desc">
+              بعد إتقان طريقة جاوس، هناك طريقة أقوى! في جاوس-جوردن نصفّر العناصر
+              <strong>فوق</strong> القادة أيضاً:
+            </p>
+
+            <div class="lesson-comparison">
+              <div class="comparison-item">
+                <div class="comparison-title">جاوس (الشكل المدرجي)</div>
+                <div class="demo-matrix">
+                  <div class="demo-row">
+                    <span class="demo-cell pivot">1</span>
+                    <span class="demo-cell">2</span>
+                    <span class="demo-divider"></span>
+                    <span class="demo-cell result">5</span>
+                  </div>
+                  <div class="demo-row">
+                    <span class="demo-cell zero">0</span>
+                    <span class="demo-cell pivot">1</span>
+                    <span class="demo-divider"></span>
+                    <span class="demo-cell result">2</span>
+                  </div>
+                </div>
+                <div class="comparison-note">✏️ يحتاج تعويض عكسي</div>
+              </div>
+
+              <div class="comparison-arrow">→</div>
+
+              <div class="comparison-item highlight-item">
+                <div class="comparison-title">جاوس-جوردن (المختصر)</div>
+                <div class="demo-matrix success-matrix">
+                  <div class="demo-row">
+                    <span class="demo-cell pivot">1</span>
+                    <span class="demo-cell zero">0</span>
+                    <span class="demo-divider"></span>
+                    <span class="demo-cell result">1</span>
+                  </div>
+                  <div class="demo-row">
+                    <span class="demo-cell zero">0</span>
+                    <span class="demo-cell pivot">1</span>
+                    <span class="demo-divider"></span>
+                    <span class="demo-cell result">2</span>
+                  </div>
+                </div>
+                <div class="comparison-note success">
+                  ✅ الحل مباشر: x=1, y=2
+                </div>
+              </div>
+            </div>
+
+            <div class="lesson-points">
+              <div class="point">
+                <span class="point-icon">🔄</span>
+                <span>الفرق: نصفّر <strong>فوق وتحت</strong> كل قائد</span>
+              </div>
+              <div class="point">
+                <span class="point-icon">⚡</span>
+                <span>الميزة: الحل واضح مباشرة بدون تعويض</span>
+              </div>
+              <div class="point">
+                <span class="point-icon">📊</span>
+                <span>جرّب الجزء الثاني من اللعبة لإتقانها!</span>
+              </div>
+            </div>
+          </div>
+
           <!-- أزرار التنقل -->
           <div class="lesson-navigation">
             <button
@@ -648,6 +768,7 @@
               <span class="dot" onclick="game.goToLesson(5)"></span>
               <span class="dot" onclick="game.goToLesson(6)"></span>
               <span class="dot" onclick="game.goToLesson(7)"></span>
+              <span class="dot" onclick="game.goToLesson(8)"></span>
             </div>
 
             <button
@@ -702,7 +823,7 @@
             <span class="phase-num">2</span>
             <span class="phase-text">إيجاد المتغيرات</span>
           </div>
-          <div class="phase-arrow">→</div>
+          <div class="phase-arrow">←</div>
           <div class="phase active" id="phase-1-indicator">
             <span class="phase-num">1</span>
             <span class="phase-text">الشكل المدرجي</span>
@@ -1044,6 +1165,10 @@
           </button>
         </div>
       </div>
+    </div>
+
+    <div class="game-footer">
+      Created by <span class="signature">Koros Sama</span>
     </div>
 
     <script src="js/matrix.js"></script>

@@ -372,6 +372,82 @@ body::before {
     margin-top: 5px;
 }
 
+/* =====================================
+   شاشة اختيار الأجزاء
+   ===================================== */
+.parts-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 20px;
+    padding: 20px 0;
+}
+
+.part-card {
+    background: var(--bg-card);
+    border: 2px solid rgba(255, 255, 255, 0.1);
+    border-radius: var(--radius-lg);
+    padding: 30px 20px;
+    text-align: center;
+    cursor: pointer;
+    transition: var(--transition-normal);
+}
+
+.part-card:hover:not(.locked) {
+    transform: translateY(-5px);
+    border-color: var(--primary);
+    box-shadow: 0 10px 30px rgba(99, 102, 241, 0.2);
+}
+
+.part-card.locked {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.part-card.locked:hover {
+    transform: none;
+}
+
+.part-icon {
+    font-size: 3rem;
+    margin-bottom: 15px;
+}
+
+.part-name {
+    font-size: 1.3rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    margin-bottom: 8px;
+}
+
+.part-desc {
+    font-size: 0.9rem;
+    color: var(--text-secondary);
+    margin-bottom: 15px;
+}
+
+.part-status {
+    font-size: 0.85rem;
+    padding: 8px 15px;
+    border-radius: 20px;
+    display: inline-block;
+}
+
+.part-card:not(.locked) .part-status {
+    background: rgba(16, 185, 129, 0.15);
+    color: var(--secondary);
+}
+
+.part-card.locked .part-status {
+    background: rgba(255, 255, 255, 0.05);
+    color: var(--text-muted);
+}
+
+@media (max-width: 500px) {
+    .parts-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
 /* شاشة الشرح */
 .tutorial-content {
     max-width: 700px;
@@ -2488,4 +2564,82 @@ body::before {
     .example-simple-nav .btn-control {
         width: 100%;
     }
+}
+
+/* =====================================
+   مقارنة جاوس وجاوس-جوردن
+   ===================================== */
+.lesson-comparison {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 20px;
+    margin: 25px 0;
+    flex-wrap: wrap;
+}
+
+.comparison-item {
+    background: var(--bg-card);
+    padding: 20px;
+    border-radius: var(--radius-lg);
+    text-align: center;
+}
+
+.comparison-item.highlight-item {
+    border: 2px solid var(--secondary);
+    box-shadow: 0 0 20px rgba(16, 185, 129, 0.2);
+}
+
+.comparison-title {
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--text-secondary);
+    margin-bottom: 15px;
+}
+
+.comparison-note {
+    margin-top: 15px;
+    font-size: 0.9rem;
+    color: var(--text-muted);
+}
+
+.comparison-note.success {
+    color: var(--secondary);
+    font-weight: 600;
+}
+
+.comparison-arrow {
+    font-size: 2rem;
+    color: var(--primary);
+}
+
+@media (max-width: 600px) {
+    .lesson-comparison {
+        flex-direction: column;
+    }
+
+    .comparison-arrow {
+        transform: rotate(90deg);
+    }
+}
+
+/* =====================================
+   التوقيع (Signature)
+   ===================================== */
+.game-footer {
+    position: fixed;
+    bottom: 10px;
+    right: 20px;
+    z-index: 1000;
+    font-family: 'Outfit', sans-serif;
+    color: rgba(255, 255, 255, 0.4);
+    font-size: 0.9rem;
+    pointer-events: none;
+    user-select: none;
+}
+
+.signature {
+    color: var(--secondary);
+    font-weight: 700;
+    opacity: 0.8;
 }
