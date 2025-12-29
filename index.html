@@ -428,108 +428,153 @@
             <h3 class="lesson-title">الخطوة 6: 📽️ شاهد الحل خطوة بخطوة</h3>
             <p class="lesson-desc">تابع كيف نحل هذه المصفوفة بالتفصيل:</p>
 
-            <div class="animated-example" id="animated-example">
-              <!-- المصفوفة المتحركة -->
-              <div class="example-step active" id="example-step-0">
-                <div class="step-label">المصفوفة الأصلية:</div>
-                <div class="demo-matrix">
-                  <div class="demo-row">
-                    <span class="demo-cell highlight">2</span>
-                    <span class="demo-cell">4</span>
-                    <span class="demo-divider"></span>
-                    <span class="demo-cell result">10</span>
+            <div class="animated-example-container">
+              <!-- المصفوفة على اليسار -->
+              <div class="example-matrix-side">
+                <div class="example-step active" id="example-step-0">
+                  <div class="demo-matrix">
+                    <div class="demo-row">
+                      <span class="demo-cell highlight">2</span>
+                      <span class="demo-cell">4</span>
+                      <span class="demo-divider"></span>
+                      <span class="demo-cell result">10</span>
+                    </div>
+                    <div class="demo-row">
+                      <span class="demo-cell">1</span>
+                      <span class="demo-cell">3</span>
+                      <span class="demo-divider"></span>
+                      <span class="demo-cell result">7</span>
+                    </div>
                   </div>
-                  <div class="demo-row">
-                    <span class="demo-cell">1</span>
-                    <span class="demo-cell">3</span>
-                    <span class="demo-divider"></span>
-                    <span class="demo-cell result">7</span>
+                </div>
+
+                <div class="example-step" id="example-step-1">
+                  <div class="demo-matrix">
+                    <div class="demo-row changed">
+                      <span class="demo-cell pivot">1</span>
+                      <span class="demo-cell">2</span>
+                      <span class="demo-divider"></span>
+                      <span class="demo-cell result">5</span>
+                    </div>
+                    <div class="demo-row">
+                      <span class="demo-cell">1</span>
+                      <span class="demo-cell">3</span>
+                      <span class="demo-divider"></span>
+                      <span class="demo-cell result">7</span>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="example-step" id="example-step-2">
+                  <div class="demo-matrix">
+                    <div class="demo-row">
+                      <span class="demo-cell pivot">1</span>
+                      <span class="demo-cell">2</span>
+                      <span class="demo-divider"></span>
+                      <span class="demo-cell result">5</span>
+                    </div>
+                    <div class="demo-row changed">
+                      <span class="demo-cell zero">0</span>
+                      <span class="demo-cell highlight">1</span>
+                      <span class="demo-divider"></span>
+                      <span class="demo-cell result">2</span>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="example-step" id="example-step-3">
+                  <div class="demo-matrix success-matrix">
+                    <div class="demo-row">
+                      <span class="demo-cell pivot">1</span>
+                      <span class="demo-cell">2</span>
+                      <span class="demo-divider"></span>
+                      <span class="demo-cell result">5</span>
+                    </div>
+                    <div class="demo-row">
+                      <span class="demo-cell zero">0</span>
+                      <span class="demo-cell pivot">1</span>
+                      <span class="demo-divider"></span>
+                      <span class="demo-cell result">2</span>
+                    </div>
                   </div>
                 </div>
               </div>
 
-              <div class="example-step" id="example-step-1">
-                <div class="step-label">
-                  الخطوة 1: R₁ → ½ × R₁ (لجعل القائد = 1)
-                </div>
-                <div class="demo-matrix">
-                  <div class="demo-row changed">
-                    <span class="demo-cell pivot">1</span>
-                    <span class="demo-cell">2</span>
-                    <span class="demo-divider"></span>
-                    <span class="demo-cell result">5</span>
-                  </div>
-                  <div class="demo-row">
-                    <span class="demo-cell">1</span>
-                    <span class="demo-cell">3</span>
-                    <span class="demo-divider"></span>
-                    <span class="demo-cell result">7</span>
+              <!-- الشرح على اليمين -->
+              <div class="example-explanation-side">
+                <div class="explanation-step active" id="explanation-step-0">
+                  <div class="step-number">البداية</div>
+                  <div class="step-title">المصفوفة الأصلية</div>
+                  <div class="step-detail">
+                    <p>هذه المصفوفة تمثل نظام معادلتين:</p>
+                    <code>2x + 4y = 10</code>
+                    <code>x + 3y = 7</code>
                   </div>
                 </div>
-              </div>
 
-              <div class="example-step" id="example-step-2">
-                <div class="step-label">
-                  الخطوة 2: R₂ → R₂ + (-1) × R₁ (لجعل ما تحت القائد = 0)
-                </div>
-                <div class="demo-matrix">
-                  <div class="demo-row">
-                    <span class="demo-cell pivot">1</span>
-                    <span class="demo-cell">2</span>
-                    <span class="demo-divider"></span>
-                    <span class="demo-cell result">5</span>
-                  </div>
-                  <div class="demo-row changed">
-                    <span class="demo-cell zero">0</span>
-                    <span class="demo-cell highlight">1</span>
-                    <span class="demo-divider"></span>
-                    <span class="demo-cell result">2</span>
+                <div class="explanation-step" id="explanation-step-1">
+                  <div class="step-number">الخطوة 1</div>
+                  <div class="step-title">R₁ → ½ × R₁</div>
+                  <div class="step-detail">
+                    <p>نضرب الصف الأول في <strong>½</strong></p>
+                    <p class="step-reason">🎯 الهدف: جعل القائد = 1</p>
+                    <div class="step-calc">[2, 4 | 10] × ½ = [1, 2 | 5]</div>
                   </div>
                 </div>
-              </div>
 
-              <div class="example-step" id="example-step-3">
-                <div class="step-label">🎉 تم! المصفوفة في الشكل المدرجي</div>
-                <div class="demo-matrix success-matrix">
-                  <div class="demo-row">
-                    <span class="demo-cell pivot">1</span>
-                    <span class="demo-cell">2</span>
-                    <span class="demo-divider"></span>
-                    <span class="demo-cell result">5</span>
-                  </div>
-                  <div class="demo-row">
-                    <span class="demo-cell zero">0</span>
-                    <span class="demo-cell pivot">1</span>
-                    <span class="demo-divider"></span>
-                    <span class="demo-cell result">2</span>
+                <div class="explanation-step" id="explanation-step-2">
+                  <div class="step-number">الخطوة 2</div>
+                  <div class="step-title">R₂ → R₂ + (-1)×R₁</div>
+                  <div class="step-detail">
+                    <p>نطرح الصف الأول من الثاني</p>
+                    <p class="step-reason">🎯 الهدف: جعل ما تحت القائد = 0</p>
+                    <div class="step-calc">
+                      [1, 3 | 7] - [1, 2 | 5] = [0, 1 | 2]
+                    </div>
                   </div>
                 </div>
-                <div class="solution-box success" style="margin-top: 20px">
-                  <div class="solution-icon">✅</div>
-                  <div class="solution-content">
-                    <strong>الآن نحل:</strong>
-                    <div class="solution-vars">
-                      <span>من R₂: y = 2</span>
-                      <span>من R₁: x + 2(2) = 5 → x = 1</span>
+
+                <div class="explanation-step" id="explanation-step-3">
+                  <div class="step-number">🎉 تم!</div>
+                  <div class="step-title">الشكل المدرجي</div>
+                  <div class="step-detail">
+                    <p>الآن نحل بالتعويض العكسي:</p>
+                    <div class="final-solution">
+                      <span class="sol-item"
+                        >من R₂: <strong>y = 2</strong></span
+                      >
+                      <span class="sol-item">من R₁: x + 2(2) = 5</span>
+                      <span class="sol-item sol-final"
+                        >∴ <strong>x = 1</strong>, <strong>y = 2</strong></span
+                      >
                     </div>
                   </div>
                 </div>
               </div>
             </div>
 
-            <!-- أزرار التحكم -->
-            <div class="example-controls">
-              <button class="btn btn-control" onclick="game.prevExampleStep()">
-                ◀ السابق
+            <!-- شريط التحكم -->
+            <!-- أزرار التحكم في المثال -->
+            <div class="example-simple-nav">
+              <button
+                class="btn btn-control"
+                id="btn-prev-example"
+                onclick="game.prevExampleStep()"
+                disabled
+              >
+                ◀ الخطوة السابقة
               </button>
-              <span class="example-progress" id="example-progress">1 / 4</span>
-              <button class="btn btn-control" onclick="game.nextExampleStep()">
-                التالي ▶
+              <span class="example-counter" id="example-counter"
+                >خطوة 1 من 4</span
+              >
+              <button
+                class="btn btn-control"
+                id="btn-next-example"
+                onclick="game.nextExampleStep()"
+              >
+                الخطوة التالية ▶
               </button>
             </div>
-            <button class="btn btn-play" onclick="game.playExample()">
-              ▶ تشغيل تلقائي
-            </button>
           </div>
 
           <!-- الخطوة 7: القائد ليس دائماً على القطر -->

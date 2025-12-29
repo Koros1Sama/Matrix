@@ -1475,42 +1475,36 @@ class GaussianGame {
         }
     }
     
-    playExample() {
-        // إيقاف أي تشغيل سابق
-        if (this.exampleAutoPlayInterval) {
-            clearInterval(this.exampleAutoPlayInterval);
-            this.exampleAutoPlayInterval = null;
-            return;
-        }
-        
-        // البدء من البداية
-        this.currentExampleStep = 0;
-        this.updateExampleUI();
-        
-        this.exampleAutoPlayInterval = setInterval(() => {
-            if (this.currentExampleStep < this.totalExampleSteps - 1) {
-                this.currentExampleStep++;
-                this.updateExampleUI();
-            } else {
-                clearInterval(this.exampleAutoPlayInterval);
-                this.exampleAutoPlayInterval = null;
-            }
-        }, 2000); // ثانيتان لكل خطوة
-    }
-    
     updateExampleUI() {
-        // تحديث الخطوات
+        // تحديث خطوات المصفوفة
         for (let i = 0; i < this.totalExampleSteps; i++) {
             const stepEl = document.getElementById(`example-step-${i}`);
             if (stepEl) {
                 stepEl.classList.toggle('active', i === this.currentExampleStep);
             }
+            // تحديث خطوات الشرح
+            const explainEl = document.getElementById(`explanation-step-${i}`);
+            if (explainEl) {
+                explainEl.classList.toggle('active', i === this.currentExampleStep);
+            }
         }
         
-        // تحديث التقدم
-        const progress = document.getElementById('example-progress');
-        if (progress) {
-            progress.textContent = `${this.currentExampleStep + 1} / ${this.totalExampleSteps}`;
+        // تحديث حالة الأزرار
+        const btnPrev = document.getElementById('btn-prev-example');
+        const btnNext = document.getElementById('btn-next-example');
+        
+        if (btnPrev) {
+            btnPrev.disabled = this.currentExampleStep === 0;
+        }
+        
+        if (btnNext) {
+            btnNext.disabled = this.currentExampleStep === this.totalExampleSteps - 1;
+        }
+        
+        // تحديث العداد
+        const counter = document.getElementById('example-counter');
+        if (counter) {
+            counter.textContent = `خطوة ${this.currentExampleStep + 1} من ${this.totalExampleSteps}`;
         }
     }
 }

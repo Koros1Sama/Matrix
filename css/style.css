@@ -2326,3 +2326,166 @@ body::before {
     transform: scale(1.05);
     box-shadow: 0 5px 20px rgba(99, 102, 241, 0.4);
 }
+
+/* =====================================
+   التخطيط الجديد للمثال المتحرك
+   ===================================== */
+.animated-example-container {
+    display: flex;
+    gap: 30px;
+    margin-bottom: 25px;
+    align-items: flex-start;
+}
+
+.example-matrix-side {
+    flex: 0 0 auto;
+}
+
+.example-explanation-side {
+    flex: 1;
+    min-width: 280px;
+}
+
+/* خطوات الشرح */
+.explanation-step {
+    display: none;
+    animation: explanation-slide 0.5s ease;
+}
+
+.explanation-step.active {
+    display: block;
+}
+
+@keyframes explanation-slide {
+    from {
+        opacity: 0;
+        transform: translateX(15px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+.step-number {
+    display: inline-block;
+    background: linear-gradient(135deg, var(--primary), #8b5cf6);
+    color: white;
+    padding: 6px 15px;
+    border-radius: 20px;
+    font-size: 0.9rem;
+    font-weight: 600;
+    margin-bottom: 10px;
+}
+
+.step-title {
+    font-size: 1.4rem;
+    font-weight: 700;
+    color: var(--accent);
+    margin-bottom: 15px;
+    font-family: 'Fira Code', monospace;
+}
+
+.step-detail {
+    background: var(--bg-card);
+    padding: 20px;
+    border-radius: var(--radius-lg);
+    border-right: 4px solid var(--primary);
+}
+
+.step-detail p {
+    margin-bottom: 10px;
+    color: var(--text-secondary);
+    line-height: 1.8;
+}
+
+.step-detail code {
+    display: block;
+    background: rgba(99, 102, 241, 0.1);
+    padding: 8px 15px;
+    border-radius: var(--radius-sm);
+    font-family: 'Fira Code', monospace;
+    color: var(--primary-light);
+    margin: 5px 0;
+}
+
+.step-reason {
+    color: var(--secondary) !important;
+    font-weight: 600;
+}
+
+.step-calc {
+    background: rgba(251, 191, 36, 0.1);
+    padding: 12px 15px;
+    border-radius: var(--radius-sm);
+    font-family: 'Fira Code', monospace;
+    color: var(--accent);
+    margin-top: 10px;
+    text-align: center;
+    font-size: 1rem;
+}
+
+.final-solution {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.sol-item {
+    font-family: 'Fira Code', monospace;
+    color: var(--text-secondary);
+}
+
+.sol-final {
+    color: var(--secondary) !important;
+    font-size: 1.1rem;
+    padding-top: 8px;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    margin-top: 5px;
+}
+
+/* أزرار التنقل البسيطة (بديل الفيديو) */
+.example-simple-nav {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 20px;
+    background: var(--bg-card);
+    padding: 20px;
+    border-radius: var(--radius-lg);
+    margin-top: 20px;
+    border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.example-counter {
+    font-family: 'Fira Code', monospace;
+    color: var(--accent);
+    font-size: 1.1rem;
+    font-weight: 600;
+    min-width: 100px;
+    text-align: center;
+    background: rgba(99, 102, 241, 0.1);
+    padding: 8px 15px;
+    border-radius: 20px;
+}
+
+/* تجاوب الشاشات الصغيرة */
+@media (max-width: 768px) {
+    .animated-example-container {
+        flex-direction: column;
+    }
+
+    .example-explanation-side {
+        min-width: 100%;
+    }
+
+    .example-simple-nav {
+        flex-direction: column;
+        gap: 15px;
+    }
+
+    .example-simple-nav .btn-control {
+        width: 100%;
+    }
+}
