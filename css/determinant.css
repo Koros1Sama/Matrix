@@ -112,6 +112,29 @@
     direction: ltr;
 }
 
+/* المصفوفة الموسعة 3×5 */
+.det-game-matrix.extended-matrix {
+    background: linear-gradient(135deg, rgba(30, 33, 45, 0.95), rgba(40, 45, 60, 0.9));
+    border: 2px solid rgba(99, 102, 241, 0.3);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+}
+
+/* العواميد المضافة (4 و 5) */
+.det-game-cell.extended-col {
+    background: rgba(139, 92, 246, 0.25);
+    border: 2px dashed rgba(139, 92, 246, 0.5);
+    position: relative;
+}
+
+/* عند إضاءة العواميد المضافة */
+.det-game-cell.extended-col.highlight-green {
+    border-style: solid !important;
+}
+
+.det-game-cell.extended-col.highlight-red {
+    border-style: solid !important;
+}
+
 .det-game-cell {
     width: 55px;
     height: 55px;

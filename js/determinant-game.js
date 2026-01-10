@@ -18,6 +18,10 @@ class DeterminantGame {
         this.steps = [];
         this.userAnswers = [];
         
+        // Extended matrix state for 3x3 Sarrus method
+        this.isExtended = false;
+        this.extendedMatrix = null;
+        
         // Tutorial tracking
         this.tutorialCompleted = {
             1: false, // 2x2
@@ -140,29 +144,37 @@ class DeterminantGame {
         const down2 = b * f * g;
         const down3 = c * d * h;
         
+        // الأقطار الهابطة على المصفوفة الموسعة 3×5
+        // القطر 1: العمود 0 → 1 → 2
+        // القطر 2: العمود 1 → 2 → 3
+        // القطر 3: العمود 2 → 3 → 4
+        
         steps.push({
             type: 'down-diag-1',
-            prompt: `القطر الرئيسي 1: ${a} × ${e} × ${i} = ؟`,
+            prompt: `القطر الهابط 1: ${a} × ${e} × ${i} = ؟`,
             highlight: [[0, 0], [1, 1], [2, 2]],
             highlightClass: 'highlight-green',
+            useExtendedMatrix: true,
             answer: down1,
             explanation: `${a} × ${e} × ${i} = ${down1}`
         });
         
         steps.push({
             type: 'down-diag-2',
-            prompt: `القطر الرئيسي 2: ${b} × ${f} × ${g} = ؟`,
-            highlight: [[0, 1], [1, 2], [2, 0]],
+            prompt: `القطر الهابط 2: ${b} × ${f} × ${g} = ؟`,
+            highlight: [[0, 1], [1, 2], [2, 3]],
             highlightClass: 'highlight-green',
+            useExtendedMatrix: true,
             answer: down2,
             explanation: `${b} × ${f} × ${g} = ${down2}`
         });
         
         steps.push({
             type: 'down-diag-3',
-            prompt: `القطر الرئيسي 3: ${c} × ${d} × ${h} = ؟`,
-            highlight: [[0, 2], [1, 0], [2, 1]],
+            prompt: `القطر الهابط 3: ${c} × ${d} × ${h} = ؟`,
+            highlight: [[0, 2], [1, 3], [2, 4]],
             highlightClass: 'highlight-green',
+            useExtendedMatrix: true,
             answer: down3,
             explanation: `${c} × ${d} × ${h} = ${down3}`
         });
@@ -172,29 +184,37 @@ class DeterminantGame {
         const up2 = a * f * h;
         const up3 = b * d * i;
         
+        // الأقطار الصاعدة على المصفوفة الموسعة 3×5
+        // القطر 1: من [2,0] إلى [0,2]
+        // القطر 2: من [2,1] إلى [0,3]
+        // القطر 3: من [2,2] إلى [0,4]
+        
         steps.push({
             type: 'up-diag-1',
-            prompt: `القطر الثانوي 1: ${c} × ${e} × ${g} = ؟`,
-            highlight: [[0, 2], [1, 1], [2, 0]],
+            prompt: `القطر الصاعد 1: ${c} × ${e} × ${g} = ؟`,
+            highlight: [[2, 0], [1, 1], [0, 2]],
             highlightClass: 'highlight-red',
+            useExtendedMatrix: true,
             answer: up1,
             explanation: `${c} × ${e} × ${g} = ${up1}`
         });
         
         steps.push({
             type: 'up-diag-2',
-            prompt: `القطر الثانوي 2: ${a} × ${f} × ${h} = ؟`,
-            highlight: [[0, 0], [1, 2], [2, 1]],
+            prompt: `القطر الصاعد 2: ${a} × ${f} × ${h} = ؟`,
+            highlight: [[2, 1], [1, 2], [0, 3]],
             highlightClass: 'highlight-red',
+            useExtendedMatrix: true,
             answer: up2,
             explanation: `${a} × ${f} × ${h} = ${up2}`
         });
         
         steps.push({
             type: 'up-diag-3',
-            prompt: `القطر الثانوي 3: ${b} × ${d} × ${i} = ؟`,
-            highlight: [[0, 1], [1, 0], [2, 2]],
+            prompt: `القطر الصاعد 3: ${b} × ${d} × ${i} = ؟`,
+            highlight: [[2, 2], [1, 3], [0, 4]],
             highlightClass: 'highlight-red',
+            useExtendedMatrix: true,
             answer: up3,
             explanation: `${b} × ${d} × ${i} = ${up3}`
         });
@@ -425,6 +445,10 @@ class DeterminantGame {
         this.userAnswers = [];
         this.isPlaying = true;
         
+        // إعادة تعيين حالة التوسيع
+        this.isExtended = false;
+        this.extendedMatrix = null;
+        
         // Generate steps based on level and matrix size
         const n = this.matrix.length;
         
@@ -526,13 +550,20 @@ class DeterminantGame {
         const step = this.steps[this.currentStep];
         const n = this.matrix.length;
         
+        // تحديد ما إذا كانت الخطوة تستخدم المصفوفة الموسعة
+        const useExtended = step.useExtendedMatrix && this.isExtended && this.extendedMatrix;
+        const displayMatrix = useExtended ? this.extendedMatrix : this.matrix;
+        const cols = useExtended ? 5 : n;
+        
         // Build matrix HTML with highlighting
-        let matrixHtml = `<div class="det-game-matrix" style="grid-template-columns: repeat(${n}, 1fr);">`;
-        for (let i = 0; i < n; i++) {
-            for (let j = 0; j < n; j++) {
+        let matrixHtml = `<div class="det-game-matrix ${useExtended ? 'extended-matrix' : ''}" style="grid-template-columns: repeat(${cols}, 1fr);">`;
+        for (let i = 0; i < displayMatrix.length; i++) {
+            for (let j = 0; j < displayMatrix[i].length; j++) {
                 const isHighlighted = step.highlight.some(([r, c]) => r === i && c === j);
                 const highlightClass = isHighlighted ? step.highlightClass : '';
-                matrixHtml += `<div class="det-game-cell ${highlightClass}">${this.matrix[i][j]}</div>`;
+                // إضافة فئة خاصة للعواميد المضافة (4 و 5)
+                const extendedColClass = (useExtended && j >= 3) ? 'extended-col' : '';
+                matrixHtml += `<div class="det-game-cell ${highlightClass} ${extendedColClass}">${displayMatrix[i][j]}</div>`;
             }
         }
         matrixHtml += '</div>';
@@ -748,6 +779,15 @@ class DeterminantGame {
             feedback.className = 'step-feedback correct';
             feedback.innerHTML = '✅ ممتاز! تم توسيع المصفوفة بشكل صحيح!';
             feedback.style.display = 'block';
+            
+            // حفظ المصفوفة الموسعة 3×5
+            const [[a, b, c], [d, e, f], [g, h, i]] = this.matrix;
+            this.extendedMatrix = [
+                [a, b, c, a, b],
+                [d, e, f, d, e],
+                [g, h, i, g, h]
+            ];
+            this.isExtended = true;
             
             setTimeout(() => {
                 this.currentStep++;

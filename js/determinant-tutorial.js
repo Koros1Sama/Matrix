@@ -402,7 +402,7 @@ class DeterminantTutorial {
                         <div class="tut-ready">
                             <p>أتقنت طريقة ساروس للمحدد 3×3!</p>
                             <div class="formula-reminder">
-                                الهابطة (+) - الصاعدة (-)
+                                الرئيسية (+) - الثانوية (-)
                             </div>
                             <button class="btn btn-primary btn-lg" onclick="determinantTutorial.complete(2)">
                                 ابدأ اللعب! 🚀
@@ -1011,9 +1011,9 @@ class DeterminantTutorial {
         return `
             <div class="final-calc-phase">
                 <div class="calc-parts">
-                    <div class="calc-down">الهابطة: ${c.down}</div>
+                    <div class="calc-down">الرئيسية: ${c.down}</div>
                     <div class="calc-minus">-</div>
-                    <div class="calc-up">الصاعدة: ${c.up}</div>
+                    <div class="calc-up">الثانوية: ${c.up}</div>
                 </div>
                 <div class="calc-result">${c.result}</div>
                 ${phase.note ? `<p class="calc-note">💡 ${phase.note}</p>` : ''}
