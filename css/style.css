@@ -2643,3 +2643,730 @@ body::before {
     font-weight: 700;
     opacity: 0.8;
 }
+
+/* ============================================
+   التحسينات البصرية الجديدة
+   ============================================ */
+
+/* Visual Arithmetic Preview */
+.preview-detailed {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Fira Code', monospace;
+    font-size: 0.85em;
+    white-space: nowrap;
+}
+
+.preview-original {
+    color: #555;
+    opacity: 0.7;
+}
+
+.preview-operator {
+    margin: 0 4px;
+    color: #888;
+    font-weight: bold;
+}
+
+.preview-ghost {
+    color: #d63384;
+    /* Pinkish for the multiplier part */
+    font-weight: bold;
+    background: rgba(214, 51, 132, 0.1);
+    padding: 2px 4px;
+    border-radius: 4px;
+}
+
+.preview-equals {
+    margin: 0 4px;
+    color: #888;
+}
+
+.preview-result {
+    color: #198754;
+    /* Success Green */
+    font-weight: bold;
+    border-bottom: 2px solid #198754;
+}
+
+/* Goal Hint Visualization */
+#goal-hint-container {
+    position: fixed;
+    top: 80px;
+    left: 20px;
+    background: white;
+    padding: 12px;
+    border-radius: 12px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    z-index: 90;
+    width: 140px;
+    opacity: 0.9;
+    transition: all 0.3s ease;
+    border: 1px solid #e0e0e0;
+}
+
+#goal-hint-container:hover {
+    opacity: 1;
+    transform: scale(1.05);
+}
+
+.goal-title {
+    font-size: 14px;
+    font-weight: bold;
+    color: #333;
+    margin-bottom: 8px;
+    text-align: center;
+}
+
+.goal-matrix-wrapper {
+    display: flex;
+    justify-content: center;
+}
+
+.goal-grid {
+    display: inline-grid;
+    gap: 4px;
+    padding: 4px;
+    background: #f8f9fa;
+    border-radius: 6px;
+}
+
+.goal-cell {
+    width: 24px;
+    height: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 4px;
+    font-size: 12px;
+    font-family: 'Fira Code', monospace;
+    background: #e9ecef;
+    color: #adb5bd;
+    border: 1px solid transparent;
+    transition: all 0.3s;
+}
+
+/* Goal Cell States */
+.goal-cell.pivot-target {
+    background: #fff3cd;
+    color: #856404;
+    border-color: #ffeeba;
+    font-weight: bold;
+}
+
+.goal-cell.zero-target {
+    background: #e2e3e5;
+    color: #383d41;
+}
+
+.goal-cell.done {
+    background: #d1e7dd;
+    color: #0f5132;
+    border-color: #badbcc;
+}
+
+.goal-cell.current-focus {
+    box-shadow: 0 0 0 2px #0d6efd;
+    z-index: 1;
+}
+
+/* Gauss-Jordan: Zero above pivot */
+.goal-cell.zero-target-above {
+    background: #e8d8f8;
+    color: #5a3d7a;
+    border-color: #d4b8f0;
+}
+
+.goal-cell.zero-target-above.done {
+    background: #d4edda;
+    color: #155724;
+    border-color: #c3e6cb;
+}
+
+/* Goal Note */
+.goal-note {
+    margin-top: 10px;
+    font-size: 11px;
+    color: #6f42c1;
+    text-align: center;
+    padding: 6px;
+    background: #f3e8ff;
+    border-radius: 6px;
+    line-height: 1.4;
+}
+
+/* Animation for updates */
+@keyframes popIn {
+    0% {
+        transform: scale(0.8);
+        opacity: 0;
+    }
+
+    100% {
+        transform: scale(1);
+        opacity: 1;
+    }
+}
+
+.goal-cell.updated {
+    animation: popIn 0.3s ease-out;
+}
+
+/* Restore/Add Preview Row Highlight */
+.matrix-row.preview-row {
+    background-color: #fff8e1 !important;
+    /* Force override */
+    border-radius: 4px;
+    transition: background-color 0.2s;
+}
+
+.matrix-row.preview-row .matrix-cell {
+    background: transparent !important;
+    /* Make cell bg transparent to show row highlight */
+}
+
+/* Ensure matrix cells can expand for detailed preview */
+.matrix-cell {
+    min-width: 60px;
+    /* Ensure logical minimum */
+    transition: all 0.3s ease;
+}
+
+.preview-row .matrix-cell {
+    width: auto;
+    /* Allow expansion */
+    padding: 0 8px;
+}
+
+/* ============================================
+   Tutorial Visual Enhancements
+   ============================================ */
+
+/* Color-Coded Coefficients - with better contrast */
+.coef-x,
+.color-1 {
+    color: #ff6b6b !important;
+    font-weight: bold;
+    text-shadow: 0 0 8px rgba(255, 107, 107, 0.5);
+}
+
+.coef-y,
+.color-2 {
+    color: #74b9ff !important;
+    font-weight: bold;
+    text-shadow: 0 0 8px rgba(116, 185, 255, 0.5);
+}
+
+.coef-z,
+.color-3 {
+    color: #55efc4 !important;
+    font-weight: bold;
+    text-shadow: 0 0 8px rgba(85, 239, 196, 0.5);
+}
+
+.coef-result,
+.color-result {
+    color: #d7a6ff !important;
+    font-weight: bold;
+    text-shadow: 0 0 8px rgba(215, 166, 255, 0.5);
+}
+
+/* Colored cells with better gradients */
+.demo-cell.color-1 {
+    background: linear-gradient(135deg, #ff6b6b, #ee5a5a) !important;
+    color: white !important;
+}
+
+.demo-cell.color-2 {
+    background: linear-gradient(135deg, #74b9ff, #5fa8f0) !important;
+    color: white !important;
+}
+
+.demo-cell.color-3 {
+    background: linear-gradient(135deg, #55efc4, #44d9b3) !important;
+    color: white !important;
+}
+
+.demo-cell.color-result {
+    background: linear-gradient(135deg, #d7a6ff, #c58aff) !important;
+    color: white !important;
+}
+
+/* Equation Box with Color Links */
+.equation-colored {
+    font-family: 'Fira Code', monospace;
+    font-size: 1.3rem;
+    padding: 15px 25px;
+    background: var(--bg-dark);
+    border-radius: var(--radius-md);
+    margin: 10px 0;
+    text-align: center;
+    direction: ltr;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+/* ============================================
+   Full Matrix Before/After Comparison
+   ============================================ */
+
+.matrix-comparison {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 30px;
+    flex-wrap: wrap;
+    margin: 20px 0;
+}
+
+.matrix-before,
+.matrix-after {
+    text-align: center;
+}
+
+.matrix-label {
+    font-size: 1rem;
+    font-weight: 600;
+    margin-bottom: 10px;
+    padding: 6px 15px;
+    border-radius: 20px;
+    display: inline-block;
+}
+
+.matrix-before .matrix-label {
+    background: rgba(255, 107, 107, 0.2);
+    color: #ff6b6b;
+}
+
+.matrix-after .matrix-label {
+    background: rgba(85, 239, 196, 0.2);
+    color: #55efc4;
+}
+
+.comparison-arrow {
+    font-size: 2rem;
+    color: var(--accent);
+    animation: arrowPulse 1.5s ease-in-out infinite;
+}
+
+@keyframes arrowPulse {
+
+    0%,
+    100% {
+        opacity: 0.6;
+        transform: translateX(0);
+    }
+
+    50% {
+        opacity: 1;
+        transform: translateX(5px);
+    }
+}
+
+/* Cell origin tracking colors */
+.demo-cell.unchanged {
+    background: linear-gradient(135deg, #636e72, #535c5f) !important;
+    opacity: 0.7;
+}
+
+.demo-cell.changed {
+    background: linear-gradient(135deg, #55efc4, #00b894) !important;
+    animation: cellChanged 0.5s ease;
+    box-shadow: 0 0 15px rgba(85, 239, 196, 0.4);
+}
+
+.demo-cell.from-operation {
+    background: linear-gradient(135deg, #ffeaa7, #fdcb6e) !important;
+    color: #2d3436 !important;
+}
+
+@keyframes cellChanged {
+    0% {
+        transform: scale(1.2);
+    }
+
+    100% {
+        transform: scale(1);
+    }
+}
+
+/* Row highlighting in comparison */
+.demo-row.highlight-row {
+    background: rgba(116, 185, 255, 0.15);
+    border-radius: var(--radius-sm);
+    padding: 5px;
+    margin: 2px 0;
+}
+
+/* Visual Matrix Grid for Tutorial */
+.visual-matrix {
+    display: inline-grid;
+    gap: 8px;
+    padding: 20px;
+    background: var(--bg-card);
+    border-radius: var(--radius-lg);
+    position: relative;
+}
+
+.visual-matrix-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.visual-cell {
+    width: 50px;
+    height: 50px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(135deg, var(--cell-default), #2563EB);
+    border-radius: var(--radius-sm);
+    font-size: 1.2rem;
+    font-weight: 600;
+    font-family: 'Fira Code', monospace;
+    transition: all 0.4s ease;
+    position: relative;
+}
+
+.visual-divider {
+    width: 3px;
+    height: 50px;
+    background: var(--text-muted);
+    margin: 0 10px;
+    border-radius: 2px;
+}
+
+/* Ghost Row (for addition visualization) */
+.ghost-row {
+    position: relative;
+}
+
+.ghost-row::before {
+    content: attr(data-operation);
+    position: absolute;
+    left: -80px;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 0.9rem;
+    color: var(--accent);
+    font-family: 'Fira Code', monospace;
+    white-space: nowrap;
+}
+
+.ghost-cell {
+    background: linear-gradient(135deg, #f59e0b, #d97706) !important;
+    opacity: 0.7;
+    animation: ghostPulse 1.5s ease-in-out infinite;
+}
+
+@keyframes ghostPulse {
+
+    0%,
+    100% {
+        opacity: 0.5;
+        transform: scale(1);
+    }
+
+    50% {
+        opacity: 0.8;
+        transform: scale(1.05);
+    }
+}
+
+/* Cell Animation */
+.visual-cell.animate-out {
+    animation: cellOut 0.3s ease forwards;
+}
+
+.visual-cell.animate-in {
+    animation: cellIn 0.4s ease forwards;
+}
+
+@keyframes cellOut {
+    0% {
+        opacity: 1;
+        transform: scale(1);
+    }
+
+    100% {
+        opacity: 0;
+        transform: scale(0.8);
+    }
+}
+
+@keyframes cellIn {
+    0% {
+        opacity: 0;
+        transform: scale(0.8);
+    }
+
+    100% {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+/* Goal/Why Explanation Box */
+.goal-box {
+    background: linear-gradient(135deg, rgba(245, 158, 11, 0.15), rgba(245, 158, 11, 0.05));
+    border: 2px solid var(--accent);
+    border-radius: var(--radius-md);
+    padding: 20px;
+    margin: 20px 0;
+    direction: rtl;
+    text-align: right;
+}
+
+.goal-box .goal-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 10px;
+    font-size: 1.1rem;
+    font-weight: bold;
+    color: var(--accent-light);
+}
+
+.goal-box .goal-method {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 1rem;
+    color: var(--text-secondary);
+}
+
+.goal-box .goal-method code {
+    background: rgba(0, 0, 0, 0.3);
+    padding: 4px 10px;
+    border-radius: 6px;
+    font-family: 'Fira Code', monospace;
+    color: var(--text-primary);
+}
+
+/* Addition Breakdown */
+.addition-breakdown {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    padding: 20px;
+    background: var(--bg-card);
+    border-radius: var(--radius-lg);
+    font-family: 'Fira Code', monospace;
+    direction: ltr;
+}
+
+.breakdown-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.breakdown-label {
+    min-width: 100px;
+    text-align: left;
+    font-size: 0.9rem;
+    color: var(--text-muted);
+}
+
+.breakdown-cells {
+    display: flex;
+    gap: 8px;
+}
+
+.breakdown-cell {
+    width: 45px;
+    height: 45px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--bg-dark);
+    border-radius: var(--radius-sm);
+    font-size: 1.1rem;
+    font-weight: 600;
+}
+
+.breakdown-cell.target {
+    background: linear-gradient(135deg, #3b82f6, #2563eb);
+}
+
+.breakdown-cell.source {
+    background: linear-gradient(135deg, #f59e0b, #d97706);
+}
+
+.breakdown-cell.result {
+    background: linear-gradient(135deg, #10b981, #059669);
+}
+
+.breakdown-operator {
+    font-size: 1.5rem;
+    color: var(--text-muted);
+    min-width: 30px;
+    text-align: center;
+}
+
+.breakdown-equals {
+    border-top: 2px solid var(--text-muted);
+    margin-top: 5px;
+    padding-top: 10px;
+}
+
+/* ============================================
+   Lesson Step Animations
+   ============================================ */
+
+/* Fade In Up Animation */
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.fade-in-up {
+    animation: fadeInUp 0.5s ease forwards;
+}
+
+/* Pop In Animation */
+@keyframes popIn {
+    0% {
+        opacity: 0;
+        transform: scale(0.8);
+    }
+
+    60% {
+        transform: scale(1.1);
+    }
+
+    100% {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+.pop-in {
+    animation: popIn 0.4s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+}
+
+/* Glow Pulse for Pivots */
+@keyframes glowPulse {
+
+    0%,
+    100% {
+        box-shadow: 0 0 10px rgba(245, 158, 11, 0.4);
+    }
+
+    50% {
+        box-shadow: 0 0 25px rgba(245, 158, 11, 0.8);
+    }
+}
+
+.glow-pulse {
+    animation: glowPulse 1.5s ease-in-out infinite;
+}
+
+/* Lesson step transition setup */
+.lesson-step .demo-cell {
+    opacity: 0;
+    transform: scale(0.8);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.lesson-step .point,
+.lesson-step .annotation {
+    opacity: 0;
+    transform: translateX(-20px);
+    transition: all 0.4s ease;
+}
+
+.lesson-step .solution-box {
+    opacity: 0;
+    transform: scale(0.95);
+    transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.lesson-step .comparison-item {
+    opacity: 0;
+    transform: translateY(20px);
+    transition: all 0.5s ease;
+}
+
+.lesson-step .comparison-arrow {
+    opacity: 0;
+    transition: all 0.3s ease;
+}
+
+.lesson-step .solution-vars span {
+    opacity: 0;
+    display: inline-block;
+}
+
+/* Animated state */
+.lesson-step.active .animated {
+    opacity: 1;
+}
+
+/* Lesson title animation */
+.lesson-step .lesson-title {
+    opacity: 0;
+    transform: translateY(-10px);
+    transition: all 0.4s ease;
+}
+
+.lesson-step.active .lesson-title {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+/* Lesson description animation */
+.lesson-step .lesson-desc {
+    opacity: 0;
+    transform: translateY(10px);
+    transition: all 0.4s ease 0.1s;
+}
+
+.lesson-step.active .lesson-desc {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+/* Operations demo animation */
+.lesson-step .op-demo-item {
+    opacity: 0;
+    transform: translateX(-15px);
+    transition: all 0.4s ease;
+}
+
+.lesson-step.active .op-demo-item {
+    opacity: 1;
+    transform: translateX(0);
+}
+
+.lesson-step.active .op-demo-item:nth-child(1) {
+    transition-delay: 0.2s;
+}
+
+.lesson-step.active .op-demo-item:nth-child(2) {
+    transition-delay: 0.4s;
+}
+
+.lesson-step.active .op-demo-item:nth-child(3) {
+    transition-delay: 0.6s;
+}
+
+/* Tip animation */
+.lesson-step .lesson-tip {
+    opacity: 0;
+    transform: translateY(10px);
+    transition: all 0.4s ease;
+}
+
+.lesson-step.active .lesson-tip {
+    opacity: 1;
+    transform: translateY(0);
+}

@@ -1,0 +1,1120 @@
+/* ============================================
+   Advanced Cinematic Tutorial Styles
+   Wide container, side-by-side, floating ops
+   ============================================ */
+
+/* Wrapper - fills available space */
+.cinema-wrapper {
+    width: 100%;
+    max-width: 900px;
+    margin: 0 auto;
+}
+
+/* Stage - Fixed black container, no fade */
+.cinema-stage {
+    background: linear-gradient(160deg, #0f1219, #151922);
+    border-radius: 20px;
+    padding: 35px 40px;
+    min-height: 450px;
+    position: relative;
+    box-shadow:
+        0 25px 80px rgba(0, 0, 0, 0.6),
+        inset 0 1px 0 rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+/* Content area - animated */
+.cinema-content {
+    opacity: 1;
+}
+
+/* Phase Header */
+.phase-header {
+    text-align: center;
+    margin-bottom: 25px;
+}
+
+.phase-title {
+    font-size: 1.6rem;
+    color: #fff;
+    margin: 0 0 8px 0;
+    text-shadow: 0 0 30px rgba(99, 102, 241, 0.4);
+}
+
+.phase-subtitle {
+    font-size: 1.1rem;
+    color: #9ca3af;
+    margin: 0;
+}
+
+/* ============================================
+   Equations Phase
+   ============================================ */
+
+.eq-phase {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 20px;
+}
+
+.eq-display {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.eq-line {
+    font-family: 'Fira Code', monospace;
+    font-size: 1.4rem;
+    padding: 14px 28px;
+    background: rgba(30, 33, 45, 0.9);
+    border-radius: 12px;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    color: #e5e7eb;
+}
+
+.eq-num {
+    font-weight: bold;
+    padding: 3px 10px;
+    border-radius: 6px;
+    margin: 0 2px;
+}
+
+.eq-num.x {
+    color: #ff6b6b;
+    background: rgba(255, 107, 107, 0.15);
+    text-shadow: 0 0 12px rgba(255, 107, 107, 0.5);
+}
+
+.eq-num.y {
+    color: #74b9ff;
+    background: rgba(116, 185, 255, 0.15);
+    text-shadow: 0 0 12px rgba(116, 185, 255, 0.5);
+}
+
+.eq-num.r {
+    color: #d7a6ff;
+    background: rgba(215, 166, 255, 0.15);
+    text-shadow: 0 0 12px rgba(215, 166, 255, 0.5);
+}
+
+.eq-var {
+    color: #9ca3af;
+    margin-left: 2px;
+}
+
+.eq-arrow {
+    font-size: 2.5rem;
+    color: #6366f1;
+    opacity: 0;
+}
+
+.eq-arrow.bouncing {
+    animation: bounce 0.8s ease-in-out infinite;
+}
+
+@keyframes bounce {
+
+    0%,
+    100% {
+        transform: translateY(0);
+    }
+
+    50% {
+        transform: translateY(8px);
+    }
+}
+
+.matrix-display {
+    opacity: 0;
+}
+
+.color-legend {
+    display: flex;
+    gap: 25px;
+    font-size: 0.95rem;
+    color: #9ca3af;
+}
+
+.leg-x {
+    color: #ff6b6b;
+}
+
+.leg-y {
+    color: #74b9ff;
+}
+
+.leg-r {
+    color: #d7a6ff;
+}
+
+/* ============================================
+   Matrix Display
+   ============================================ */
+
+.mmatrix {
+    display: inline-flex;
+    flex-direction: column;
+    gap: 8px;
+    padding: 18px 20px;
+    background: rgba(15, 18, 25, 0.9);
+    border-radius: 14px;
+    position: relative;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+}
+
+.mmatrix::before,
+.mmatrix::after {
+    content: '';
+    position: absolute;
+    top: 8px;
+    bottom: 8px;
+    width: 4px;
+    background: linear-gradient(180deg, #6366f1, #8b5cf6);
+    border-radius: 2px;
+}
+
+.mmatrix::before {
+    left: 6px;
+}
+
+.mmatrix::after {
+    right: 6px;
+}
+
+.mrow {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 4px 12px;
+    border-radius: 8px;
+    transition: all 0.3s ease;
+}
+
+.mrow.row-highlight {
+    background: rgba(99, 102, 241, 0.1);
+}
+
+.mrow.pulsing {
+    animation: rowPulse 0.8s ease-in-out infinite;
+}
+
+@keyframes rowPulse {
+
+    0%,
+    100% {
+        background: rgba(245, 158, 11, 0.1);
+    }
+
+    50% {
+        background: rgba(245, 158, 11, 0.25);
+        box-shadow: 0 0 15px rgba(245, 158, 11, 0.2);
+    }
+}
+
+.mrow.target-row {
+    background: rgba(99, 102, 241, 0.15);
+    border: 1px solid rgba(99, 102, 241, 0.3);
+}
+
+.mrow.source-row {
+    background: rgba(245, 158, 11, 0.1);
+    border: 1px solid rgba(245, 158, 11, 0.3);
+}
+
+.mcell {
+    width: 50px;
+    height: 50px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(135deg, #3b82f6, #2563eb);
+    border-radius: 10px;
+    font-family: 'Fira Code', monospace;
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: white;
+    transition: all 0.4s ease;
+    position: relative;
+}
+
+.mcell.pop {
+    animation: cellPop 0.35s ease forwards;
+}
+
+@keyframes cellPop {
+    0% {
+        transform: scale(0.5);
+        opacity: 0;
+    }
+
+    60% {
+        transform: scale(1.15);
+    }
+
+    100% {
+        transform: scale(1);
+        opacity: 1;
+    }
+}
+
+/* Cell color variants */
+.mcell.cell-x {
+    background: linear-gradient(135deg, #ff6b6b, #ee5a5a);
+    box-shadow: 0 0 15px rgba(255, 107, 107, 0.35);
+}
+
+.mcell.cell-y {
+    background: linear-gradient(135deg, #74b9ff, #5fa8f0);
+    box-shadow: 0 0 15px rgba(116, 185, 255, 0.35);
+}
+
+.mcell.cell-r {
+    background: linear-gradient(135deg, #d7a6ff, #c58aff);
+    box-shadow: 0 0 15px rgba(215, 166, 255, 0.35);
+}
+
+.mcell.cell-pivot {
+    background: linear-gradient(135deg, #f59e0b, #d97706);
+    box-shadow: 0 0 18px rgba(245, 158, 11, 0.5);
+}
+
+.mcell.cell-zero {
+    background: linear-gradient(135deg, #4b5563, #374151);
+}
+
+.mcell.cell-changed,
+.mcell.cell-new {
+    background: linear-gradient(135deg, #10b981, #059669);
+    box-shadow: 0 0 18px rgba(16, 185, 129, 0.5);
+}
+
+.mcell.cell-target {
+    border: 2px solid #6366f1;
+}
+
+.mcell.operating,
+.mcell.computing {
+    transform: scale(1.1);
+    box-shadow: 0 0 25px rgba(245, 158, 11, 0.6);
+}
+
+.mcell.morph-in {
+    animation: morphIn 0.5s ease forwards;
+}
+
+@keyframes morphIn {
+    0% {
+        transform: scale(0.8);
+        opacity: 0.5;
+    }
+
+    50% {
+        transform: scale(1.15);
+    }
+
+    100% {
+        transform: scale(1);
+        opacity: 1;
+    }
+}
+
+.mdivider {
+    width: 3px;
+    height: 50px;
+    background: linear-gradient(180deg, #6366f1, #8b5cf6);
+    margin: 0 10px;
+    border-radius: 2px;
+}
+
+/* ============================================
+   Floating Operators (above cells)
+   ============================================ */
+
+.float-op,
+.float-sub {
+    position: absolute;
+    top: -35px;
+    left: 50%;
+    transform: translateX(-50%) translateY(10px);
+    background: linear-gradient(135deg, #f59e0b, #d97706);
+    color: white;
+    font-size: 1rem;
+    font-weight: bold;
+    padding: 5px 12px;
+    border-radius: 8px;
+    opacity: 0;
+    transition: all 0.35s ease;
+    white-space: nowrap;
+    z-index: 10;
+    box-shadow: 0 5px 20px rgba(245, 158, 11, 0.4);
+}
+
+.float-sub {
+    background: linear-gradient(135deg, #ef4444, #dc2626);
+    box-shadow: 0 5px 20px rgba(239, 68, 68, 0.4);
+}
+
+.float-op.float-show,
+.float-sub.float-show {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+}
+
+.float-op.float-hide,
+.float-sub.float-hide {
+    opacity: 0;
+    transform: translateX(-50%) translateY(-10px);
+}
+
+/* ============================================
+   Operation Phase (Scale & Add)
+   ============================================ */
+
+.op-phase {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 25px;
+}
+
+.op-label {
+    font-family: 'Fira Code', monospace;
+    font-size: 1.5rem;
+    color: #a78bfa;
+    text-shadow: 0 0 20px rgba(167, 139, 250, 0.5);
+}
+
+/* Side by side matrices - HORIZONTAL */
+.matrices-side {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 35px;
+    flex-wrap: nowrap;
+}
+
+.matrix-box {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+}
+
+.box-label {
+    font-size: 1rem;
+    font-weight: 600;
+    padding: 6px 18px;
+    border-radius: 20px;
+    background: rgba(255, 255, 255, 0.08);
+    color: #e5e7eb;
+}
+
+.before-box .box-label {
+    background: rgba(255, 107, 107, 0.15);
+    color: #ff6b6b;
+}
+
+.after-box .box-label {
+    background: rgba(16, 185, 129, 0.15);
+    color: #10b981;
+}
+
+.transform-arrow {
+    font-size: 2.5rem;
+    color: #a78bfa;
+    opacity: 0;
+}
+
+.transform-arrow.pulse-arrow {
+    animation: arrowPulse 1s ease-in-out infinite;
+}
+
+@keyframes arrowPulse {
+
+    0%,
+    100% {
+        opacity: 0.6;
+        transform: translateX(0);
+    }
+
+    50% {
+        opacity: 1;
+        transform: translateX(8px);
+        text-shadow: 0 0 20px rgba(167, 139, 250, 0.6);
+    }
+}
+
+/* Cell Operations Display */
+.cell-ops {
+    display: flex;
+    gap: 20px;
+    padding: 15px 25px;
+    background: rgba(30, 33, 45, 0.8);
+    border-radius: 12px;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.cell-op {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-family: 'Fira Code', monospace;
+    font-size: 1.1rem;
+    opacity: 0;
+}
+
+.cell-op.highlight {
+    animation: flashHighlight 0.3s ease;
+}
+
+@keyframes flashHighlight {
+
+    0%,
+    100% {
+        background: transparent;
+    }
+
+    50% {
+        background: rgba(245, 158, 11, 0.3);
+        border-radius: 6px;
+    }
+}
+
+.cop-before {
+    color: #74b9ff;
+    font-weight: bold;
+}
+
+.cop-operator {
+    color: #f59e0b;
+    font-weight: bold;
+}
+
+.cop-equals {
+    color: #6b7280;
+}
+
+.cop-after {
+    color: #10b981;
+    font-weight: bold;
+    background: rgba(16, 185, 129, 0.15);
+    padding: 2px 8px;
+    border-radius: 4px;
+}
+
+/* Add Breakdown */
+.add-breakdown {
+    padding: 18px 25px;
+    background: rgba(30, 33, 45, 0.8);
+    border-radius: 12px;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    opacity: 0;
+}
+
+.breakdown-title {
+    font-size: 0.95rem;
+    color: #9ca3af;
+    margin-bottom: 12px;
+    text-align: center;
+}
+
+.add-breakdown {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+}
+
+.add-op {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-family: 'Fira Code', monospace;
+    font-size: 1.15rem;
+    opacity: 0;
+}
+
+.add-op.flash {
+    animation: flashHighlight 0.3s ease;
+}
+
+.add-target {
+    color: #74b9ff;
+    font-weight: bold;
+    background: rgba(116, 185, 255, 0.15);
+    padding: 4px 10px;
+    border-radius: 6px;
+}
+
+.add-minus,
+.add-plus {
+    color: #a78bfa;
+    font-weight: bold;
+    font-size: 1.1rem;
+}
+
+.add-k {
+    color: #f59e0b;
+    font-weight: bold;
+    background: rgba(245, 158, 11, 0.2);
+    padding: 2px 6px;
+    border-radius: 4px;
+}
+
+.add-times {
+    color: #9ca3af;
+}
+
+.add-source {
+    color: #f59e0b;
+    font-weight: bold;
+    background: rgba(245, 158, 11, 0.15);
+    padding: 4px 10px;
+    border-radius: 6px;
+}
+
+.add-scaled {
+    color: #ef4444;
+    font-weight: bold;
+    background: rgba(239, 68, 68, 0.15);
+    padding: 2px 8px;
+    border-radius: 4px;
+}
+
+.add-equals {
+    color: #6b7280;
+}
+
+.add-result {
+    color: #10b981;
+    font-weight: bold;
+    background: rgba(16, 185, 129, 0.2);
+    padding: 4px 12px;
+    border-radius: 6px;
+    box-shadow: 0 0 10px rgba(16, 185, 129, 0.3);
+}
+
+/* ============================================
+   WHY Explanation Box
+   ============================================ */
+
+.why-box {
+    background: linear-gradient(135deg, rgba(99, 102, 241, 0.15), rgba(139, 92, 246, 0.1));
+    border: 2px solid rgba(99, 102, 241, 0.3);
+    border-radius: 14px;
+    padding: 18px 22px;
+    margin-bottom: 20px;
+    text-align: right;
+    direction: rtl;
+    opacity: 0;
+    transform: translateY(-10px);
+    transition: all 0.5s ease;
+}
+
+.why-box.visible {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.why-title {
+    font-size: 1.15rem;
+    font-weight: bold;
+    color: #a78bfa;
+    margin-bottom: 10px;
+}
+
+.why-content {
+    font-size: 1rem;
+    color: #d1d5db;
+    line-height: 1.8;
+}
+
+/* ============================================
+   Result Phase
+   ============================================ */
+
+.result-phase {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 30px;
+}
+
+.journey {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 30px;
+}
+
+.journey-matrix {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+}
+
+.journey-label {
+    font-size: 1rem;
+    font-weight: 600;
+    padding: 8px 20px;
+    border-radius: 20px;
+}
+
+.journey-label.original {
+    background: rgba(255, 107, 107, 0.15);
+    color: #ff6b6b;
+}
+
+.journey-label.final {
+    background: rgba(16, 185, 129, 0.15);
+    color: #10b981;
+}
+
+.journey-steps {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 5px;
+    opacity: 0;
+}
+
+.jstep {
+    font-family: 'Fira Code', monospace;
+    font-size: 0.95rem;
+    color: #a78bfa;
+    padding: 5px 14px;
+    background: rgba(167, 139, 250, 0.1);
+    border-radius: 6px;
+    opacity: 0;
+    transform: translateY(-5px);
+    transition: all 0.3s ease;
+}
+
+.jstep.appear {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.jarrow {
+    color: #6366f1;
+    font-size: 1.2rem;
+    opacity: 0;
+    transition: all 0.3s ease;
+}
+
+.jarrow.appear {
+    opacity: 1;
+}
+
+/* Solution Panel */
+.solution-panel {
+    text-align: center;
+    padding: 25px 45px;
+    background: linear-gradient(135deg, rgba(16, 185, 129, 0.15), rgba(16, 185, 129, 0.05));
+    border: 2px solid rgba(16, 185, 129, 0.35);
+    border-radius: 16px;
+    opacity: 0;
+}
+
+.solution-panel.celebrate {
+    animation: celebrateIn 0.6s ease forwards;
+}
+
+@keyframes celebrateIn {
+    0% {
+        transform: scale(0.85);
+        opacity: 0;
+    }
+
+    60% {
+        transform: scale(1.05);
+    }
+
+    100% {
+        transform: scale(1);
+        opacity: 1;
+    }
+}
+
+.sol-title {
+    font-size: 1.35rem;
+    font-weight: bold;
+    color: #10b981;
+    margin-bottom: 15px;
+}
+
+.sol-vars {
+    display: flex;
+    gap: 25px;
+    justify-content: center;
+}
+
+.sol-var {
+    font-family: 'Fira Code', monospace;
+    font-size: 1.35rem;
+    color: white;
+    padding: 12px 28px;
+    background: linear-gradient(135deg, #10b981, #059669);
+    border-radius: 10px;
+    box-shadow: 0 8px 25px rgba(16, 185, 129, 0.4);
+    opacity: 0;
+    transform: scale(0.8);
+    transition: all 0.4s ease;
+}
+
+.sol-var.var-pop {
+    opacity: 1;
+    transform: scale(1);
+}
+
+.sol-check {
+    margin-top: 15px;
+    font-size: 0.9rem;
+    color: #9ca3af;
+    line-height: 1.6;
+}
+
+/* ============================================
+   Solution Extraction Stage
+   ============================================ */
+
+.extraction-stage {
+    background: rgba(20, 24, 33, 0.9);
+    border-radius: 16px;
+    padding: 25px;
+    margin: 25px 0;
+    border: 1px solid rgba(99, 102, 241, 0.2);
+    opacity: 0;
+}
+
+.extraction-title {
+    font-size: 1.2rem;
+    font-weight: bold;
+    color: #a78bfa;
+    text-align: center;
+    margin-bottom: 20px;
+    opacity: 0;
+}
+
+.final-matrix-display {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 20px;
+    opacity: 0;
+}
+
+.final-matrix-display .mmatrix {
+    background: rgba(99, 102, 241, 0.1);
+}
+
+.mcell.glow-result {
+    animation: glowPulse 1s ease-in-out infinite;
+    box-shadow: 0 0 20px rgba(16, 185, 129, 0.6);
+}
+
+@keyframes glowPulse {
+
+    0%,
+    100% {
+        box-shadow: 0 0 15px rgba(16, 185, 129, 0.4);
+    }
+
+    50% {
+        box-shadow: 0 0 30px rgba(16, 185, 129, 0.8);
+    }
+}
+
+.extraction-steps {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    opacity: 0;
+}
+
+.extract-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 20px;
+    background: rgba(30, 33, 45, 0.8);
+    border-radius: 10px;
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    direction: rtl;
+    opacity: 0;
+    transform: translateX(-20px);
+}
+
+.extract-label {
+    font-weight: bold;
+    color: #74b9ff;
+    min-width: 55px;
+}
+
+.extract-eq {
+    font-family: 'Fira Code', monospace;
+    color: #d1d5db;
+    flex: 1;
+}
+
+.extract-arrow {
+    color: #a78bfa;
+    font-size: 1.3rem;
+    animation: arrowPulse 1s ease-in-out infinite;
+}
+
+.extract-result {
+    font-family: 'Fira Code', monospace;
+    font-weight: bold;
+    color: #10b981;
+    background: rgba(16, 185, 129, 0.15);
+    padding: 6px 14px;
+    border-radius: 8px;
+    box-shadow: 0 0 12px rgba(16, 185, 129, 0.3);
+}
+
+/* ============================================
+   Navigation
+   ============================================ */
+
+.cinema-nav {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 20px 0;
+    margin-top: 15px;
+}
+
+.nav-btn {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 12px 26px;
+    background: rgba(99, 102, 241, 0.1);
+    border: 2px solid rgba(99, 102, 241, 0.25);
+    border-radius: 12px;
+    color: #a5b4fc;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.nav-btn:hover:not(:disabled) {
+    background: rgba(99, 102, 241, 0.2);
+    border-color: #6366f1;
+    color: white;
+}
+
+.nav-btn:disabled {
+    opacity: 0.35;
+    cursor: not-allowed;
+}
+
+.nav-btn.nav-primary {
+    background: linear-gradient(135deg, #6366f1, #4f46e5);
+    border: none;
+    color: white;
+}
+
+.nav-btn.nav-primary:hover:not(:disabled) {
+    background: linear-gradient(135deg, #818cf8, #6366f1);
+    box-shadow: 0 6px 25px rgba(99, 102, 241, 0.4);
+}
+
+.nav-progress {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+}
+
+#nav-label {
+    font-size: 0.95rem;
+    color: #9ca3af;
+}
+
+.nav-dots {
+    display: flex;
+    gap: 10px;
+}
+
+.nav-dot {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    background: rgba(99, 102, 241, 0.25);
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.nav-dot.active {
+    background: #6366f1;
+    box-shadow: 0 0 12px rgba(99, 102, 241, 0.6);
+    transform: scale(1.2);
+}
+
+.nav-dot:hover {
+    background: rgba(99, 102, 241, 0.5);
+}
+
+.nav-btn.disabled-look {
+    opacity: 0.35;
+}
+
+/* ============================================
+   Control Panel
+   ============================================ */
+
+.cinema-controls {
+    background: rgba(30, 33, 45, 0.6);
+    border-radius: 14px;
+    padding: 15px 20px;
+    margin-top: 15px;
+    border: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.ctrl-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 20px;
+    flex-wrap: wrap;
+}
+
+.ctrl-group {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.ctrl-group label {
+    font-size: 0.9rem;
+    color: #9ca3af;
+}
+
+#speed-slider {
+    width: 100px;
+    height: 6px;
+    -webkit-appearance: none;
+    appearance: none;
+    background: rgba(99, 102, 241, 0.2);
+    border-radius: 3px;
+    cursor: pointer;
+}
+
+#speed-slider::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    width: 18px;
+    height: 18px;
+    background: linear-gradient(135deg, #6366f1, #4f46e5);
+    border-radius: 50%;
+    cursor: pointer;
+    box-shadow: 0 2px 8px rgba(99, 102, 241, 0.4);
+}
+
+#speed-slider::-moz-range-thumb {
+    width: 18px;
+    height: 18px;
+    background: linear-gradient(135deg, #6366f1, #4f46e5);
+    border-radius: 50%;
+    cursor: pointer;
+    border: none;
+}
+
+#speed-label {
+    font-size: 0.85rem;
+    color: #a5b4fc;
+    min-width: 65px;
+}
+
+.ctrl-btn {
+    padding: 8px 16px;
+    background: rgba(99, 102, 241, 0.1);
+    border: 1px solid rgba(99, 102, 241, 0.25);
+    border-radius: 8px;
+    color: #a5b4fc;
+    font-size: 0.9rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.ctrl-btn:hover {
+    background: rgba(99, 102, 241, 0.2);
+    border-color: #6366f1;
+    color: white;
+}
+
+.ctrl-btn.active {
+    background: linear-gradient(135deg, #10b981, #059669);
+    border-color: transparent;
+    color: white;
+    box-shadow: 0 3px 12px rgba(16, 185, 129, 0.3);
+}
+
+/* Keyboard Hint */
+.cinema-hint {
+    text-align: center;
+    font-size: 0.85rem;
+    color: #6b7280;
+    margin-top: 10px;
+    padding: 8px;
+    background: rgba(0, 0, 0, 0.2);
+    border-radius: 8px;
+}
+
+/* ============================================
+   Responsive
+   ============================================ */
+
+@media (max-width: 750px) {
+    .cinema-stage {
+        padding: 25px 20px;
+        min-height: 400px;
+    }
+
+    .matrices-side {
+        flex-direction: column;
+        gap: 20px;
+    }
+
+    .transform-arrow {
+        transform: rotate(90deg);
+    }
+
+    .transform-arrow.pulse-arrow {
+        animation: arrowPulseV 1s ease-in-out infinite;
+    }
+
+    @keyframes arrowPulseV {
+
+        0%,
+        100% {
+            opacity: 0.6;
+            transform: rotate(90deg) translateX(0);
+        }
+
+        50% {
+            opacity: 1;
+            transform: rotate(90deg) translateX(8px);
+        }
+    }
+
+    .journey {
+        flex-direction: column;
+        gap: 20px;
+    }
+
+    .journey-steps {
+        flex-direction: row;
+        flex-wrap: wrap;
+        justify-content: center;
+    }
+
+    .cell-ops {
+        flex-wrap: wrap;
+        justify-content: center;
+    }
+}

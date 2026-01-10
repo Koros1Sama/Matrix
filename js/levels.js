@@ -42,7 +42,7 @@ const LEVELS = [
         variables: ['x', 'y'],
         matrix: [
             [2, -3, 1],
-            [4, 1, 13]
+            [4, 1, 3]
         ],
         solution: { x: 2, y: 1 },
         minSteps: 4
