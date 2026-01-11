@@ -3005,6 +3005,127 @@
 }
 
 /* ============================================
+   Minor Extend (In-Game 3x3 Minors)
+   ============================================ */
+
+.minor-extend-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 20px;
+    padding: 20px;
+    background: rgba(99, 102, 241, 0.08);
+    border-radius: 16px;
+    border: 1px solid rgba(99, 102, 241, 0.2);
+}
+
+.minor-extend-label {
+    color: #a5b4fc;
+    font-size: 1rem;
+    font-weight: 600;
+}
+
+.minor-extend-matrix {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    padding: 15px;
+    background: rgba(30, 33, 45, 0.9);
+    border-radius: 12px;
+    border: 2px solid rgba(139, 92, 246, 0.4);
+}
+
+.minor-extend-input {
+    width: 45px;
+    height: 45px;
+    text-align: center;
+    font-family: 'Fira Code', monospace;
+    font-size: 1.2rem;
+    font-weight: 600;
+    background: rgba(30, 33, 45, 0.8);
+    color: #e5e7eb;
+    border: 2px dashed rgba(167, 139, 250, 0.5);
+    border-radius: 8px;
+    outline: none;
+    transition: all 0.3s ease;
+}
+
+.minor-extend-input:focus {
+    border-color: #a78bfa;
+    border-style: solid;
+    box-shadow: 0 0 0 3px rgba(167, 139, 250, 0.2);
+    background: rgba(167, 139, 250, 0.1);
+}
+
+.minor-extend-input.correct {
+    background: rgba(16, 185, 129, 0.25);
+    border: 2px solid #10b981;
+    color: #10b981;
+}
+
+.minor-extend-input.incorrect {
+    background: rgba(239, 68, 68, 0.25);
+    border: 2px solid #ef4444;
+    color: #ef4444;
+    animation: shake-input 0.4s ease;
+}
+
+/* Hide number input arrows */
+.minor-extend-input::-webkit-outer-spin-button,
+.minor-extend-input::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
+.minor-extend-input[type=number] {
+    -moz-appearance: textfield;
+}
+
+/* Extended Minor Display */
+.extended-minor {
+    background: rgba(139, 92, 246, 0.08);
+    border: 1px solid rgba(139, 92, 246, 0.3);
+    border-radius: 12px;
+    padding: 15px;
+}
+
+.extended-minor .sub-matrix-grid {
+    gap: 4px;
+}
+
+.extended-minor .sub-matrix-cell.extended-col {
+    background: rgba(139, 92, 246, 0.2);
+    border: 1px dashed rgba(139, 92, 246, 0.5);
+}
+
+/* Diagonal Highlighting for Minor Extended Matrix */
+.diag-down-active {
+    background: linear-gradient(135deg, rgba(16, 185, 129, 0.4), rgba(16, 185, 129, 0.2)) !important;
+    border: 2px solid #10b981 !important;
+    box-shadow: 0 0 10px rgba(16, 185, 129, 0.4);
+    animation: pulse-diag 1s ease-in-out infinite;
+}
+
+.diag-up-active {
+    background: linear-gradient(135deg, rgba(239, 68, 68, 0.4), rgba(239, 68, 68, 0.2)) !important;
+    border: 2px solid #ef4444 !important;
+    box-shadow: 0 0 10px rgba(239, 68, 68, 0.4);
+    animation: pulse-diag 1s ease-in-out infinite;
+}
+
+@keyframes pulse-diag {
+
+    0%,
+    100% {
+        transform: scale(1);
+    }
+
+    50% {
+        transform: scale(1.05);
+    }
+}
+
+/* ============================================
    Hint System (Game)
    ============================================ */
 
@@ -3794,4 +3915,4448 @@
     .diagonals-phase {
         flex-direction: column;
     }
+}
+
+/* ============================================
+   CRAMER'S RULE SECTION
+   ============================================ */
+
+/* Method Choice Screen */
+.cramer-method-choice {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 25px;
+    padding: 30px;
+}
+
+.method-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+    margin-bottom: 10px;
+}
+
+.method-header h3 {
+    color: #a5b4fc;
+    font-size: 1.3rem;
+}
+
+.system-preview {
+    background: rgba(30, 33, 45, 0.9);
+    border: 2px solid rgba(99, 102, 241, 0.3);
+    border-radius: 16px;
+    padding: 20px 30px;
+    text-align: center;
+}
+
+.system-title {
+    color: #9ca3af;
+    font-size: 0.95rem;
+    margin-bottom: 15px;
+}
+
+.system-equations .equation {
+    color: #e5e7eb;
+    font-family: 'Fira Code', monospace;
+    font-size: 1.1rem;
+    margin: 8px 0;
+    direction: ltr;
+}
+
+.system-mini {
+    background: rgba(30, 33, 45, 0.6);
+    border-radius: 10px;
+    padding: 12px 20px;
+    margin-bottom: 15px;
+}
+
+.system-mini .equation {
+    font-size: 0.9rem;
+    margin: 4px 0;
+}
+
+.method-prompt h4 {
+    color: #fbbf24;
+    font-size: 1.2rem;
+    text-align: center;
+}
+
+.method-options {
+    display: flex;
+    gap: 25px;
+    flex-wrap: wrap;
+    justify-content: center;
+}
+
+.method-btn {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
+    padding: 25px 35px;
+    border-radius: 16px;
+    border: 2px solid transparent;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    min-width: 180px;
+    background: rgba(30, 33, 45, 0.9);
+}
+
+.method-btn.sarrus-btn {
+    border-color: rgba(16, 185, 129, 0.4);
+}
+
+.method-btn.sarrus-btn:hover {
+    background: rgba(16, 185, 129, 0.15);
+    border-color: #10b981;
+    transform: translateY(-5px);
+    box-shadow: 0 10px 30px rgba(16, 185, 129, 0.3);
+}
+
+.method-btn.cofactor-btn {
+    border-color: rgba(139, 92, 246, 0.4);
+}
+
+.method-btn.cofactor-btn:hover {
+    background: rgba(139, 92, 246, 0.15);
+    border-color: #8b5cf6;
+    transform: translateY(-5px);
+    box-shadow: 0 10px 30px rgba(139, 92, 246, 0.3);
+}
+
+.method-icon {
+    font-size: 2.5rem;
+}
+
+.method-name {
+    font-size: 1.2rem;
+    font-weight: 700;
+    color: #e5e7eb;
+}
+
+.method-desc {
+    font-size: 0.85rem;
+    color: #9ca3af;
+    text-align: center;
+}
+
+/* Disabled Method Button (for 4x4 Sarrus) */
+.method-btn.disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    pointer-events: none;
+    border-color: rgba(107, 114, 128, 0.3);
+}
+
+.method-btn.disabled .method-desc {
+    color: #ef4444;
+}
+
+/* Recommended Method Button */
+.method-btn.recommended {
+    border-color: #10b981;
+    background: rgba(16, 185, 129, 0.1);
+    animation: recommend-pulse 2s ease-in-out infinite;
+}
+
+.method-btn.recommended .method-desc {
+    color: #10b981;
+    font-weight: 600;
+}
+
+@keyframes recommend-pulse {
+
+    0%,
+    100% {
+        box-shadow: 0 0 5px rgba(16, 185, 129, 0.3);
+    }
+
+    50% {
+        box-shadow: 0 0 20px rgba(16, 185, 129, 0.5);
+    }
+}
+
+/* Cramer Game UI */
+.cramer-game-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 20px;
+}
+
+.cramer-game-header h3 {
+    color: #a5b4fc;
+    font-size: 1.2rem;
+}
+
+.cramer-step-counter {
+    background: rgba(99, 102, 241, 0.2);
+    padding: 8px 16px;
+    border-radius: 20px;
+    color: #a5b4fc;
+    font-weight: 600;
+}
+
+.cramer-progress-bar {
+    height: 6px;
+    background: rgba(99, 102, 241, 0.2);
+    border-radius: 3px;
+    margin-bottom: 25px;
+    overflow: hidden;
+}
+
+.cramer-progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, #6366f1, #8b5cf6);
+    border-radius: 3px;
+    transition: width 0.4s ease;
+}
+
+.cramer-system-display {
+    margin-bottom: 20px;
+}
+
+.cramer-matrix-display {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 5px;
+    margin: 20px 0;
+}
+
+.matrix-bars {
+    font-size: 60px;
+    color: #6366f1;
+    font-weight: 300;
+    line-height: 1;
+}
+
+.cramer-matrix-grid {
+    display: grid;
+    gap: 6px;
+    padding: 10px;
+    background: rgba(30, 33, 45, 0.8);
+    border-radius: 10px;
+}
+
+.cramer-cell {
+    width: 50px;
+    height: 50px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Fira Code', monospace;
+    font-size: 1.2rem;
+    font-weight: 600;
+    color: #e5e7eb;
+    background: rgba(99, 102, 241, 0.15);
+    border-radius: 8px;
+    border: 1px solid rgba(99, 102, 241, 0.3);
+    transition: all 0.3s ease;
+}
+
+.cramer-cell.highlight-col {
+    background: linear-gradient(135deg, rgba(251, 191, 36, 0.3), rgba(245, 158, 11, 0.2));
+    border: 2px solid #fbbf24;
+    color: #fbbf24;
+    animation: pulse-highlight 1.5s ease-in-out infinite;
+}
+
+.cramer-cell.extended-col {
+    background: rgba(139, 92, 246, 0.2);
+    border: 1px dashed rgba(139, 92, 246, 0.5);
+    color: #c4b5fd;
+}
+
+/* Diagonal Highlighting - Down (Green) */
+.cramer-cell.highlight-green {
+    background: linear-gradient(135deg, rgba(16, 185, 129, 0.4), rgba(16, 185, 129, 0.2));
+    border: 2px solid #10b981;
+    color: #10b981;
+    font-weight: 700;
+    animation: diag-pulse-green 1s ease-in-out infinite;
+}
+
+@keyframes diag-pulse-green {
+
+    0%,
+    100% {
+        box-shadow: 0 0 5px rgba(16, 185, 129, 0.3);
+    }
+
+    50% {
+        box-shadow: 0 0 15px rgba(16, 185, 129, 0.6);
+    }
+}
+
+/* Diagonal Highlighting - Up (Red) */
+.cramer-cell.highlight-red {
+    background: linear-gradient(135deg, rgba(239, 68, 68, 0.4), rgba(239, 68, 68, 0.2));
+    border: 2px solid #ef4444;
+    color: #ef4444;
+    font-weight: 700;
+    animation: diag-pulse-red 1s ease-in-out infinite;
+}
+
+@keyframes diag-pulse-red {
+
+    0%,
+    100% {
+        box-shadow: 0 0 5px rgba(239, 68, 68, 0.3);
+    }
+
+    50% {
+        box-shadow: 0 0 15px rgba(239, 68, 68, 0.6);
+    }
+}
+
+@keyframes pulse-highlight {
+
+    0%,
+    100% {
+        box-shadow: 0 0 5px rgba(251, 191, 36, 0.3);
+    }
+
+    50% {
+        box-shadow: 0 0 15px rgba(251, 191, 36, 0.6);
+    }
+}
+
+.cramer-step-area {
+    background: rgba(30, 33, 45, 0.6);
+    border-radius: 16px;
+    padding: 25px;
+    margin: 20px 0;
+    text-align: center;
+}
+
+.cramer-sub-matrix {
+    margin: 15px 0;
+    padding: 15px;
+    background: rgba(99, 102, 241, 0.1);
+    border-radius: 12px;
+    display: inline-block;
+}
+
+.cramer-completed-steps {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    max-height: 200px;
+    overflow-y: auto;
+    padding: 10px;
+}
+
+/* Cramer Win Screen */
+.cramer-win-screen {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 25px;
+    padding: 40px;
+    text-align: center;
+}
+
+.cramer-win-screen .win-celebration {
+    font-size: 4rem;
+    animation: bounce 1s ease infinite;
+}
+
+.cramer-win-screen h2 {
+    color: #10b981;
+    font-size: 2rem;
+}
+
+.cramer-win-screen .win-stars {
+    font-size: 2.5rem;
+}
+
+.cramer-win-screen .win-solution {
+    background: rgba(16, 185, 129, 0.1);
+    border: 1px solid rgba(16, 185, 129, 0.3);
+    border-radius: 16px;
+    padding: 20px 30px;
+}
+
+.cramer-win-screen .win-solution h4 {
+    color: #6ee7b7;
+    margin-bottom: 15px;
+}
+
+.cramer-win-screen .solution-vars {
+    display: flex;
+    gap: 25px;
+    flex-wrap: wrap;
+    justify-content: center;
+}
+
+.cramer-win-screen .solution-vars span {
+    font-family: 'Fira Code', monospace;
+    font-size: 1.3rem;
+    color: #10b981;
+    font-weight: 600;
+}
+
+.cramer-win-screen .win-buttons {
+    display: flex;
+    gap: 15px;
+    flex-wrap: wrap;
+    justify-content: center;
+}
+
+/* Cramer Tutorial */
+.cramer-tutorial {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+.cramer-tutorial .tutorial-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 20px;
+}
+
+.cramer-tutorial .tutorial-header h3 {
+    color: #a5b4fc;
+}
+
+.cramer-tutorial .tutorial-step-counter {
+    color: #9ca3af;
+}
+
+.cramer-tutorial .tutorial-progress-bar {
+    height: 4px;
+    background: rgba(99, 102, 241, 0.2);
+    border-radius: 2px;
+    margin-bottom: 30px;
+}
+
+.cramer-tutorial .tutorial-progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, #6366f1, #8b5cf6);
+    border-radius: 2px;
+    transition: width 0.3s ease;
+}
+
+.cramer-tutorial .tutorial-content {
+    background: rgba(30, 33, 45, 0.6);
+    border-radius: 16px;
+    padding: 30px;
+    min-height: 400px;
+}
+
+.cramer-tutorial .tutorial-content h4 {
+    color: #fbbf24;
+    font-size: 1.3rem;
+    margin-bottom: 20px;
+}
+
+.cramer-tutorial .tutorial-content p {
+    color: #d1d5db;
+    font-size: 1.05rem;
+    line-height: 1.7;
+    margin-bottom: 20px;
+}
+
+.cramer-tutorial .tutorial-example {
+    background: rgba(99, 102, 241, 0.1);
+    border-radius: 12px;
+    padding: 20px;
+    margin: 20px 0;
+}
+
+.cramer-tutorial .example-system {
+    text-align: center;
+}
+
+.cramer-tutorial .example-system .equation {
+    font-family: 'Fira Code', monospace;
+    font-size: 1.2rem;
+    color: #e5e7eb;
+    margin: 10px 0;
+}
+
+.cramer-tutorial .tutorial-note {
+    background: rgba(251, 191, 36, 0.1);
+    border: 1px solid rgba(251, 191, 36, 0.3);
+    border-radius: 10px;
+    padding: 15px 20px;
+    color: #fbbf24;
+    margin: 20px 0;
+}
+
+.cramer-tutorial .tutorial-formulas {
+    display: flex;
+    gap: 20px;
+    flex-wrap: wrap;
+    justify-content: center;
+    margin: 20px 0;
+}
+
+.cramer-tutorial .formula-item {
+    background: rgba(99, 102, 241, 0.2);
+    padding: 12px 20px;
+    border-radius: 10px;
+    font-family: 'Fira Code', monospace;
+    color: #a5b4fc;
+    font-size: 1.1rem;
+}
+
+.cramer-tutorial .tutorial-matrices {
+    display: flex;
+    gap: 40px;
+    justify-content: center;
+    margin: 25px 0;
+}
+
+.cramer-tutorial .matrix-block {
+    text-align: center;
+}
+
+.cramer-tutorial .matrix-label {
+    color: #9ca3af;
+    margin-bottom: 10px;
+}
+
+.cramer-tutorial .demo-matrix.small {
+    transform: scale(0.9);
+}
+
+.cramer-tutorial .tutorial-formula {
+    text-align: center;
+    font-family: 'Fira Code', monospace;
+    color: #e5e7eb;
+    font-size: 1.1rem;
+    margin: 15px 0;
+}
+
+.cramer-tutorial .tutorial-formula.result {
+    color: #10b981;
+    font-size: 1.2rem;
+    font-weight: 600;
+}
+
+.cramer-tutorial .tutorial-comparison {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 20px;
+    margin: 25px 0;
+}
+
+.cramer-tutorial .comparison-arrow {
+    font-size: 2rem;
+    color: #6366f1;
+}
+
+.cramer-tutorial .comparison-title {
+    color: #9ca3af;
+    font-size: 0.9rem;
+    margin-bottom: 10px;
+    text-align: center;
+}
+
+.cramer-tutorial .demo-cell.highlight-old {
+    background: rgba(239, 68, 68, 0.2);
+    border-color: #ef4444;
+    color: #fca5a5;
+}
+
+.cramer-tutorial .demo-cell.highlight-new {
+    background: rgba(16, 185, 129, 0.2);
+    border-color: #10b981;
+    color: #6ee7b7;
+}
+
+.cramer-tutorial .method-comparison {
+    display: flex;
+    gap: 25px;
+    justify-content: center;
+    margin: 25px 0;
+}
+
+.cramer-tutorial .method-box {
+    background: rgba(30, 33, 45, 0.8);
+    border-radius: 16px;
+    padding: 20px;
+    min-width: 200px;
+}
+
+.cramer-tutorial .method-box.sarrus {
+    border: 2px solid rgba(16, 185, 129, 0.4);
+}
+
+.cramer-tutorial .method-box.cofactor {
+    border: 2px solid rgba(139, 92, 246, 0.4);
+}
+
+.cramer-tutorial .method-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 15px;
+}
+
+.cramer-tutorial .method-title {
+    font-weight: 700;
+    color: #e5e7eb;
+}
+
+.cramer-tutorial .method-body ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.cramer-tutorial .method-body li {
+    color: #d1d5db;
+    margin: 8px 0;
+    padding-left: 20px;
+    position: relative;
+}
+
+.cramer-tutorial .method-body li::before {
+    content: '•';
+    position: absolute;
+    left: 0;
+    color: #6366f1;
+}
+
+.cramer-tutorial .tutorial-summary {
+    display: flex;
+    gap: 25px;
+    justify-content: center;
+    margin: 25px 0;
+}
+
+.cramer-tutorial .summary-box {
+    background: rgba(99, 102, 241, 0.15);
+    border: 1px solid rgba(99, 102, 241, 0.3);
+    border-radius: 16px;
+    padding: 20px 30px;
+    text-align: center;
+}
+
+.cramer-tutorial .formula-big {
+    font-family: 'Fira Code', monospace;
+    font-size: 1.4rem;
+    color: #a5b4fc;
+    font-weight: 600;
+    margin-bottom: 10px;
+}
+
+.cramer-tutorial .formula-desc {
+    color: #9ca3af;
+    font-size: 0.9rem;
+}
+
+.cramer-tutorial .tutorial-warning {
+    background: rgba(239, 68, 68, 0.1);
+    border: 1px solid rgba(239, 68, 68, 0.3);
+    border-radius: 10px;
+    padding: 15px 20px;
+    color: #fca5a5;
+    margin: 20px 0;
+    text-align: center;
+}
+
+.cramer-tutorial .tutorial-ready {
+    background: linear-gradient(135deg, rgba(16, 185, 129, 0.15), rgba(99, 102, 241, 0.15));
+    border-radius: 12px;
+    padding: 20px;
+    text-align: center;
+    color: #10b981;
+    font-size: 1.2rem;
+    font-weight: 600;
+    margin-top: 25px;
+}
+
+.cramer-tutorial .tutorial-navigation {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-top: 30px;
+}
+
+.cramer-tutorial .tutorial-dots {
+    display: flex;
+    gap: 8px;
+}
+
+.cramer-tutorial .dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background: rgba(99, 102, 241, 0.3);
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.cramer-tutorial .dot.active {
+    background: #6366f1;
+    transform: scale(1.2);
+}
+
+.cramer-tutorial .dot:hover {
+    background: rgba(99, 102, 241, 0.6);
+}
+
+.cramer-tutorial .btn-success {
+    background: linear-gradient(135deg, #10b981, #059669);
+    color: white;
+}
+
+.cramer-tutorial .btn-success:hover {
+    transform: scale(1.05);
+    box-shadow: 0 5px 20px rgba(16, 185, 129, 0.4);
+}
+
+/* Tutorial Step Content */
+.cramer-tutorial .cramer-steps {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    margin: 20px 0;
+}
+
+.cramer-tutorial .cramer-step {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    background: rgba(99, 102, 241, 0.1);
+    padding: 12px 20px;
+    border-radius: 10px;
+}
+
+.cramer-tutorial .cramer-step .step-num {
+    width: 30px;
+    height: 30px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(135deg, #6366f1, #8b5cf6);
+    border-radius: 50%;
+    color: white;
+    font-weight: 700;
+}
+
+.cramer-tutorial .diagonal-demo {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin: 20px 0;
+}
+
+.cramer-tutorial .diag-item {
+    padding: 12px 20px;
+    border-radius: 10px;
+    font-family: 'Fira Code', monospace;
+}
+
+.cramer-tutorial .diag-item.down {
+    background: rgba(16, 185, 129, 0.15);
+    border: 1px solid rgba(16, 185, 129, 0.3);
+    color: #6ee7b7;
+}
+
+.cramer-tutorial .diag-item.up {
+    background: rgba(239, 68, 68, 0.15);
+    border: 1px solid rgba(239, 68, 68, 0.3);
+    color: #fca5a5;
+}
+
+.cramer-tutorial .sarrus-demo {
+    text-align: center;
+    margin: 20px 0;
+}
+
+.cramer-tutorial .matrix-extended {
+    display: inline-flex;
+    flex-direction: column;
+    gap: 5px;
+    background: rgba(30, 33, 45, 0.9);
+    padding: 15px;
+    border-radius: 12px;
+    border: 2px solid rgba(99, 102, 241, 0.3);
+}
+
+.cramer-tutorial .matrix-extended .demo-row {
+    display: flex;
+    gap: 5px;
+}
+
+.cramer-tutorial .matrix-extended .demo-cell.extended {
+    background: rgba(139, 92, 246, 0.2);
+    border: 1px dashed rgba(139, 92, 246, 0.5);
+    color: #c4b5fd;
+}
+
+.cramer-tutorial .cofactor-demo {
+    display: flex;
+    gap: 20px;
+    justify-content: center;
+    flex-wrap: wrap;
+    margin: 20px 0;
+}
+
+.cramer-tutorial .cofactor-term {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 12px 18px;
+    border-radius: 10px;
+    font-family: 'Fira Code', monospace;
+    font-size: 1.1rem;
+}
+
+.cramer-tutorial .cofactor-term.positive {
+    background: rgba(16, 185, 129, 0.15);
+    border: 1px solid rgba(16, 185, 129, 0.3);
+}
+
+.cramer-tutorial .cofactor-term.negative {
+    background: rgba(239, 68, 68, 0.15);
+    border: 1px solid rgba(239, 68, 68, 0.3);
+}
+
+.cramer-tutorial .cofactor-term .sign {
+    font-size: 1.3rem;
+    font-weight: 700;
+}
+
+.cramer-tutorial .cofactor-term.positive .sign {
+    color: #10b981;
+}
+
+.cramer-tutorial .cofactor-term.negative .sign {
+    color: #ef4444;
+}
+
+.cramer-tutorial .cofactor-term .element {
+    color: #fbbf24;
+}
+
+.cramer-tutorial .cofactor-term .minor {
+    color: #a5b4fc;
+}
+
+.cramer-tutorial .tutorial-ready-box {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    background: linear-gradient(135deg, rgba(16, 185, 129, 0.1), rgba(99, 102, 241, 0.1));
+    border-radius: 16px;
+    padding: 25px;
+    margin: 20px 0;
+}
+
+.cramer-tutorial .ready-icon {
+    font-size: 3rem;
+}
+
+.cramer-tutorial .ready-text p {
+    margin: 8px 0;
+}
+
+.cramer-tutorial .method-preview {
+    display: flex;
+    gap: 20px;
+    justify-content: center;
+}
+
+.cramer-tutorial .preview-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    background: rgba(99, 102, 241, 0.15);
+    padding: 12px 20px;
+    border-radius: 10px;
+    color: #d1d5db;
+}
+
+.cramer-tutorial .preview-item .icon {
+    font-size: 1.5rem;
+}
+
+/* ============================================
+   PROFESSIONAL CRAMER TUTORIAL STYLES
+   ============================================ */
+
+.cramer-tutorial.professional {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 0;
+    background: rgba(20, 22, 32, 0.95);
+    border-radius: 20px;
+    border: 1px solid rgba(99, 102, 241, 0.3);
+    overflow: hidden;
+}
+
+.cramer-tutorial .tut-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 20px 25px;
+    background: linear-gradient(135deg, rgba(99, 102, 241, 0.15), rgba(139, 92, 246, 0.1));
+    border-bottom: 1px solid rgba(99, 102, 241, 0.2);
+}
+
+.cramer-tutorial .tut-title-section {
+    text-align: center;
+}
+
+.cramer-tutorial .tut-title-section h3 {
+    color: #e5e7eb;
+    font-size: 1.4rem;
+    margin: 0;
+}
+
+.cramer-tutorial .tut-subtitle {
+    color: #a5b4fc;
+    font-size: 0.9rem;
+}
+
+.cramer-tutorial .tut-counter {
+    background: rgba(99, 102, 241, 0.3);
+    padding: 8px 16px;
+    border-radius: 20px;
+    color: #c4b5fd;
+    font-weight: 600;
+}
+
+.cramer-tutorial .tut-progress {
+    height: 4px;
+    background: rgba(99, 102, 241, 0.2);
+}
+
+.cramer-tutorial .tut-progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, #6366f1, #8b5cf6, #a78bfa);
+    transition: width 0.4s ease;
+}
+
+.cramer-tutorial .tut-content {
+    padding: 30px;
+    min-height: 400px;
+}
+
+.cramer-tutorial .phase-title {
+    color: #fbbf24;
+    font-size: 1.5rem;
+    margin-bottom: 25px;
+    text-align: center;
+}
+
+.cramer-tutorial .tut-navigation {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 20px 30px;
+    background: rgba(30, 33, 45, 0.5);
+    border-top: 1px solid rgba(99, 102, 241, 0.2);
+}
+
+.cramer-tutorial .tut-dots {
+    display: flex;
+    gap: 10px;
+}
+
+.cramer-tutorial .tut-dots .dot {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    background: rgba(99, 102, 241, 0.3);
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.cramer-tutorial .tut-dots .dot.active {
+    background: #6366f1;
+    transform: scale(1.3);
+    box-shadow: 0 0 10px rgba(99, 102, 241, 0.5);
+}
+
+.cramer-tutorial .tut-dots .dot:hover {
+    background: rgba(99, 102, 241, 0.6);
+}
+
+.cramer-tutorial .keyboard-hint {
+    text-align: center;
+    padding: 12px;
+    background: rgba(251, 191, 36, 0.1);
+    color: #fbbf24;
+    font-size: 0.85rem;
+    border-top: 1px solid rgba(251, 191, 36, 0.2);
+}
+
+/* Intro Phase */
+.cramer-tutorial .tut-intro {
+    text-align: center;
+}
+
+.cramer-tutorial .tut-intro p {
+    color: #d1d5db;
+    font-size: 1.1rem;
+    line-height: 1.8;
+    margin-bottom: 20px;
+}
+
+.cramer-tutorial .tut-uses {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    margin: 25px 0;
+}
+
+.cramer-tutorial .use-item {
+    background: rgba(99, 102, 241, 0.15);
+    padding: 15px 25px;
+    border-radius: 12px;
+    color: #e5e7eb;
+    font-size: 1.05rem;
+    border: 1px solid rgba(99, 102, 241, 0.2);
+}
+
+.cramer-tutorial .tut-note {
+    background: rgba(251, 191, 36, 0.1);
+    border: 1px solid rgba(251, 191, 36, 0.3);
+    padding: 15px 25px;
+    border-radius: 12px;
+    color: #fbbf24;
+    margin-top: 20px;
+}
+
+.cramer-tutorial .tut-warning {
+    background: rgba(239, 68, 68, 0.1);
+    border: 1px solid rgba(239, 68, 68, 0.3);
+    padding: 20px;
+    border-radius: 12px;
+    color: #fca5a5;
+    margin-top: 20px;
+    text-align: center;
+}
+
+/* Formula Phase */
+.cramer-tutorial .cramer-formula-phase {
+    text-align: center;
+}
+
+.cramer-tutorial .system-display {
+    background: rgba(30, 33, 45, 0.8);
+    padding: 20px 30px;
+    border-radius: 12px;
+    display: inline-block;
+    margin-bottom: 25px;
+}
+
+.cramer-tutorial .system-display .eq {
+    font-family: 'Fira Code', monospace;
+    font-size: 1.2rem;
+    color: #e5e7eb;
+    margin: 8px 0;
+}
+
+.cramer-tutorial .formula-cards {
+    display: flex;
+    gap: 30px;
+    justify-content: center;
+    margin: 25px 0;
+}
+
+.cramer-tutorial .formula-card {
+    background: linear-gradient(135deg, rgba(99, 102, 241, 0.15), rgba(139, 92, 246, 0.1));
+    border: 2px solid rgba(99, 102, 241, 0.3);
+    border-radius: 16px;
+    padding: 20px 30px;
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.cramer-tutorial .formula-label {
+    font-size: 1.5rem;
+    color: #a5b4fc;
+    font-weight: 700;
+}
+
+.cramer-tutorial .formula-fraction {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 5px;
+}
+
+.cramer-tutorial .formula-fraction .num {
+    font-family: 'Fira Code', monospace;
+    font-size: 1.3rem;
+    color: #10b981;
+    border-bottom: 2px solid #a5b4fc;
+    padding-bottom: 5px;
+}
+
+.cramer-tutorial .formula-fraction .denom {
+    font-family: 'Fira Code', monospace;
+    font-size: 1.3rem;
+    color: #fbbf24;
+}
+
+.cramer-tutorial .formula-explanation {
+    text-align: left;
+    background: rgba(30, 33, 45, 0.6);
+    padding: 20px;
+    border-radius: 12px;
+    margin-top: 20px;
+}
+
+.cramer-tutorial .formula-explanation p {
+    margin: 10px 0;
+    color: #d1d5db;
+}
+
+/* Visual Phase - Matrix Building */
+.cramer-tutorial .matrix-building-phase {
+    text-align: center;
+}
+
+.cramer-tutorial .example-system {
+    background: rgba(99, 102, 241, 0.1);
+    padding: 15px 25px;
+    border-radius: 12px;
+    display: inline-block;
+    margin-bottom: 25px;
+}
+
+.cramer-tutorial .sys-label {
+    color: #9ca3af;
+    margin-bottom: 8px;
+}
+
+.cramer-tutorial .sys-eq {
+    font-family: 'Fira Code', monospace;
+    font-size: 1.1rem;
+    color: #e5e7eb;
+    margin: 5px 0;
+}
+
+.cramer-tutorial .matrices-comparison {
+    display: flex;
+    gap: 20px;
+    justify-content: center;
+    flex-wrap: wrap;
+}
+
+.cramer-tutorial .matrix-card {
+    background: rgba(30, 33, 45, 0.8);
+    border: 2px solid rgba(99, 102, 241, 0.3);
+    border-radius: 16px;
+    padding: 20px;
+    min-width: 150px;
+}
+
+.cramer-tutorial .matrix-card.highlight-replace {
+    border-color: rgba(16, 185, 129, 0.5);
+    background: rgba(16, 185, 129, 0.05);
+}
+
+.cramer-tutorial .matrix-title {
+    color: #a5b4fc;
+    font-weight: 600;
+    margin-bottom: 15px;
+}
+
+.cramer-tutorial .matrix-visual {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    margin-bottom: 15px;
+}
+
+.cramer-tutorial .matrix-visual .m-row {
+    display: flex;
+    gap: 5px;
+    justify-content: center;
+}
+
+.cramer-tutorial .matrix-visual .cell {
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Fira Code', monospace;
+    font-size: 1.1rem;
+    border-radius: 8px;
+}
+
+.cramer-tutorial .matrix-visual .cell.coef {
+    background: rgba(99, 102, 241, 0.2);
+    color: #a5b4fc;
+    border: 1px solid rgba(99, 102, 241, 0.3);
+}
+
+.cramer-tutorial .matrix-visual .cell.const {
+    background: rgba(16, 185, 129, 0.2);
+    color: #6ee7b7;
+    border: 2px solid rgba(16, 185, 129, 0.5);
+    animation: pulse-const 2s ease-in-out infinite;
+}
+
+@keyframes pulse-const {
+
+    0%,
+    100% {
+        box-shadow: 0 0 5px rgba(16, 185, 129, 0.3);
+    }
+
+    50% {
+        box-shadow: 0 0 15px rgba(16, 185, 129, 0.6);
+    }
+}
+
+.cramer-tutorial .det-value {
+    font-family: 'Fira Code', monospace;
+    color: #fbbf24;
+    font-weight: 600;
+}
+
+/* Solution Phase */
+.cramer-tutorial .solution-phase {
+    max-width: 600px;
+    margin: 0 auto;
+}
+
+.cramer-tutorial .solution-steps {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.cramer-tutorial .sol-step {
+    display: flex;
+    align-items: flex-start;
+    gap: 15px;
+    background: rgba(30, 33, 45, 0.6);
+    padding: 15px 20px;
+    border-radius: 12px;
+    border: 1px solid rgba(99, 102, 241, 0.2);
+}
+
+.cramer-tutorial .sol-step.result {
+    background: linear-gradient(135deg, rgba(16, 185, 129, 0.15), rgba(16, 185, 129, 0.05));
+    border-color: rgba(16, 185, 129, 0.4);
+}
+
+.cramer-tutorial .sol-step .step-num {
+    width: 35px;
+    height: 35px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(135deg, #6366f1, #8b5cf6);
+    border-radius: 50%;
+    color: white;
+    font-weight: 700;
+    flex-shrink: 0;
+}
+
+.cramer-tutorial .sol-step.result .step-num {
+    background: linear-gradient(135deg, #10b981, #059669);
+}
+
+.cramer-tutorial .step-content {
+    flex: 1;
+}
+
+.cramer-tutorial .step-label {
+    color: #9ca3af;
+    font-size: 0.9rem;
+    margin-bottom: 5px;
+}
+
+.cramer-tutorial .step-calc {
+    font-family: 'Fira Code', monospace;
+    color: #e5e7eb;
+    font-size: 1.05rem;
+}
+
+.cramer-tutorial .step-calc strong {
+    color: #10b981;
+}
+
+/* Ready Phase */
+.cramer-tutorial .tut-ready {
+    text-align: center;
+    padding: 30px;
+}
+
+.cramer-tutorial .tut-ready .ready-icon {
+    font-size: 4rem;
+    margin-bottom: 20px;
+}
+
+.cramer-tutorial .tut-ready p {
+    color: #d1d5db;
+    font-size: 1.1rem;
+    margin: 10px 0;
+}
+
+.cramer-tutorial .formula-reminder {
+    display: flex;
+    gap: 30px;
+    justify-content: center;
+    margin: 25px 0;
+}
+
+.cramer-tutorial .formula-reminder span {
+    background: linear-gradient(135deg, rgba(99, 102, 241, 0.2), rgba(139, 92, 246, 0.15));
+    padding: 12px 25px;
+    border-radius: 10px;
+    font-family: 'Fira Code', monospace;
+    font-size: 1.1rem;
+    color: #a5b4fc;
+    border: 1px solid rgba(99, 102, 241, 0.3);
+}
+
+.cramer-tutorial .btn-lg {
+    padding: 15px 40px;
+    font-size: 1.2rem;
+    margin-top: 20px;
+}
+
+/* 3x3 Tutorial Specific Styles */
+.cramer-tutorial .tut-formulas-3var {
+    display: flex;
+    gap: 20px;
+    justify-content: center;
+    margin: 25px 0;
+}
+
+.cramer-tutorial .tut-formulas-3var .formula-item {
+    background: rgba(99, 102, 241, 0.15);
+    padding: 12px 20px;
+    border-radius: 10px;
+    font-family: 'Fira Code', monospace;
+    color: #a5b4fc;
+    font-size: 1.1rem;
+}
+
+.cramer-tutorial .method-choice-phase {
+    text-align: center;
+}
+
+.cramer-tutorial .method-choice-phase p {
+    color: #d1d5db;
+    font-size: 1.05rem;
+    margin-bottom: 25px;
+}
+
+.cramer-tutorial .method-cards {
+    display: flex;
+    gap: 25px;
+    justify-content: center;
+    flex-wrap: wrap;
+}
+
+.cramer-tutorial .method-card {
+    background: rgba(30, 33, 45, 0.8);
+    border-radius: 16px;
+    padding: 25px;
+    min-width: 220px;
+    text-align: left;
+    transition: all 0.3s ease;
+}
+
+.cramer-tutorial .method-card.sarrus {
+    border: 2px solid rgba(16, 185, 129, 0.4);
+}
+
+.cramer-tutorial .method-card.cofactor {
+    border: 2px solid rgba(139, 92, 246, 0.4);
+}
+
+.cramer-tutorial .method-card .method-icon {
+    font-size: 2.5rem;
+    margin-bottom: 15px;
+}
+
+.cramer-tutorial .method-card .method-title {
+    color: #e5e7eb;
+    font-size: 1.2rem;
+    font-weight: 700;
+    margin-bottom: 15px;
+}
+
+.cramer-tutorial .method-features {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.cramer-tutorial .method-features li {
+    color: #9ca3af;
+    margin: 8px 0;
+    padding-left: 20px;
+    position: relative;
+}
+
+.cramer-tutorial .method-features li::before {
+    content: '✓';
+    position: absolute;
+    left: 0;
+    color: #10b981;
+}
+
+/* Sarrus Demo */
+.cramer-tutorial .sarrus-demo-phase {
+    text-align: center;
+}
+
+.cramer-tutorial .demo-title {
+    color: #9ca3af;
+    margin-bottom: 15px;
+}
+
+.cramer-tutorial .extended-matrix-demo {
+    display: flex;
+    justify-content: center;
+    margin: 20px 0;
+}
+
+.cramer-tutorial .matrix-wrapper {
+    background: rgba(30, 33, 45, 0.8);
+    padding: 20px;
+    border-radius: 12px;
+    border: 2px solid rgba(99, 102, 241, 0.3);
+}
+
+.cramer-tutorial .matrix-wrapper .m-row {
+    display: flex;
+    gap: 8px;
+    margin: 5px 0;
+}
+
+.cramer-tutorial .matrix-wrapper .cell {
+    width: 45px;
+    height: 45px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Fira Code', monospace;
+    font-size: 1.1rem;
+    background: rgba(99, 102, 241, 0.15);
+    border-radius: 8px;
+    color: #e5e7eb;
+}
+
+.cramer-tutorial .matrix-wrapper .cell.ext {
+    background: rgba(139, 92, 246, 0.2);
+    border: 1px dashed rgba(139, 92, 246, 0.5);
+    color: #c4b5fd;
+}
+
+.cramer-tutorial .diagonals-demo {
+    display: flex;
+    gap: 30px;
+    justify-content: center;
+    margin: 25px 0;
+}
+
+.cramer-tutorial .diag-group {
+    background: rgba(30, 33, 45, 0.6);
+    padding: 20px;
+    border-radius: 12px;
+    min-width: 200px;
+}
+
+.cramer-tutorial .diag-group.down {
+    border: 2px solid rgba(16, 185, 129, 0.4);
+}
+
+.cramer-tutorial .diag-group.up {
+    border: 2px solid rgba(239, 68, 68, 0.4);
+}
+
+.cramer-tutorial .group-title {
+    font-weight: 600;
+    margin-bottom: 10px;
+}
+
+.cramer-tutorial .diag-group.down .group-title {
+    color: #10b981;
+}
+
+.cramer-tutorial .diag-group.up .group-title {
+    color: #ef4444;
+}
+
+.cramer-tutorial .diag-calc {
+    font-family: 'Fira Code', monospace;
+    font-size: 0.95rem;
+    color: #9ca3af;
+    margin: 8px 0;
+}
+
+.cramer-tutorial .diag-result {
+    font-family: 'Fira Code', monospace;
+    color: #e5e7eb;
+}
+
+.cramer-tutorial .final-result {
+    font-size: 1.3rem;
+    font-family: 'Fira Code', monospace;
+    color: #fbbf24;
+    margin-top: 20px;
+}
+
+/* Cofactor Demo */
+.cramer-tutorial .cofactor-demo-phase {
+    text-align: center;
+}
+
+.cramer-tutorial .cofactor-terms {
+    display: flex;
+    gap: 20px;
+    justify-content: center;
+    margin: 25px 0;
+}
+
+.cramer-tutorial .cofactor-terms .term {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 15px 20px;
+    border-radius: 12px;
+    font-family: 'Fira Code', monospace;
+    font-size: 1.1rem;
+}
+
+.cramer-tutorial .cofactor-terms .term.positive {
+    background: rgba(16, 185, 129, 0.15);
+    border: 1px solid rgba(16, 185, 129, 0.4);
+}
+
+.cramer-tutorial .cofactor-terms .term.negative {
+    background: rgba(239, 68, 68, 0.15);
+    border: 1px solid rgba(239, 68, 68, 0.4);
+}
+
+.cramer-tutorial .cofactor-terms .sign {
+    font-size: 1.4rem;
+    font-weight: 700;
+}
+
+.cramer-tutorial .cofactor-terms .term.positive .sign {
+    color: #10b981;
+}
+
+.cramer-tutorial .cofactor-terms .term.negative .sign {
+    color: #ef4444;
+}
+
+.cramer-tutorial .cofactor-terms .element {
+    color: #fbbf24;
+}
+
+.cramer-tutorial .cofactor-terms .times {
+    color: #9ca3af;
+}
+
+.cramer-tutorial .cofactor-terms .minor {
+    color: #a5b4fc;
+}
+
+.cramer-tutorial .sign-pattern {
+    background: rgba(30, 33, 45, 0.6);
+    padding: 20px;
+    border-radius: 12px;
+    display: inline-block;
+    margin: 20px 0;
+}
+
+.cramer-tutorial .pattern-title {
+    color: #9ca3af;
+    margin-bottom: 10px;
+}
+
+.cramer-tutorial .pattern-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 5px;
+}
+
+.cramer-tutorial .pattern-grid span {
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.3rem;
+    font-weight: 700;
+    border-radius: 8px;
+}
+
+.cramer-tutorial .pattern-grid .ps {
+    background: rgba(16, 185, 129, 0.2);
+    color: #10b981;
+}
+
+.cramer-tutorial .pattern-grid .ns {
+    background: rgba(239, 68, 68, 0.2);
+    color: #ef4444;
+}
+
+.cramer-tutorial .cofactor-tip {
+    background: rgba(251, 191, 36, 0.1);
+    border: 1px solid rgba(251, 191, 36, 0.3);
+    padding: 15px 25px;
+    border-radius: 10px;
+    color: #fbbf24;
+    margin-top: 25px;
+}
+
+/* Cramer Steps */
+.cramer-tutorial .cramer-steps-phase {
+    max-width: 600px;
+    margin: 0 auto;
+}
+
+.cramer-tutorial .steps-list {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.cramer-tutorial .step-item {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    background: rgba(30, 33, 45, 0.6);
+    padding: 15px 20px;
+    border-radius: 12px;
+    border: 1px solid rgba(99, 102, 241, 0.2);
+}
+
+.cramer-tutorial .step-item.result {
+    background: linear-gradient(135deg, rgba(16, 185, 129, 0.15), rgba(16, 185, 129, 0.05));
+    border-color: rgba(16, 185, 129, 0.4);
+}
+
+.cramer-tutorial .step-item .step-num {
+    width: 35px;
+    height: 35px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(135deg, #6366f1, #8b5cf6);
+    border-radius: 50%;
+    color: white;
+    font-weight: 700;
+    flex-shrink: 0;
+}
+
+.cramer-tutorial .step-item.result .step-num {
+    background: linear-gradient(135deg, #10b981, #059669);
+}
+
+.cramer-tutorial .step-item .step-text {
+    color: #e5e7eb;
+    font-size: 1.05rem;
+}
+
+/* 4x4 Tutorial Styles */
+.cramer-tutorial .strategy-phase {
+    max-width: 600px;
+    margin: 0 auto;
+}
+
+.cramer-tutorial .strategy-tips {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.cramer-tutorial .tip-item {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    background: rgba(99, 102, 241, 0.1);
+    padding: 15px 20px;
+    border-radius: 12px;
+    border: 1px solid rgba(99, 102, 241, 0.2);
+}
+
+.cramer-tutorial .tip-icon {
+    font-size: 1.5rem;
+}
+
+.cramer-tutorial .tip-text {
+    color: #e5e7eb;
+    font-size: 1.05rem;
+}
+
+.cramer-tutorial .diagonal-example-phase {
+    text-align: center;
+}
+
+.cramer-tutorial .diagonal-example-phase p {
+    color: #d1d5db;
+    margin-bottom: 20px;
+}
+
+.cramer-tutorial .diagonal-matrix {
+    display: inline-flex;
+    flex-direction: column;
+    gap: 5px;
+    background: rgba(30, 33, 45, 0.8);
+    padding: 20px;
+    border-radius: 12px;
+    border: 2px solid rgba(99, 102, 241, 0.3);
+    margin-bottom: 20px;
+}
+
+.cramer-tutorial .diagonal-matrix .m-row {
+    display: flex;
+    gap: 5px;
+}
+
+.cramer-tutorial .diagonal-matrix .cell {
+    width: 45px;
+    height: 45px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Fira Code', monospace;
+    font-size: 1.1rem;
+    border-radius: 8px;
+}
+
+.cramer-tutorial .diagonal-matrix .cell.pivot {
+    background: rgba(16, 185, 129, 0.25);
+    color: #10b981;
+    border: 2px solid rgba(16, 185, 129, 0.5);
+    font-weight: 700;
+}
+
+.cramer-tutorial .diagonal-matrix .cell.zero {
+    background: rgba(99, 102, 241, 0.1);
+    color: #6b7280;
+}
+
+.cramer-tutorial .diag-formula {
+    font-size: 1.3rem;
+    font-family: 'Fira Code', monospace;
+    color: #fbbf24;
+    margin: 20px 0;
+}
+
+.cramer-tutorial .diag-note {
+    color: #10b981;
+    font-size: 1rem;
+}
+
+.cramer-tutorial .tips-phase {
+    max-width: 500px;
+    margin: 0 auto;
+}
+
+.cramer-tutorial .success-tips {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.cramer-tutorial .success-tips .tip {
+    background: rgba(16, 185, 129, 0.1);
+    border: 1px solid rgba(16, 185, 129, 0.3);
+    padding: 15px 20px;
+    border-radius: 10px;
+    color: #6ee7b7;
+    font-size: 1.05rem;
+}
+
+/* Button Styles */
+.cramer-tutorial .btn-nav {
+    padding: 10px 20px;
+    border-radius: 10px;
+    font-size: 1rem;
+    transition: all 0.3s ease;
+}
+
+.cramer-tutorial .btn-success {
+    background: linear-gradient(135deg, #10b981, #059669);
+    color: white;
+    border: none;
+}
+
+.cramer-tutorial .btn-success:hover {
+    transform: scale(1.05);
+    box-shadow: 0 5px 20px rgba(16, 185, 129, 0.4);
+}
+
+/* ============================================
+   VISUAL EQUATION MAPPING STYLES
+   ============================================ */
+
+.cramer-tutorial .visual-equation-mapping {
+    text-align: center;
+    margin-bottom: 25px;
+}
+
+.cramer-tutorial .system-with-colors {
+    background: rgba(30, 33, 45, 0.8);
+    padding: 20px 40px;
+    border-radius: 16px;
+    display: inline-block;
+    margin-bottom: 15px;
+}
+
+.cramer-tutorial .eq-row {
+    font-family: 'Fira Code', monospace;
+    font-size: 1.4rem;
+    color: #e5e7eb;
+    margin: 10px 0;
+    direction: ltr;
+}
+
+.cramer-tutorial .coef-a {
+    color: #6366f1;
+    font-weight: 700;
+    background: rgba(99, 102, 241, 0.2);
+    padding: 2px 8px;
+    border-radius: 6px;
+}
+
+.cramer-tutorial .coef-b {
+    color: #8b5cf6;
+    font-weight: 700;
+    background: rgba(139, 92, 246, 0.2);
+    padding: 2px 8px;
+    border-radius: 6px;
+}
+
+.cramer-tutorial .const-e {
+    color: #10b981;
+    font-weight: 700;
+    background: rgba(16, 185, 129, 0.2);
+    padding: 2px 8px;
+    border-radius: 6px;
+}
+
+.cramer-tutorial .mapping-arrow {
+    font-size: 2rem;
+    margin: 15px 0;
+    animation: arrow-bounce 1s ease infinite;
+}
+
+@keyframes arrow-bounce {
+
+    0%,
+    100% {
+        transform: translateY(0);
+    }
+
+    50% {
+        transform: translateY(5px);
+    }
+}
+
+.cramer-tutorial .matrices-row {
+    display: flex;
+    gap: 40px;
+    justify-content: center;
+    flex-wrap: wrap;
+}
+
+.cramer-tutorial .matrix-box {
+    text-align: center;
+}
+
+.cramer-tutorial .matrix-box .matrix-label {
+    color: #9ca3af;
+    font-size: 0.9rem;
+    margin-bottom: 10px;
+}
+
+.cramer-tutorial .visual-matrix {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    background: rgba(30, 33, 45, 0.9);
+    padding: 15px 20px;
+    border-radius: 12px;
+    border: 2px solid rgba(99, 102, 241, 0.3);
+}
+
+.cramer-tutorial .visual-matrix .bracket {
+    font-size: 3rem;
+    color: #6366f1;
+    font-weight: 200;
+}
+
+.cramer-tutorial .matrix-inner {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.cramer-tutorial .matrix-inner .m-row {
+    display: flex;
+    gap: 15px;
+    font-family: 'Fira Code', monospace;
+    font-size: 1.3rem;
+}
+
+.cramer-tutorial .formula-key {
+    display: flex;
+    gap: 30px;
+    justify-content: center;
+    margin-top: 20px;
+}
+
+.cramer-tutorial .key-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    color: #d1d5db;
+    font-size: 0.95rem;
+}
+
+.cramer-tutorial .key-item .dot {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+}
+
+.cramer-tutorial .key-item .dot.blue {
+    background: #6366f1;
+}
+
+.cramer-tutorial .key-item .dot.green {
+    background: #10b981;
+}
+
+/* Colored System Display */
+.cramer-tutorial .colored-system {
+    background: rgba(30, 33, 45, 0.9);
+    padding: 20px 30px;
+    border-radius: 16px;
+    display: inline-block;
+    margin-bottom: 25px;
+    border: 2px solid rgba(99, 102, 241, 0.3);
+}
+
+.cramer-tutorial .colored-system .sys-label {
+    color: #fbbf24;
+    font-weight: 600;
+    margin-bottom: 10px;
+}
+
+.cramer-tutorial .colored-system .sys-eq {
+    font-family: 'Fira Code', monospace;
+    font-size: 1.3rem;
+    color: #e5e7eb;
+    margin: 8px 0;
+    direction: ltr;
+}
+
+.cramer-tutorial .c1 {
+    color: #6366f1;
+    font-weight: 700;
+    background: rgba(99, 102, 241, 0.25);
+    padding: 2px 8px;
+    border-radius: 6px;
+}
+
+.cramer-tutorial .c2 {
+    color: #8b5cf6;
+    font-weight: 700;
+    background: rgba(139, 92, 246, 0.25);
+    padding: 2px 8px;
+    border-radius: 6px;
+}
+
+.cramer-tutorial .cb {
+    color: #10b981;
+    font-weight: 700;
+    background: rgba(16, 185, 129, 0.25);
+    padding: 2px 8px;
+    border-radius: 6px;
+}
+
+/* Replacement Demo */
+.cramer-tutorial .replacement-demo {
+    display: flex;
+    gap: 20px;
+    justify-content: center;
+    flex-wrap: wrap;
+}
+
+.cramer-tutorial .matrix-step {
+    text-align: center;
+}
+
+.cramer-tutorial .step-badge {
+    background: linear-gradient(135deg, #6366f1, #8b5cf6);
+    color: white;
+    padding: 6px 16px;
+    border-radius: 20px;
+    font-size: 0.9rem;
+    font-weight: 600;
+    margin-bottom: 12px;
+    display: inline-block;
+}
+
+.cramer-tutorial .step-badge.replace-badge {
+    background: linear-gradient(135deg, #10b981, #059669);
+}
+
+.cramer-tutorial .matrix-card.original {
+    border: 2px solid rgba(99, 102, 241, 0.4);
+}
+
+.cramer-tutorial .matrix-card.replaced {
+    border: 2px solid rgba(16, 185, 129, 0.5);
+    background: rgba(16, 185, 129, 0.05);
+}
+
+.cramer-tutorial .cell.c1 {
+    background: rgba(99, 102, 241, 0.2);
+    color: #818cf8;
+}
+
+.cramer-tutorial .cell.c2 {
+    background: rgba(139, 92, 246, 0.2);
+    color: #a78bfa;
+}
+
+.cramer-tutorial .cell.cb {
+    background: rgba(16, 185, 129, 0.25);
+    color: #6ee7b7;
+}
+
+.cramer-tutorial .cell.replaced-cell {
+    animation: replaced-glow 1.5s ease-in-out infinite;
+    border: 2px solid rgba(16, 185, 129, 0.6) !important;
+}
+
+@keyframes replaced-glow {
+
+    0%,
+    100% {
+        box-shadow: 0 0 5px rgba(16, 185, 129, 0.3);
+    }
+
+    50% {
+        box-shadow: 0 0 15px rgba(16, 185, 129, 0.6);
+    }
+}
+
+.cramer-tutorial .det-calc {
+    font-family: 'Fira Code', monospace;
+    font-size: 0.9rem;
+    color: #9ca3af;
+    margin-top: 10px;
+}
+
+.cramer-tutorial .det-calc strong {
+    color: #fbbf24;
+}
+
+.cramer-tutorial .var-result {
+    background: linear-gradient(135deg, rgba(16, 185, 129, 0.2), rgba(16, 185, 129, 0.1));
+    border: 1px solid rgba(16, 185, 129, 0.4);
+    padding: 10px 20px;
+    border-radius: 10px;
+    margin-top: 10px;
+    font-family: 'Fira Code', monospace;
+    color: #6ee7b7;
+}
+
+.cramer-tutorial .var-result strong {
+    color: #10b981;
+    font-size: 1.2rem;
+}
+
+/* ============================================
+   FORMULA WITH STEPS LAYOUT
+   ============================================ */
+
+.cramer-tutorial .visual-with-formula {
+    text-align: center;
+}
+
+/* Main Formula Box - Prominently Displayed */
+.cramer-tutorial .main-formula-box {
+    background: linear-gradient(135deg, rgba(99, 102, 241, 0.2), rgba(139, 92, 246, 0.15));
+    border: 3px solid rgba(99, 102, 241, 0.5);
+    border-radius: 20px;
+    padding: 25px 40px;
+    margin-bottom: 25px;
+    display: inline-block;
+    box-shadow: 0 10px 40px rgba(99, 102, 241, 0.2);
+}
+
+.cramer-tutorial .formula-title {
+    color: #fbbf24;
+    font-size: 1.2rem;
+    font-weight: 700;
+    margin-bottom: 15px;
+}
+
+.cramer-tutorial .formula-row {
+    display: flex;
+    gap: 50px;
+    justify-content: center;
+}
+
+.cramer-tutorial .formula-item {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.cramer-tutorial .formula-item .var-name {
+    font-family: 'Fira Code', monospace;
+    font-size: 2rem;
+    font-weight: 700;
+    color: #e5e7eb;
+}
+
+.cramer-tutorial .formula-item .equals {
+    font-size: 1.8rem;
+    color: #9ca3af;
+}
+
+.cramer-tutorial .formula-item .fraction {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.cramer-tutorial .formula-item .numerator {
+    font-family: 'Fira Code', monospace;
+    font-size: 1.4rem;
+    font-weight: 600;
+    color: #10b981;
+    padding-bottom: 8px;
+    border-bottom: 3px solid #a5b4fc;
+}
+
+.cramer-tutorial .formula-item .denominator {
+    font-family: 'Fira Code', monospace;
+    font-size: 1.4rem;
+    font-weight: 600;
+    color: #fbbf24;
+    padding-top: 8px;
+}
+
+/* Example with Steps */
+.cramer-tutorial .example-with-steps {
+    text-align: right;
+}
+
+.cramer-tutorial .example-system-box {
+    background: rgba(30, 33, 45, 0.8);
+    padding: 15px 25px;
+    border-radius: 12px;
+    display: inline-block;
+    margin-bottom: 20px;
+    text-align: center;
+}
+
+.cramer-tutorial .example-system-box .sys-title {
+    color: #fbbf24;
+    font-weight: 600;
+    margin-bottom: 8px;
+}
+
+.cramer-tutorial .example-system-box .sys-eq {
+    font-family: 'Fira Code', monospace;
+    font-size: 1.1rem;
+    color: #e5e7eb;
+    margin: 5px 0;
+    direction: ltr;
+}
+
+.cramer-tutorial .solving-steps {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.cramer-tutorial .cramer-step {
+    background: rgba(30, 33, 45, 0.6);
+    border: 1px solid rgba(99, 102, 241, 0.2);
+    border-radius: 16px;
+    padding: 15px 20px;
+    text-align: right;
+}
+
+.cramer-tutorial .cramer-step.highlight-step {
+    border-color: rgba(16, 185, 129, 0.4);
+    background: rgba(16, 185, 129, 0.05);
+}
+
+.cramer-tutorial .step-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 12px;
+}
+
+.cramer-tutorial .step-header .step-number {
+    width: 30px;
+    height: 30px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(135deg, #6366f1, #8b5cf6);
+    border-radius: 50%;
+    color: white;
+    font-weight: 700;
+    font-size: 0.95rem;
+}
+
+.cramer-tutorial .cramer-step.highlight-step .step-number {
+    background: linear-gradient(135deg, #10b981, #059669);
+}
+
+.cramer-tutorial .step-header .step-reason {
+    color: #d1d5db;
+    font-size: 1rem;
+}
+
+.cramer-tutorial .step-header .step-reason strong {
+    color: #a5b4fc;
+}
+
+.cramer-tutorial .step-body {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    justify-content: center;
+    margin-bottom: 10px;
+}
+
+.cramer-tutorial .mini-matrix {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: rgba(99, 102, 241, 0.1);
+    padding: 10px 15px;
+    border-radius: 10px;
+    border: 1px solid rgba(99, 102, 241, 0.3);
+}
+
+.cramer-tutorial .mini-matrix.replaced {
+    background: rgba(16, 185, 129, 0.1);
+    border-color: rgba(16, 185, 129, 0.4);
+}
+
+.cramer-tutorial .mini-matrix .br {
+    font-size: 2.5rem;
+    color: #6b7280;
+    font-weight: 200;
+}
+
+.cramer-tutorial .m-inner {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+
+.cramer-tutorial .m-inner .r {
+    display: flex;
+    gap: 15px;
+}
+
+.cramer-tutorial .m-inner .r span {
+    font-family: 'Fira Code', monospace;
+    font-size: 1.2rem;
+    color: #e5e7eb;
+    min-width: 25px;
+    text-align: center;
+}
+
+.cramer-tutorial .m-inner .r span.new {
+    color: #10b981;
+    font-weight: 700;
+    background: rgba(16, 185, 129, 0.2);
+    padding: 2px 6px;
+    border-radius: 4px;
+    animation: new-value-pulse 1.5s ease-in-out infinite;
+}
+
+@keyframes new-value-pulse {
+
+    0%,
+    100% {
+        box-shadow: 0 0 4px rgba(16, 185, 129, 0.3);
+    }
+
+    50% {
+        box-shadow: 0 0 12px rgba(16, 185, 129, 0.6);
+    }
+}
+
+.cramer-tutorial .step-body .calc {
+    font-family: 'Fira Code', monospace;
+    font-size: 1rem;
+    color: #9ca3af;
+    direction: ltr;
+}
+
+.cramer-tutorial .step-body .calc .result {
+    color: #fbbf24;
+    font-size: 1.2rem;
+}
+
+.cramer-tutorial .apply-formula {
+    background: linear-gradient(135deg, rgba(16, 185, 129, 0.2), rgba(16, 185, 129, 0.1));
+    border: 1px solid rgba(16, 185, 129, 0.4);
+    border-radius: 10px;
+    padding: 10px 20px;
+    font-family: 'Fira Code', monospace;
+    color: #6ee7b7;
+    text-align: center;
+    direction: ltr;
+}
+
+.cramer-tutorial .apply-formula .final {
+    color: #10b981;
+    font-size: 1.3rem;
+    font-weight: 700;
+}
+
+.cramer-tutorial .final-answer {
+    background: linear-gradient(135deg, rgba(16, 185, 129, 0.25), rgba(16, 185, 129, 0.15));
+    border: 2px solid rgba(16, 185, 129, 0.5);
+    border-radius: 16px;
+    padding: 15px 30px;
+    margin-top: 20px;
+    font-size: 1.3rem;
+    font-weight: 700;
+    color: #10b981;
+    text-align: center;
+}
+
+/* Centered Example Box */
+.cramer-tutorial .example-system-box.centered {
+    display: block;
+    text-align: center;
+    margin: 0 auto 20px auto;
+}
+
+/* Glowing Constants in Example */
+.cramer-tutorial .const-glow {
+    color: #10b981;
+    font-weight: 700;
+    background: rgba(16, 185, 129, 0.2);
+    padding: 2px 10px;
+    border-radius: 6px;
+    animation: const-pulse 1.5s ease-in-out infinite;
+}
+
+@keyframes const-pulse {
+
+    0%,
+    100% {
+        box-shadow: 0 0 5px rgba(16, 185, 129, 0.3);
+    }
+
+    50% {
+        box-shadow: 0 0 15px rgba(16, 185, 129, 0.6);
+    }
+}
+
+/* Apply Formula Box with Proper Fractions */
+.cramer-tutorial .apply-formula-box {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 15px;
+    background: linear-gradient(135deg, rgba(16, 185, 129, 0.2), rgba(16, 185, 129, 0.1));
+    border: 2px solid rgba(16, 185, 129, 0.4);
+    border-radius: 12px;
+    padding: 15px 25px;
+    font-family: 'Fira Code', monospace;
+    direction: ltr;
+}
+
+.cramer-tutorial .apply-formula-box .var-label {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: #e5e7eb;
+}
+
+.cramer-tutorial .apply-formula-box .eq {
+    font-size: 1.4rem;
+    color: #9ca3af;
+}
+
+.cramer-tutorial .apply-formula-box .frac {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.cramer-tutorial .apply-formula-box .frac .num {
+    font-size: 1.1rem;
+    color: #10b981;
+    padding-bottom: 5px;
+    border-bottom: 2px solid #a5b4fc;
+}
+
+.cramer-tutorial .apply-formula-box .frac .den {
+    font-size: 1.1rem;
+    color: #fbbf24;
+    padding-top: 5px;
+}
+
+.cramer-tutorial .apply-formula-box .final-val {
+    font-size: 1.8rem;
+    font-weight: 700;
+    color: #10b981;
+    background: rgba(16, 185, 129, 0.25);
+    padding: 5px 15px;
+    border-radius: 10px;
+    box-shadow: 0 0 15px rgba(16, 185, 129, 0.4);
+}
+
+/* Determinant Notation with Proper Bars */
+.cramer-tutorial .det-notation {
+    position: relative;
+    padding: 0 12px;
+}
+
+.cramer-tutorial .det-notation::before,
+.cramer-tutorial .det-notation::after {
+    content: '';
+    position: absolute;
+    top: -2px;
+    bottom: -2px;
+    width: 2px;
+    background: currentColor;
+}
+
+.cramer-tutorial .det-notation::before {
+    left: 0;
+}
+
+.cramer-tutorial .det-notation::after {
+    right: 0;
+}
+
+.cramer-tutorial .det-notation sub {
+    font-size: 0.7em;
+    vertical-align: sub;
+}
+
+/* ============================================
+   INVERSE MATRIX GAME & TUTORIAL STYLES
+   ============================================ */
+
+/* Inverse Game Container */
+#inverse-game-container {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 20px;
+    background: var(--bg-secondary, #1e293b);
+    border-radius: 20px;
+    margin-top: 20px;
+}
+
+.inverse-game {
+    direction: rtl;
+    text-align: right;
+}
+
+.inv-game-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+    gap: 15px;
+    flex-wrap: wrap;
+}
+
+.inv-game-header h3 {
+    margin: 0;
+    color: var(--text-primary, #f1f5f9);
+    flex: 1;
+    text-align: center;
+}
+
+.inv-step-counter {
+    background: var(--bg-tertiary, #334155);
+    padding: 8px 16px;
+    border-radius: 20px;
+    font-weight: 600;
+    color: var(--text-secondary, #94a3b8);
+}
+
+.inv-progress-bar {
+    width: 100%;
+    height: 8px;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 10px;
+    margin: 15px 0;
+    overflow: hidden;
+}
+
+.inv-progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, #6366f1, #8b5cf6);
+    border-radius: 10px;
+    transition: width 0.5s ease;
+}
+
+.inv-phase-indicator {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 15px;
+    margin: 20px 0;
+    flex-wrap: wrap;
+}
+
+.inv-phase-indicator .phase {
+    padding: 10px 20px;
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 20px;
+    color: #94a3b8;
+    transition: all 0.3s ease;
+}
+
+.inv-phase-indicator .phase.active {
+    background: rgba(99, 102, 241, 0.2);
+    color: #a5b4fc;
+    border: 1px solid rgba(99, 102, 241, 0.3);
+}
+
+.inv-phase-indicator .phase-arrow {
+    color: #64748b;
+}
+
+/* Augmented Matrix Display */
+.inv-matrix-display {
+    display: flex;
+    justify-content: center;
+    margin: 25px 0;
+}
+
+.inv-augmented-matrix {
+    background: rgba(30, 33, 45, 0.9);
+    border-radius: 15px;
+    padding: 20px;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    direction: ltr;
+}
+
+.inv-aug-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin: 8px 0;
+}
+
+.inv-cell {
+    width: 55px;
+    height: 55px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.3rem;
+    font-weight: 600;
+    font-family: 'Fira Code', monospace;
+    border-radius: 10px;
+    background: rgba(99, 102, 241, 0.15);
+    color: #e5e7eb;
+    transition: all 0.3s ease;
+}
+
+.inv-cell.identity {
+    background: rgba(139, 92, 246, 0.2);
+    border: 1px dashed rgba(139, 92, 246, 0.4);
+}
+
+.inv-cell.zero {
+    color: #64748b;
+}
+
+.inv-cell.pivot {
+    color: #10b981;
+    font-weight: 700;
+}
+
+.inv-cell.result {
+    background: rgba(16, 185, 129, 0.2);
+    border: 2px solid rgba(16, 185, 129, 0.4);
+    color: #10b981;
+}
+
+.inv-cell.highlight-yellow {
+    background: rgba(251, 191, 36, 0.3) !important;
+    border: 3px solid #fbbf24 !important;
+    box-shadow: 0 0 20px rgba(251, 191, 36, 0.5);
+    animation: cell-pulse 0.6s ease;
+}
+
+.inv-divider {
+    font-size: 2rem;
+    color: #6366f1;
+    margin: 0 10px;
+    font-weight: 300;
+}
+
+/* Multiplication Display */
+.inv-multiplication-display {
+    text-align: center;
+    margin: 25px 0;
+}
+
+.mult-equation {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 15px;
+    font-size: 1.3rem;
+    color: #e5e7eb;
+    margin-bottom: 20px;
+}
+
+.mult-label {
+    color: #a5b4fc;
+    font-weight: 600;
+}
+
+.mult-matrices {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 20px;
+    direction: ltr;
+}
+
+.mult-matrix,
+.mult-vector {
+    background: rgba(30, 33, 45, 0.9);
+    border-radius: 12px;
+    padding: 15px;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.mult-row {
+    display: flex;
+    gap: 10px;
+    margin: 5px 0;
+}
+
+.mult-cell {
+    width: 45px;
+    height: 45px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Fira Code', monospace;
+    font-weight: 600;
+    background: rgba(99, 102, 241, 0.15);
+    color: #e5e7eb;
+    border-radius: 8px;
+}
+
+.mult-cell.const {
+    background: rgba(251, 191, 36, 0.2);
+    color: #fbbf24;
+}
+
+.mult-times {
+    font-size: 1.5rem;
+    color: #64748b;
+}
+
+/* Step Area */
+.inv-step-area {
+    background: rgba(30, 33, 45, 0.9);
+    border-radius: 15px;
+    padding: 25px;
+    margin: 20px 0;
+    text-align: center;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.calc-terms {
+    margin: 15px 0;
+    font-family: 'Fira Code', monospace;
+    color: #d1d5db;
+}
+
+.calc-terms .term {
+    display: inline-block;
+    margin: 0 5px;
+}
+
+/* Completed Steps */
+.inv-completed-steps {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin-top: 20px;
+}
+
+/* Win Screen */
+.inv-win-screen {
+    text-align: center;
+    padding: 40px;
+}
+
+.inv-win-screen .win-icon {
+    font-size: 4rem;
+    animation: bounce 0.6s ease infinite;
+}
+
+.inv-win-screen h2 {
+    color: #059669;
+    font-size: 2rem;
+    margin: 15px 0;
+}
+
+.inv-win-screen .win-stars {
+    font-size: 2.5rem;
+    margin: 20px 0;
+}
+
+.inv-win-screen .win-buttons {
+    display: flex;
+    gap: 15px;
+    justify-content: center;
+    margin-top: 25px;
+}
+
+/* ============================================
+   INVERSE TUTORIAL STYLES
+   ============================================ */
+
+#inverse-tutorial-container {
+    display: none;
+}
+
+.inverse-tutorial {
+    max-width: 850px;
+    margin: 0 auto;
+    background: linear-gradient(160deg, #0f1219, #151922);
+    border-radius: 20px;
+    padding: 35px 40px;
+    box-shadow: 0 25px 80px rgba(0, 0, 0, 0.6);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    direction: rtl;
+    text-align: right;
+}
+
+/* Formula Highlight Box */
+.formula-highlight {
+    font-size: 1.5rem;
+    text-align: center;
+    padding: 20px;
+    background: rgba(99, 102, 241, 0.15);
+    border: 1px solid rgba(99, 102, 241, 0.3);
+    border-radius: 12px;
+    color: #a5b4fc;
+    margin: 20px 0;
+    font-family: 'Fira Code', monospace;
+}
+
+/* Inverse Concept Phase */
+.inverse-concept-phase {
+    color: #e5e7eb;
+}
+
+.concept-steps {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    margin: 25px 0;
+}
+
+.concept-step {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    padding: 15px 20px;
+    background: rgba(99, 102, 241, 0.1);
+    border-radius: 12px;
+    border-right: 4px solid #6366f1;
+}
+
+.concept-step.result {
+    background: rgba(16, 185, 129, 0.15);
+    border-color: #10b981;
+}
+
+.concept-step .step-num {
+    width: 35px;
+    height: 35px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(135deg, #6366f1, #8b5cf6);
+    color: #fff;
+    border-radius: 50%;
+    font-weight: 700;
+}
+
+.concept-step.result .step-num {
+    background: linear-gradient(135deg, #10b981, #059669);
+}
+
+.concept-note {
+    padding: 15px 20px;
+    background: rgba(251, 191, 36, 0.15);
+    border: 1px solid rgba(251, 191, 36, 0.3);
+    border-radius: 10px;
+    color: #fbbf24;
+    text-align: center;
+    margin-top: 20px;
+}
+
+/* Setup Phase */
+.inverse-setup-phase {
+    color: #e5e7eb;
+}
+
+.augmented-demo {
+    display: flex;
+    justify-content: center;
+    margin: 25px 0;
+}
+
+.matrix-pair {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    direction: ltr;
+}
+
+.matrix-box {
+    text-align: center;
+}
+
+.matrix-label {
+    color: #a5b4fc;
+    font-weight: 600;
+    margin-bottom: 10px;
+}
+
+.visual-matrix {
+    display: flex;
+    align-items: center;
+}
+
+.visual-matrix .bracket {
+    font-size: 3rem;
+    color: #6366f1;
+    font-weight: 100;
+}
+
+.visual-matrix .matrix-inner {
+    padding: 10px 15px;
+}
+
+.visual-matrix .m-row {
+    display: flex;
+    gap: 15px;
+    justify-content: center;
+    margin: 5px 0;
+}
+
+.visual-matrix .m-row span {
+    font-family: 'Fira Code', monospace;
+    font-weight: 600;
+    color: #e5e7eb;
+}
+
+.visual-matrix .m-row span.one {
+    color: #10b981;
+}
+
+.visual-matrix .m-row span.zero {
+    color: #64748b;
+}
+
+.divider-line {
+    font-size: 4rem;
+    color: #6366f1;
+    font-weight: 100;
+    margin: 0 15px;
+}
+
+.setup-goal {
+    padding: 20px;
+    background: rgba(16, 185, 129, 0.15);
+    border: 1px solid rgba(16, 185, 129, 0.3);
+    border-radius: 12px;
+    color: #d1fae5;
+    text-align: center;
+    margin-top: 20px;
+}
+
+/* Example Phase */
+.inverse-example-phase {
+    color: #e5e7eb;
+}
+
+.step-by-step {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    margin: 20px 0;
+}
+
+.step-by-step.compact {
+    gap: 15px;
+}
+
+.inv-step {
+    background: rgba(30, 33, 45, 0.9);
+    border-radius: 15px;
+    padding: 20px;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.inv-step .step-header {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    margin-bottom: 15px;
+}
+
+.inv-step .step-number {
+    width: 30px;
+    height: 30px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(135deg, #6366f1, #8b5cf6);
+    color: #fff;
+    border-radius: 50%;
+    font-weight: 700;
+}
+
+.inv-step .step-title {
+    color: #a5b4fc;
+    font-weight: 600;
+}
+
+.augmented-matrix,
+.augmented-matrix-3x3 {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 5px;
+    direction: ltr;
+}
+
+.aug-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.aug-row .cell {
+    width: 45px;
+    height: 45px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Fira Code', monospace;
+    font-weight: 600;
+    background: rgba(99, 102, 241, 0.15);
+    color: #e5e7eb;
+    border-radius: 8px;
+    font-size: 1.1rem;
+}
+
+.aug-row .cell.id {
+    background: rgba(139, 92, 246, 0.2);
+}
+
+.aug-row .cell.pivot {
+    color: #10b981;
+}
+
+.aug-row .cell.zero {
+    color: #64748b;
+}
+
+.aug-row .cell.result {
+    background: rgba(16, 185, 129, 0.25);
+    color: #10b981;
+    border: 2px solid rgba(16, 185, 129, 0.5);
+}
+
+.aug-row.changed {
+    background: rgba(251, 191, 36, 0.1);
+    border-radius: 8px;
+    padding: 5px;
+}
+
+.aug-row.changed .cell.id {
+    background: rgba(251, 191, 36, 0.2);
+}
+
+.aug-row .divider {
+    font-size: 1.8rem;
+    color: #6366f1;
+    margin: 0 10px;
+    font-weight: 100;
+}
+
+.augmented-matrix.final .aug-row,
+.augmented-matrix-3x3.final .aug-row {
+    background: rgba(16, 185, 129, 0.1);
+    border-radius: 8px;
+    padding: 5px;
+}
+
+.inverse-result {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 20px;
+    margin-top: 20px;
+    padding: 20px;
+    background: rgba(16, 185, 129, 0.15);
+    border: 2px solid rgba(16, 185, 129, 0.4);
+    border-radius: 15px;
+}
+
+.inverse-result .result-label {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: #10b981;
+}
+
+.inverse-result .result-matrix {
+    display: flex;
+    align-items: center;
+    direction: ltr;
+}
+
+.inverse-result .bracket {
+    font-size: 3rem;
+    color: #10b981;
+    font-weight: 100;
+}
+
+.inverse-result .matrix-inner .m-row {
+    display: flex;
+    gap: 15px;
+}
+
+.inverse-result .matrix-inner .m-row span {
+    font-family: 'Fira Code', monospace;
+    font-weight: 600;
+    font-size: 1.2rem;
+    color: #10b981;
+}
+
+/* Solve Phase */
+.inverse-solve-phase {
+    color: #e5e7eb;
+}
+
+.matrix-multiplication {
+    margin: 25px 0;
+}
+
+.matrix-multiplication .mult-row {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 15px;
+    margin-bottom: 15px;
+    font-size: 1.2rem;
+    color: #d1d5db;
+}
+
+.matrix-multiplication .var {
+    color: #fbbf24;
+    font-weight: 700;
+    font-size: 1.4rem;
+}
+
+.matrix-multiplication .eq {
+    color: #64748b;
+}
+
+.matrix-multiplication .label {
+    color: #a5b4fc;
+}
+
+.matrix-multiplication .times {
+    color: #64748b;
+}
+
+.matrix-multiplication .mult-visual {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 20px;
+    direction: ltr;
+}
+
+.matrix-multiplication .mini-matrix {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    background: rgba(30, 33, 45, 0.9);
+    padding: 15px;
+    border-radius: 10px;
+}
+
+.matrix-multiplication .mini-matrix.col {
+    padding: 10px 15px;
+}
+
+.matrix-multiplication .mini-matrix.result .m-row span {
+    color: #10b981;
+}
+
+.matrix-multiplication .m-row {
+    display: flex;
+    gap: 10px;
+}
+
+.matrix-multiplication .m-row span {
+    font-family: 'Fira Code', monospace;
+    font-weight: 600;
+    color: #e5e7eb;
+}
+
+.calc-details {
+    margin: 20px 0;
+    text-align: center;
+}
+
+.calc-details .calc-row {
+    padding: 10px 20px;
+    margin: 8px 0;
+    background: rgba(99, 102, 241, 0.1);
+    border-radius: 10px;
+    display: inline-block;
+    font-family: 'Fira Code', monospace;
+    color: #d1d5db;
+}
+
+.calc-details .var-name {
+    color: #fbbf24;
+    font-weight: 700;
+}
+
+.final-answer {
+    padding: 20px;
+    text-align: center;
+    font-size: 1.3rem;
+    font-weight: 700;
+    border-radius: 12px;
+}
+
+.final-answer.success {
+    background: rgba(16, 185, 129, 0.2);
+    color: #10b981;
+    border: 2px solid rgba(16, 185, 129, 0.4);
+}
+
+/* Ready Phase */
+.summary-steps {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin: 25px 0;
+}
+
+.sum-step {
+    padding: 12px 20px;
+    background: rgba(99, 102, 241, 0.1);
+    border-radius: 10px;
+    color: #d1d5db;
+}
+
+.key-points {
+    margin: 20px 0;
+}
+
+.key-point {
+    padding: 10px 15px;
+    margin: 5px 0;
+    background: rgba(16, 185, 129, 0.1);
+    border-radius: 8px;
+    color: #d1fae5;
+}
+
+/* Strategy Phase */
+.strategy-steps {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    margin: 25px 0;
+}
+
+.strat-step {
+    display: flex;
+    gap: 15px;
+    padding: 20px;
+    background: rgba(30, 33, 45, 0.9);
+    border-radius: 15px;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.strat-icon {
+    font-size: 1.5rem;
+}
+
+.strat-content strong {
+    color: #a5b4fc;
+    display: block;
+    margin-bottom: 5px;
+}
+
+.strat-content p {
+    color: #9ca3af;
+    margin: 0;
+}
+
+.strategy-tip {
+    padding: 15px 20px;
+    background: rgba(251, 191, 36, 0.15);
+    border: 1px solid rgba(251, 191, 36, 0.3);
+    border-radius: 10px;
+    color: #fbbf24;
+    text-align: center;
+}
+
+/* ============================================
+   INVERSE TUTORIAL EXTRA STYLES
+   ============================================ */
+
+/* Big Formula Row */
+.cramer-tutorial .big-formula {
+    font-size: 1.6rem;
+    justify-content: center;
+    gap: 15px;
+    flex-wrap: wrap;
+}
+
+.cramer-tutorial .matrix-name {
+    font-weight: 700;
+    padding: 8px 15px;
+    border-radius: 8px;
+    background: rgba(99, 102, 241, 0.2);
+    color: #a5b4fc;
+}
+
+.cramer-tutorial .matrix-name.inverse {
+    background: rgba(16, 185, 129, 0.2);
+    color: #10b981;
+}
+
+.cramer-tutorial .matrix-name.identity {
+    background: rgba(139, 92, 246, 0.2);
+    color: #c4b5fd;
+}
+
+.cramer-tutorial .matrix-name.var {
+    background: rgba(251, 191, 36, 0.2);
+    color: #fbbf24;
+}
+
+.cramer-tutorial .matrix-name.const {
+    background: rgba(236, 72, 153, 0.2);
+    color: #f472b6;
+}
+
+.cramer-tutorial .times,
+.cramer-tutorial .equals {
+    color: #64748b;
+    font-weight: 400;
+}
+
+.cramer-tutorial .note {
+    font-size: 0.85rem;
+    color: #94a3b8;
+    font-weight: 400;
+}
+
+/* Identity Matrix Examples */
+.cramer-tutorial .identity-examples {
+    gap: 50px;
+    justify-content: center;
+}
+
+.cramer-tutorial .diag {
+    color: #10b981 !important;
+    font-weight: 700;
+}
+
+.cramer-tutorial .zero {
+    color: #64748b !important;
+}
+
+/* Augmented Matrix Visual */
+.augmented-visual-box {
+    background: rgba(30, 33, 45, 0.9);
+    border-radius: 15px;
+    padding: 25px;
+    margin: 20px 0;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.augmented-visual-box .aug-title {
+    text-align: center;
+    font-size: 1.2rem;
+    color: #a5b4fc;
+    margin-bottom: 20px;
+}
+
+.aug-transform {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 20px;
+    flex-wrap: wrap;
+}
+
+.aug-side {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+}
+
+.aug-side .aug-label {
+    font-size: 0.9rem;
+    color: #94a3b8;
+}
+
+.result-side .aug-label {
+    color: #10b981;
+}
+
+.aug-side .aug-desc {
+    font-size: 0.9rem;
+    color: #a5b4fc;
+    font-family: 'Fira Code', monospace;
+}
+
+.transform-arrow {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 5px;
+}
+
+.transform-arrow span:first-child {
+    font-size: 0.8rem;
+    color: #94a3b8;
+}
+
+.transform-arrow .arrow {
+    font-size: 1.5rem;
+    color: #6366f1;
+}
+
+.aug-matrix-display {
+    display: flex;
+    align-items: center;
+    direction: ltr;
+}
+
+.aug-matrix-display.large {
+    margin: 15px 0;
+}
+
+.aug-matrix-display.extra-large .m-row {
+    gap: 12px;
+}
+
+.aug-matrix-display .bracket {
+    font-size: 3rem;
+    color: #6366f1;
+    font-weight: 100;
+}
+
+.aug-matrix-display .aug-left,
+.aug-matrix-display .aug-right {
+    padding: 10px 15px;
+}
+
+.aug-matrix-display .aug-left.identity .m-row span {
+    color: #10b981;
+}
+
+.aug-matrix-display .aug-divider {
+    font-size: 3rem;
+    color: #6366f1;
+    font-weight: 100;
+    margin: 0 10px;
+}
+
+.aug-matrix-display .aug-divider.result {
+    color: #10b981;
+}
+
+.aug-matrix-display .m-row {
+    display: flex;
+    gap: 15px;
+    justify-content: center;
+    margin: 8px 0;
+}
+
+.aug-matrix-display .m-row span {
+    font-family: 'Fira Code', monospace;
+    font-weight: 600;
+    color: #e5e7eb;
+    min-width: 25px;
+    text-align: center;
+}
+
+.aug-matrix-display .aug-right.result .m-row span {
+    color: #10b981;
+}
+
+.aug-matrix-display .m-row span.result-val {
+    color: #10b981;
+    font-weight: 700;
+}
+
+.aug-matrix-display .m-row.changed {
+    background: rgba(251, 191, 36, 0.2);
+    border-radius: 6px;
+    padding: 3px 8px;
+}
+
+.aug-matrix-display .m-row span.zero-new {
+    color: #10b981;
+}
+
+.aug-matrix-display .m-row span.pivot {
+    color: #10b981;
+    font-weight: 700;
+}
+
+.aug-matrix-display.final {
+    background: rgba(16, 185, 129, 0.1);
+    border-radius: 12px;
+    padding: 10px;
+    border: 2px solid rgba(16, 185, 129, 0.3);
+}
+
+.aug-labels {
+    display: flex;
+    justify-content: center;
+    gap: 150px;
+    margin-top: 10px;
+    color: #94a3b8;
+    font-size: 0.9rem;
+}
+
+/* Algebra Steps */
+.algebra-steps .step-body.algebra {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 12px;
+    font-size: 1.4rem;
+    padding: 15px 0;
+    flex-wrap: wrap;
+}
+
+.algebra-steps .step-body.algebra.result {
+    background: rgba(16, 185, 129, 0.15);
+    border-radius: 12px;
+    border: 2px solid rgba(16, 185, 129, 0.3);
+}
+
+/* Operation Explanation */
+.operation-explanation {
+    background: rgba(99, 102, 241, 0.1);
+    border-radius: 10px;
+    padding: 15px;
+    margin-bottom: 15px;
+    text-align: center;
+}
+
+.operation-explanation .op-row {
+    color: #a5b4fc;
+    margin-bottom: 8px;
+}
+
+.operation-explanation .op-calc {
+    font-family: 'Fira Code', monospace;
+    color: #d1d5db;
+    font-size: 0.95rem;
+}
+
+.cramer-step .op-note {
+    font-size: 0.85rem;
+    color: #94a3b8;
+}
+
+.cramer-step .step-note {
+    margin-top: 10px;
+    padding: 8px 15px;
+    background: rgba(16, 185, 129, 0.15);
+    border-radius: 8px;
+    color: #10b981;
+    text-align: center;
+    font-size: 0.9rem;
+}
+
+/* Result Callout */
+.result-callout {
+    text-align: center;
+    margin-top: 15px;
+    padding: 12px 20px;
+    background: rgba(16, 185, 129, 0.2);
+    border-radius: 10px;
+    color: #10b981;
+    font-weight: 600;
+    font-size: 1.1rem;
+}
+
+/* Matrix Multiplication Visual */
+.matrix-multiplication-visual {
+    margin: 25px 0;
+}
+
+.matrix-multiplication-visual .mult-matrices {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 20px;
+    flex-wrap: wrap;
+}
+
+.matrix-multiplication-visual .mult-matrix {
+    text-align: center;
+}
+
+.matrix-multiplication-visual .mult-label {
+    font-size: 0.9rem;
+    color: #a5b4fc;
+    margin-bottom: 8px;
+}
+
+.matrix-multiplication-visual .inverse-m .mult-label {
+    color: #10b981;
+}
+
+.matrix-multiplication-visual .const-m .mult-label {
+    color: #f472b6;
+}
+
+.matrix-multiplication-visual .result-m .mult-label {
+    color: #fbbf24;
+}
+
+.matrix-multiplication-visual .mult-sign {
+    font-size: 1.5rem;
+    color: #64748b;
+}
+
+/* Op List */
+.cramer-step .op-list {
+    padding: 10px 20px;
+}
+
+.cramer-step .op-list div {
+    color: #d1d5db;
+    margin: 5px 0;
+}
+
+.cramer-step .op-list .above {
+    color: #10b981;
+}
+
+.cramer-step .op-list .below {
+    color: #f472b6;
+}
+
+/* Tip Step */
+.cramer-step.tip-step {
+    background: rgba(99, 102, 241, 0.1);
+}
+
+.cramer-step.tip-step .step-number {
+    background: transparent;
+    font-size: 1.3rem;
+}
+
+/* Warning Style Uses */
+.tut-uses.warning-style {
+    background: rgba(251, 191, 36, 0.1);
+    border: 1px solid rgba(251, 191, 36, 0.3);
+    padding: 20px;
+    border-radius: 12px;
+}
+
+/* Main Formula Box Result */
+.main-formula-box.result-box {
+    background: rgba(16, 185, 129, 0.15);
+    border-color: rgba(16, 185, 129, 0.4);
+}
+
+.main-formula-box.result-box .formula-title {
+    color: #10b981;
+    margin-bottom: 15px;
+}
+
+.main-formula-box.result-box .result-matrix .m-row span {
+    color: #10b981;
+}
+
+/* Reminder Steps */
+.formula-reminder .reminder-steps {
+    display: flex;
+    justify-content: center;
+    gap: 25px;
+    flex-wrap: wrap;
+    margin: 20px 0;
+}
+
+.formula-reminder .reminder-steps span {
+    padding: 10px 15px;
+    background: rgba(99, 102, 241, 0.15);
+    border-radius: 10px;
+    color: #a5b4fc;
+}
+
+.formula-reminder .reminder-points {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    align-items: center;
+}
+
+.formula-reminder .reminder-points .point {
+    color: #d1d5db;
+}
+
+/* ============================================
+   INVERSE GAME NEW STYLES
+   ============================================ */
+
+.inverse-game {
+    direction: rtl;
+    text-align: right;
+    padding: 20px;
+}
+
+.inv-game-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+    gap: 15px;
+    flex-wrap: wrap;
+}
+
+.inv-game-header h3 {
+    margin: 0;
+    color: #f1f5f9;
+    flex: 1;
+    text-align: center;
+}
+
+.inv-step-counter {
+    background: #334155;
+    padding: 8px 16px;
+    border-radius: 20px;
+    font-weight: 600;
+    color: #94a3b8;
+}
+
+.inv-goal-hint {
+    background: rgba(99, 102, 241, 0.15);
+    border: 1px solid rgba(99, 102, 241, 0.3);
+    border-radius: 12px;
+    padding: 15px 20px;
+    margin-bottom: 20px;
+    text-align: center;
+}
+
+.inv-goal-hint .goal-title {
+    color: #a5b4fc;
+    font-weight: 600;
+    font-size: 1.1rem;
+}
+
+.inv-matrix-display {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin: 25px 0;
+}
+
+.inv-augmented-matrix {
+    background: rgba(30, 33, 45, 0.95);
+    border-radius: 15px;
+    padding: 20px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    direction: ltr;
+}
+
+.inv-aug-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin: 10px 0;
+    padding: 5px;
+    border-radius: 8px;
+    transition: background 0.3s ease;
+}
+
+.inv-aug-row:hover {
+    background: rgba(99, 102, 241, 0.1);
+}
+
+.inv-row-label {
+    color: #94a3b8;
+    font-weight: 600;
+    font-size: 0.9rem;
+    min-width: 30px;
+}
+
+.inv-cell {
+    width: 55px;
+    height: 55px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.2rem;
+    font-weight: 600;
+    font-family: 'Fira Code', monospace;
+    border-radius: 10px;
+    background: rgba(99, 102, 241, 0.15);
+    color: #e5e7eb;
+    transition: all 0.3s ease;
+}
+
+.inv-cell.identity {
+    background: rgba(139, 92, 246, 0.2);
+    border: 1px dashed rgba(139, 92, 246, 0.4);
+}
+
+.inv-cell.zero {
+    color: #64748b;
+}
+
+.inv-cell.pivot {
+    border: 2px solid #6366f1;
+}
+
+.inv-cell.pivot.correct {
+    background: rgba(16, 185, 129, 0.25);
+    border-color: #10b981;
+    color: #10b981;
+}
+
+.inv-cell.correct:not(.pivot) {
+    color: #10b981;
+}
+
+.inv-divider {
+    font-size: 2.5rem;
+    color: #6366f1;
+    margin: 0 15px;
+    font-weight: 200;
+}
+
+.inv-row-actions {
+    display: flex;
+    gap: 5px;
+    margin-left: 10px;
+}
+
+.inv-row-btn {
+    width: 35px;
+    height: 35px;
+    border: none;
+    border-radius: 8px;
+    background: rgba(99, 102, 241, 0.2);
+    color: #a5b4fc;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-size: 1rem;
+}
+
+.inv-row-btn:hover {
+    background: rgba(99, 102, 241, 0.4);
+    transform: scale(1.1);
+}
+
+.inv-matrix-labels {
+    display: flex;
+    justify-content: space-around;
+    width: 100%;
+    max-width: 500px;
+    margin-top: 15px;
+    direction: rtl;
+}
+
+.inv-matrix-labels span {
+    font-size: 0.85rem;
+    color: #94a3b8;
+    padding: 8px 15px;
+    background: rgba(30, 33, 45, 0.8);
+    border-radius: 20px;
+}
+
+.inv-matrix-labels .label-left {
+    color: #a5b4fc;
+}
+
+.inv-matrix-labels .label-right {
+    color: #c4b5fd;
+}
+
+.inv-controls {
+    display: flex;
+    justify-content: center;
+    gap: 15px;
+    margin-top: 25px;
+    flex-wrap: wrap;
+}
+
+/* Inverse Modals */
+.inv-modal {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.7);
+    z-index: 1000;
+    align-items: center;
+    justify-content: center;
+}
+
+.inv-modal.active {
+    display: flex;
+}
+
+.inv-modal-content {
+    background: linear-gradient(160deg, #1e293b, #0f172a);
+    border-radius: 20px;
+    padding: 30px;
+    min-width: 350px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    direction: rtl;
+    text-align: right;
+}
+
+.inv-modal-content h4 {
+    margin: 0 0 20px 0;
+    color: #f1f5f9;
+    text-align: center;
+}
+
+.modal-field {
+    margin: 15px 0;
+}
+
+.modal-field label {
+    display: block;
+    color: #94a3b8;
+    margin-bottom: 8px;
+}
+
+.modal-field select,
+.modal-field input {
+    background: rgba(30, 33, 45, 0.9);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 8px;
+    color: #f1f5f9;
+    padding: 10px 15px;
+    font-size: 1rem;
+}
+
+.modal-field select {
+    width: 100%;
+}
+
+.fraction-input {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.fraction-input input {
+    width: 70px;
+    text-align: center;
+}
+
+.fraction-input span {
+    color: #64748b;
+    font-size: 1.5rem;
+}
+
+.modal-buttons {
+    display: flex;
+    justify-content: center;
+    gap: 15px;
+    margin-top: 25px;
+}
+
+/* Phase 2 */
+.inv-phase2-content {
+    text-align: center;
+}
+
+.formula-box {
+    background: rgba(99, 102, 241, 0.15);
+    border: 1px solid rgba(99, 102, 241, 0.3);
+    border-radius: 12px;
+    padding: 20px;
+    margin-bottom: 25px;
+}
+
+.formula-box .formula-title {
+    font-size: 1.5rem;
+    color: #a5b4fc;
+    font-weight: 700;
+    font-family: 'Fira Code', monospace;
+}
+
+.multiplication-display {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 20px;
+    margin: 25px 0;
+    flex-wrap: wrap;
+    direction: ltr;
+}
+
+.mult-matrix,
+.mult-vector {
+    text-align: center;
+}
+
+.mult-label {
+    font-size: 0.9rem;
+    color: #94a3b8;
+    margin-bottom: 10px;
+}
+
+.mult-vector.result .mult-label {
+    color: #10b981;
+}
+
+.mini-matrix {
+    background: rgba(30, 33, 45, 0.95);
+    border-radius: 12px;
+    padding: 15px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.mini-matrix.col {
+    padding: 15px 20px;
+}
+
+.mini-row {
+    display: flex;
+    gap: 8px;
+    margin: 5px 0;
+    justify-content: center;
+}
+
+.mini-cell {
+    min-width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Fira Code', monospace;
+    font-weight: 600;
+    color: #e5e7eb;
+    background: rgba(99, 102, 241, 0.15);
+    border-radius: 6px;
+    padding: 0 8px;
+}
+
+.mini-cell.const {
+    background: rgba(251, 191, 36, 0.2);
+    color: #fbbf24;
+}
+
+.mini-cell.result-val {
+    background: rgba(16, 185, 129, 0.2);
+    color: #10b981;
+    font-weight: 700;
+}
+
+.mult-sign {
+    font-size: 2rem;
+    color: #64748b;
+}
+
+.solution-display {
+    background: rgba(16, 185, 129, 0.15);
+    border: 2px solid rgba(16, 185, 129, 0.4);
+    border-radius: 15px;
+    padding: 25px;
+    margin: 25px 0;
+}
+
+.solution-display h4 {
+    color: #10b981;
+    margin: 0 0 15px 0;
+}
+
+.solution-var {
+    display: inline-block;
+    background: rgba(16, 185, 129, 0.2);
+    padding: 10px 20px;
+    border-radius: 10px;
+    margin: 5px 10px;
+    color: #10b981;
+    font-weight: 700;
+    font-size: 1.2rem;
+    font-family: 'Fira Code', monospace;
+}
+
+.phase2-buttons {
+    margin-top: 30px;
+}
+
+/* Win Screen */
+.inv-win-screen {
+    text-align: center;
+    padding: 40px;
+}
+
+.inv-win-screen .win-icon {
+    font-size: 5rem;
+    margin-bottom: 20px;
+    animation: bounce 0.6s ease infinite;
+}
+
+@keyframes bounce {
+
+    0%,
+    100% {
+        transform: translateY(0);
+    }
+
+    50% {
+        transform: translateY(-15px);
+    }
+}
+
+.inv-win-screen h2 {
+    color: #10b981;
+    font-size: 2.5rem;
+    margin: 0 0 15px 0;
+}
+
+.inv-win-screen .win-stars {
+    font-size: 3rem;
+    margin: 20px 0;
+}
+
+.inv-win-screen p {
+    color: #94a3b8;
+    font-size: 1.1rem;
+}
+
+.win-buttons {
+    display: flex;
+    gap: 15px;
+    justify-content: center;
+    margin-top: 30px;
+}
+
+/* ============================================
+   INVERSE PHASE 2 - X = A^-1 × B Display
+   ============================================ */
+
+.inverse-phase2 {
+    text-align: center;
+    padding: 30px;
+    direction: rtl;
+}
+
+.inverse-found-title {
+    font-size: 1.8rem;
+    color: #10b981;
+    margin-bottom: 30px;
+    font-weight: 700;
+}
+
+.inverse-multiplication-section {
+    background: rgba(30, 33, 45, 0.95);
+    border-radius: 20px;
+    padding: 30px;
+    margin: 25px 0;
+    border: 1px solid rgba(99, 102, 241, 0.3);
+}
+
+.formula-display {
+    font-size: 1.6rem;
+    color: #a5b4fc;
+    font-weight: 700;
+    font-family: 'Fira Code', monospace;
+    margin-bottom: 25px;
+}
+
+.multiplication-visual {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 25px;
+    flex-wrap: wrap;
+    direction: ltr;
+}
+
+.mult-matrix-box,
+.mult-vector-box {
+    text-align: center;
+}
+
+.mult-label {
+    font-size: 1rem;
+    color: #94a3b8;
+    margin-bottom: 10px;
+    font-weight: 600;
+}
+
+.mult-matrix-content,
+.mult-vector-content {
+    background: rgba(99, 102, 241, 0.1);
+    border: 1px solid rgba(99, 102, 241, 0.3);
+    border-radius: 12px;
+    padding: 15px;
+}
+
+.mini-matrix-grid {
+    display: grid;
+    gap: 8px;
+}
+
+/* Dynamic grid - will be set by JavaScript based on matrix size */
+.inverse-phase2 .mini-matrix-grid {
+    grid-template-columns: repeat(2, 1fr);
+}
+
+.mult-cell {
+    min-width: 50px;
+    height: 45px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Fira Code', monospace;
+    font-weight: 600;
+    font-size: 1.1rem;
+    color: #e5e7eb;
+    background: rgba(99, 102, 241, 0.15);
+    border-radius: 8px;
+    padding: 0 10px;
+}
+
+.mult-cell.const {
+    background: rgba(251, 191, 36, 0.2);
+    color: #fbbf24;
+}
+
+.mult-cell.result-val {
+    background: rgba(16, 185, 129, 0.25);
+    color: #10b981;
+    font-weight: 700;
+    font-size: 1.2rem;
+}
+
+.mult-vector-box.result .mult-vector-content {
+    border-color: rgba(16, 185, 129, 0.5);
+    background: rgba(16, 185, 129, 0.1);
+}
+
+.mult-operator {
+    font-size: 2.5rem;
+    color: #64748b;
+    font-weight: 200;
+}
+
+.inverse-solution-section {
+    background: rgba(16, 185, 129, 0.1);
+    border: 2px solid rgba(16, 185, 129, 0.4);
+    border-radius: 15px;
+    padding: 25px;
+    margin: 30px 0;
+}
+
+.inverse-solution-section h4 {
+    color: #10b981;
+    margin: 0 0 20px 0;
+    font-size: 1.3rem;
+}
+
+.solution-values {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+    flex-wrap: wrap;
+}
+
+.solution-item {
+    background: rgba(16, 185, 129, 0.2);
+    padding: 12px 25px;
+    border-radius: 12px;
+    color: #10b981;
+    font-weight: 700;
+    font-size: 1.3rem;
+    font-family: 'Fira Code', monospace;
+}
+
+.inverse-complete-btn {
+    margin-top: 30px;
+}
+
+.inverse-complete-btn .btn-lg {
+    padding: 15px 50px;
+    font-size: 1.2rem;
+}
+
+/* Win screen within matrix container */
+.inverse-win-screen {
+    text-align: center;
+    padding: 50px 30px;
+}
+
+.inverse-win-screen .win-icon {
+    font-size: 5rem;
+    margin-bottom: 20px;
+    animation: celebrateBounce 0.6s ease infinite;
+}
+
+@keyframes celebrateBounce {
+
+    0%,
+    100% {
+        transform: translateY(0) scale(1);
+    }
+
+    50% {
+        transform: translateY(-20px) scale(1.1);
+    }
+}
+
+.inverse-win-screen h2 {
+    color: #10b981;
+    font-size: 2.5rem;
+    margin: 0 0 15px 0;
+}
+
+.inverse-win-screen .win-stars {
+    font-size: 3.5rem;
+    margin: 25px 0;
+}
+
+.inverse-win-screen p {
+    color: #94a3b8;
+    font-size: 1.2rem;
+    margin-bottom: 30px;
+}
+
+/* System title in equations display */
+.inverse-system-title {
+    color: #a5b4fc;
+    font-weight: 600;
+    margin-bottom: 10px;
+    font-size: 0.95rem;
+}
+
+/* ============================================
+   INVERSE PHASE 2 - Step Sections
+   ============================================ */
+
+.inverse-step-section {
+    background: rgba(30, 33, 45, 0.95);
+    border-radius: 16px;
+    padding: 25px;
+    margin-bottom: 20px;
+    border: 1px solid rgba(99, 102, 241, 0.3);
+    text-align: right;
+}
+
+.inverse-step-section.final {
+    background: rgba(16, 185, 129, 0.1);
+    border-color: rgba(16, 185, 129, 0.4);
+}
+
+.step-header {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    margin-bottom: 20px;
+    direction: rtl;
+}
+
+.step-number {
+    width: 35px;
+    height: 35px;
+    background: linear-gradient(135deg, #6366f1, #8b5cf6);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    color: white;
+    font-size: 1.1rem;
+}
+
+.inverse-step-section.final .step-number {
+    background: linear-gradient(135deg, #10b981, #059669);
+    font-size: 1.2rem;
+}
+
+.step-title {
+    font-size: 1.3rem;
+    font-weight: 600;
+    color: #e5e7eb;
+}
+
+.step-content {
+    padding-right: 50px;
+}
+
+.step-explanation {
+    color: #94a3b8;
+    line-height: 1.8;
+    margin-bottom: 20px;
+    font-size: 1rem;
+}
+
+.step-explanation strong {
+    color: #a5b4fc;
+}
+
+/* Transform Visual */
+.transform-visual {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 20px;
+    margin: 20px 0;
+    direction: ltr;
+}
+
+.transform-box {
+    background: rgba(99, 102, 241, 0.15);
+    border: 1px solid rgba(99, 102, 241, 0.3);
+    border-radius: 12px;
+    padding: 15px 25px;
+}
+
+.transform-box.highlight {
+    background: rgba(16, 185, 129, 0.15);
+    border-color: rgba(16, 185, 129, 0.4);
+}
+
+.transform-label {
+    font-family: 'Fira Code', monospace;
+    font-size: 1.1rem;
+    color: #e5e7eb;
+}
+
+.transform-box.highlight .transform-label {
+    color: #10b981;
+    font-weight: 600;
+}
+
+.transform-arrow {
+    font-size: 2rem;
+    color: #64748b;
+}
+
+/* Extracted Inverse */
+.extracted-inverse {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 20px;
+    margin-top: 20px;
+    flex-wrap: wrap;
+}
+
+.extracted-label {
+    color: #a5b4fc;
+    font-weight: 600;
+    font-size: 1.1rem;
+}
+
+/* Formula Box Large */
+.formula-box-large {
+    font-size: 1.8rem;
+    font-family: 'Fira Code', monospace;
+    color: #a5b4fc;
+    font-weight: 700;
+    text-align: center;
+    margin-bottom: 25px;
+}
+
+/* Multiplication Breakdown */
+.multiplication-breakdown {
+    background: rgba(0, 0, 0, 0.2);
+    border-radius: 12px;
+    padding: 20px;
+    margin-top: 20px;
+    direction: ltr;
+}
+
+.breakdown-title {
+    color: #a5b4fc;
+    font-weight: 600;
+    margin-bottom: 15px;
+    font-size: 1rem;
+    direction: rtl;
+    text-align: right;
+}
+
+.mult-step-row {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    padding: 10px 15px;
+    background: rgba(99, 102, 241, 0.1);
+    border-radius: 8px;
+    margin-bottom: 10px;
+    flex-wrap: wrap;
+}
+
+.mult-var {
+    font-weight: 700;
+    color: #a5b4fc;
+    font-size: 1.1rem;
+    font-family: 'Fira Code', monospace;
+    min-width: 50px;
+}
+
+.mult-calc {
+    color: #94a3b8;
+    font-family: 'Fira Code', monospace;
+    font-size: 0.95rem;
+    flex: 1;
+}
+
+.mult-result {
+    color: #10b981;
+    font-weight: 700;
+    font-size: 1.1rem;
+    font-family: 'Fira Code', monospace;
 }

@@ -18,8 +18,8 @@ class GaussianGame {
             1: { name: 'طريقة جاوس', icon: '📐', unlockLevel: 0 },
             2: { name: 'جاوس-جوردن', icon: '🎯', unlockLevel: 5 },
             3: { name: 'المحددات', icon: '🧮', unlockLevel: 5, isDeterminant: true },
-            4: { name: 'كرامر', icon: '📊', unlockLevel: 5, comingSoon: true },
-            5: { name: 'المعكوس', icon: '🔄', unlockLevel: 5, comingSoon: true }
+            4: { name: 'كرامر', icon: '📊', unlockLevel: 5, isCramer: true },
+            5: { name: 'المعكوس', icon: '🔄', unlockLevel: 5, isInverse: true }
         };
         
         // تحميل التقدم المحفوظ
@@ -31,7 +31,11 @@ class GaussianGame {
         // نظام المعلم المساعد
         this.tutorVisible = false;
         this.currentHint = null;
-        this.tutorEnabledLevels = [1, 2, 3, 4]; // المستويات التي يظهر فيها المعلم
+        this.tutorEnabledLevels = null; // null = جميع المستويات تدعم التلميحات
+        
+        // تتبع التلميحات والأخطاء للتقييم
+        this.hintsUsed = 0;
+        this.errorsCount = 0;
         
         // نظام الدروس التعليمية
         this.currentLessonStep = 1;
@@ -41,6 +45,12 @@ class GaussianGame {
         this.currentExampleStep = 0;
         this.totalExampleSteps = 4;
         this.exampleAutoPlayInterval = null;
+        
+        // وضع المعكوس
+        this.isInverseMode = false;
+        this.inverseOriginalSize = 0;
+        this.inverseConstants = [];
+        
         
         this.init();
     }
@@ -201,6 +211,10 @@ class GaussianGame {
         // التحقق من نوع اللعبة
         if (partInfo.isDeterminant) {
             this.showDeterminantLevelSelect();
+        } else if (partInfo.isCramer) {
+            this.showCramerLevelSelect();
+        } else if (partInfo.isInverse) {
+            this.showInverseLevelSelect();
         } else {
             this.showLevelSelect();
         }
@@ -296,7 +310,7 @@ class GaussianGame {
         if (isComplete) card.classList.add('completed');
         if (this.devMode && !isComplete) card.classList.add('dev-unlocked');
         
-        const starsDisplay = isComplete ? '⭐'.repeat(stars) + '☆'.repeat(3 - stars) : '☆☆☆';
+        const starsDisplay = isComplete ? '⭐'.repeat(stars) + '☆'.repeat(5 - stars) : '☆☆☆☆☆';
         
         card.innerHTML = `
             <span class="level-num">${levelNum}</span>
@@ -380,8 +394,362 @@ class GaussianGame {
         this.showGaussUI();
     }
     
+    // ==================== CRAMER'S RULE ====================
+    
+    showCramerLevelSelect() {
+        // عرض شاشة اختيار مستويات كرامر
+        const titleEl = document.getElementById('level-select-title');
+        if (titleEl) {
+            titleEl.textContent = `${this.partsInfo[this.currentPart].name} - اختر المستوى`;
+        }
+        this.populateCramerLevelGrid();
+        this.showScreen('levelSelect');
+    }
+    
+    populateCramerLevelGrid() {
+        const grid = document.getElementById('levels-grid');
+        if (!grid) return;
+        
+        grid.innerHTML = '';
+        
+        // إضافة بطاقة التعلم الأولى (2x2)
+        const learnCard1 = document.createElement('div');
+        learnCard1.className = 'level-card learn-card';
+        learnCard1.innerHTML = `
+            <span class="level-number">📐</span>
+            <span class="level-stars">تعلم 2×2</span>
+        `;
+        learnCard1.addEventListener('click', () => {
+            if (typeof cramerTutorial !== 'undefined') {
+                cramerTutorial.show(1);
+            }
+        });
+        grid.appendChild(learnCard1);
+        
+        // المستويات 1-2 (2x2)
+        for (let i = 1; i <= 2; i++) {
+            grid.appendChild(this.createCramerLevelCard(i));
+        }
+        
+        // إضافة بطاقة التعلم الثانية (3x3)
+        const learnCard2 = document.createElement('div');
+        learnCard2.className = 'level-card learn-card';
+        learnCard2.innerHTML = `
+            <span class="level-number">📊</span>
+            <span class="level-stars">تعلم 3×3</span>
+        `;
+        learnCard2.addEventListener('click', () => {
+            if (typeof cramerTutorial !== 'undefined') {
+                cramerTutorial.show(2);
+            }
+        });
+        grid.appendChild(learnCard2);
+        
+        // المستويات 3-8 (3x3)
+        for (let i = 3; i <= 8; i++) {
+            grid.appendChild(this.createCramerLevelCard(i));
+        }
+        
+        // إضافة بطاقة التعلم الثالثة (4x4)
+        const learnCard3 = document.createElement('div');
+        learnCard3.className = 'level-card learn-card';
+        learnCard3.innerHTML = `
+            <span class="level-number">🧮</span>
+            <span class="level-stars">تعلم 4×4</span>
+        `;
+        learnCard3.addEventListener('click', () => {
+            if (typeof cramerTutorial !== 'undefined') {
+                cramerTutorial.show(3);
+            }
+        });
+        grid.appendChild(learnCard3);
+        
+        // المستويات 9-10 (4x4)
+        for (let i = 9; i <= 10; i++) {
+            grid.appendChild(this.createCramerLevelCard(i));
+        }
+    }
+    
+    createCramerLevelCard(levelNum) {
+        const levelData = cramerLevels[levelNum];
+        const stars = typeof cramerGame !== 'undefined' ? cramerGame.getStars(levelNum) : 0;
+        const isComplete = typeof cramerGame !== 'undefined' ? cramerGame.completedLevels.includes(levelNum) : false;
+        
+        // فك القفل: المستوى الأول مفتوح دائماً، أو المستوى السابق مكتمل، أو وضع المطور
+        const prevLevel = levelNum > 1 ? levelNum - 1 : 0;
+        const isUnlocked = this.devMode || levelNum === 1 || 
+            (typeof cramerGame !== 'undefined' && cramerGame.completedLevels.includes(prevLevel));
+        
+        const card = document.createElement('div');
+        card.className = 'level-card';
+        
+        if (!isUnlocked) card.classList.add('locked');
+        if (isComplete) card.classList.add('completed');
+        if (this.devMode && !isComplete) card.classList.add('dev-unlocked');
+        
+        const starsDisplay = isComplete ? '⭐'.repeat(stars) + '☆'.repeat(5 - stars) : '☆☆☆☆☆';
+        
+        card.innerHTML = `
+            <span class="level-num">${levelNum}</span>
+            <span class="level-stars">${starsDisplay}</span>
+        `;
+        
+        if (isUnlocked) {
+            card.addEventListener('click', () => this.startCramerLevel(levelNum));
+        }
+        
+        return card;
+    }
+    
+    startCramerLevel(levelNum) {
+        if (typeof cramerGame !== 'undefined') {
+            // إخفاء جميع عناصر جاوس
+            this.hideGaussUI();
+            
+            // إظهار حاوية كرامر
+            let gameContainer = document.getElementById('cramer-game-container');
+            if (!gameContainer) {
+                gameContainer = document.createElement('div');
+                gameContainer.id = 'cramer-game-container';
+                document.getElementById('game-screen')?.querySelector('.container')?.appendChild(gameContainer);
+            }
+            gameContainer.style.display = 'block';
+            
+            cramerGame.startLevel(levelNum);
+            this.showScreen('game');
+        }
+    }
+    
+    endCramerGame() {
+        // إخفاء كرامر
+        const gameContainer = document.getElementById('cramer-game-container');
+        if (gameContainer) {
+            gameContainer.style.display = 'none';
+            gameContainer.innerHTML = '';
+        }
+        
+        // إعادة عرض عناصر جاوس
+        this.showGaussUI();
+    }
+    
+    // ==================== INVERSE MATRIX ====================
+    
+    showInverseLevelSelect() {
+        // عرض شاشة اختيار مستويات المعكوس
+        const titleEl = document.getElementById('level-select-title');
+        if (titleEl) {
+            titleEl.textContent = `${this.partsInfo[this.currentPart].name} - اختر المستوى`;
+        }
+        this.populateInverseLevelGrid();
+        this.showScreen('levelSelect');
+    }
+    
+    populateInverseLevelGrid() {
+        const grid = document.getElementById('levels-grid');
+        if (!grid) return;
+        
+        grid.innerHTML = '';
+        
+        // إضافة بطاقة التعلم الأولى (2x2)
+        const learnCard1 = document.createElement('div');
+        learnCard1.className = 'level-card learn-card';
+        learnCard1.innerHTML = `
+            <span class="level-number">📐</span>
+            <span class="level-stars">تعلم 2×2</span>
+        `;
+        learnCard1.addEventListener('click', () => {
+            if (typeof inverseTutorial !== 'undefined') {
+                inverseTutorial.show(1);
+            }
+        });
+        grid.appendChild(learnCard1);
+        
+        // المستويات 1-4 (2x2)
+        for (let i = 1; i <= 4; i++) {
+            grid.appendChild(this.createInverseLevelCard(i));
+        }
+        
+        // إضافة بطاقة التعلم الثانية (3x3)
+        const learnCard2 = document.createElement('div');
+        learnCard2.className = 'level-card learn-card';
+        learnCard2.innerHTML = `
+            <span class="level-number">📊</span>
+            <span class="level-stars">تعلم 3×3</span>
+        `;
+        learnCard2.addEventListener('click', () => {
+            if (typeof inverseTutorial !== 'undefined') {
+                inverseTutorial.show(2);
+            }
+        });
+        grid.appendChild(learnCard2);
+        
+        // المستويات 5-9 (3x3)
+        for (let i = 5; i <= 9; i++) {
+            grid.appendChild(this.createInverseLevelCard(i));
+        }
+        
+        // إضافة بطاقة التعلم الثالثة (4x4)
+        const learnCard3 = document.createElement('div');
+        learnCard3.className = 'level-card learn-card';
+        learnCard3.innerHTML = `
+            <span class="level-number">🧮</span>
+            <span class="level-stars">تعلم 4×4</span>
+        `;
+        learnCard3.addEventListener('click', () => {
+            if (typeof inverseTutorial !== 'undefined') {
+                inverseTutorial.show(3);
+            }
+        });
+        grid.appendChild(learnCard3);
+        
+        // المستوى 10 (4x4)
+        grid.appendChild(this.createInverseLevelCard(10));
+    }
+    
+    createInverseLevelCard(levelNum) {
+        const levelData = typeof inverseLevels !== 'undefined' ? inverseLevels[levelNum] : null;
+        const stars = typeof inverseGame !== 'undefined' ? inverseGame.getStars(levelNum) : 0;
+        const isComplete = typeof inverseGame !== 'undefined' ? inverseGame.completedLevels.includes(levelNum) : false;
+        
+        // فك القفل: المستوى الأول مفتوح دائماً، أو المستوى السابق مكتمل، أو وضع المطور
+        const prevLevel = levelNum > 1 ? levelNum - 1 : 0;
+        const isUnlocked = this.devMode || levelNum === 1 || 
+            (typeof inverseGame !== 'undefined' && inverseGame.completedLevels.includes(prevLevel));
+        
+        const card = document.createElement('div');
+        card.className = 'level-card';
+        
+        if (!isUnlocked) card.classList.add('locked');
+        if (isComplete) card.classList.add('completed');
+        if (this.devMode && !isComplete) card.classList.add('dev-unlocked');
+        
+        const starsDisplay = isComplete ? '⭐'.repeat(stars) + '☆'.repeat(5 - stars) : '☆☆☆☆☆';
+        
+        card.innerHTML = `
+            <span class="level-num">${levelNum}</span>
+            <span class="level-stars">${starsDisplay}</span>
+        `;
+        
+        if (isUnlocked) {
+            card.addEventListener('click', () => this.startInverseLevel(levelNum));
+        }
+        
+        return card;
+    }
+    
+    startInverseLevel(levelNum) {
+        const levelData = typeof inverseLevels !== 'undefined' ? inverseLevels[levelNum] : null;
+        if (!levelData) {
+            console.error('Inverse level not found:', levelNum);
+            return;
+        }
+        
+        // إنشاء المصفوفة الموسعة [A | I]
+        const n = levelData.size;
+        const augmentedMatrix = [];
+        
+        for (let i = 0; i < n; i++) {
+            const row = [];
+            // إضافة معاملات A
+            for (let j = 0; j < n; j++) {
+                row.push(levelData.coefficients[i][j]);
+            }
+            // إضافة مصفوفة الوحدة I
+            for (let j = 0; j < n; j++) {
+                row.push(i === j ? 1 : 0);
+            }
+            augmentedMatrix.push(row);
+        }
+        
+        // إنشاء كائن المستوى بنفس بنية مستويات جاوس
+        const inverseAsLevel = {
+            id: levelNum,
+            name: levelData.description,
+            size: [n, n * 2],
+            variables: levelData.variables,
+            matrix: augmentedMatrix,
+            solution: levelData.solution,
+            minSteps: levelData.minSteps,
+            // بيانات إضافية للمعكوس
+            isInverseLevel: true,
+            originalSize: n,
+            constants: levelData.constants
+        };
+        
+        this.currentLevel = inverseAsLevel;
+        this.matrix = Matrix.fromArray(augmentedMatrix);
+        this.originalMatrix = Matrix.fromArray(augmentedMatrix);
+        this.history = [];
+        this.score = 1000;
+        this.steps = 0;
+        this.phase = 1;
+        this.userSolvedAnswers = {};
+        
+        // تعيين علامة وضع المعكوس
+        this.isInverseMode = true;
+        this.inverseOriginalSize = n;
+        this.inverseConstants = levelData.constants;
+        
+        // إعادة تعيين المعلم المساعد
+        this.tutorVisible = false;
+        this.currentHint = null;
+        
+        this.updateUI();
+        this.renderMatrix();
+        this.renderInverseEquations(levelData);
+        this.showScreen('game');
+        
+        this.elements.phase1.classList.add('active');
+        this.elements.phase2.classList.remove('active');
+        this.elements.phase1Indicator.classList.add('active');
+        this.elements.phase2Indicator.classList.remove('active');
+        
+        // إظهار زر التلميح للمعكوس - نفس جاوس-جوردن
+        this.elements.btnShowHint.style.display = 'inline-flex';
+        // إظهار التلميح تلقائياً في المستوى الأول
+        if (levelNum === 1) {
+            setTimeout(() => this.showTutor(), 500);
+        }
+    }
+    
+    renderInverseEquations(levelData) {
+        const display = this.elements.equationsDisplay;
+        let html = '<div class="inverse-system-title">النظام الأصلي:</div>';
+        
+        for (let i = 0; i < levelData.size; i++) {
+            let eq = '';
+            for (let j = 0; j < levelData.size; j++) {
+                const coef = levelData.coefficients[i][j];
+                if (j > 0) {
+                    eq += coef >= 0 ? ' + ' : ' - ';
+                    eq += `${Math.abs(coef)}${levelData.variables[j]}`;
+                } else {
+                    eq += `${coef}${levelData.variables[j]}`;
+                }
+            }
+            eq += ` = ${levelData.constants[i]}`;
+            html += `<div class="equation-line">${eq}</div>`;
+        }
+        
+        display.innerHTML = html;
+    }
+    
+    endInverseGame() {
+        // إخفاء المعكوس
+        const gameContainer = document.getElementById('inverse-game-container');
+        if (gameContainer) {
+            gameContainer.style.display = 'none';
+            gameContainer.innerHTML = '';
+        }
+        
+        // إعادة عرض عناصر جاوس
+        this.showGaussUI();
+    }
+    
     updatePartsUI() {
-        for (let i = 2; i <= 4; i++) {
+        const requiredStars = 20;
+        
+        for (let i = 2; i <= 5; i++) {
             const card = document.getElementById(`part-card-${i}`);
             if (card) {
                 const isUnlocked = this.isPartUnlocked(i) || this.devMode;
@@ -391,8 +759,23 @@ class GaussianGame {
                     if (isUnlocked) {
                         statusEl.textContent = 'مفتوح ✓';
                     } else {
-                        const prevPartName = this.partsInfo[i - 1].name;
-                        statusEl.textContent = `🔒 أكمل المرحلة 5 من ${prevPartName}`;
+                        // حساب النجوم المطلوبة من القسم المناسب
+                        let currentStars = 0;
+                        let sourcePartName = '';
+                        
+                        if (i === 4 || i === 5) {
+                            // كرامر والمعكوس يتطلبان نجوم من المحددات
+                            if (typeof detGame !== 'undefined' && detGame.levelStars) {
+                                currentStars = Object.values(detGame.levelStars).reduce((sum, s) => sum + s, 0);
+                            }
+                            sourcePartName = this.partsInfo[3].name;
+                        } else {
+                            // جاوس-جوردن والمحددات يتطلبان نجوم من جاوس
+                            currentStars = this.getTotalStars(1);
+                            sourcePartName = this.partsInfo[1].name;
+                        }
+                        
+                        statusEl.innerHTML = `🔒 <span class="unlock-progress">${currentStars}/${requiredStars}</span> ⭐ من ${sourcePartName}`;
                     }
                 }
             }
@@ -400,6 +783,17 @@ class GaussianGame {
     }
     
     showLevelSelect() {
+        // التحقق من وضع المعكوس والتوجيه المناسب
+        if (this.isInverseMode || this.currentPart === 5) {
+            this.isInverseMode = false;
+            // إعادة عرض phase2 للاستخدام العادي
+            if (this.elements.phase2) {
+                this.elements.phase2.style.display = '';
+            }
+            this.showInverseLevelSelect();
+            return;
+        }
+        
         // تحديث العنوان حسب الجزء الحالي
         const titleEl = document.getElementById('level-select-title');
         if (titleEl) {
@@ -446,7 +840,7 @@ class GaussianGame {
             if (isCompleted) card.classList.add('completed');
             if (this.devMode && !isCompleted) card.classList.add('dev-unlocked');
             
-            const stars = isCompleted ? this.getStars(level.id) : '☆☆☆';
+            const stars = isCompleted ? this.getStars(level.id) : '☆☆☆☆☆';
             
             card.innerHTML = `
                 <span class="level-num">${level.id}</span>
@@ -483,6 +877,11 @@ class GaussianGame {
         const level = getLevel(levelId);
         if (!level) return;
         
+        // إعادة تعيين وضع المعكوس
+        this.isInverseMode = false;
+        this.inverseOriginalSize = 0;
+        this.inverseConstants = [];
+        
         this.currentLevel = level;
         this.matrix = Matrix.fromArray(level.matrix);
         this.originalMatrix = Matrix.fromArray(level.matrix);
@@ -491,6 +890,10 @@ class GaussianGame {
         this.steps = 0;
         this.phase = 1;
         this.userSolvedAnswers = {}; // مسح إجابات اللاعب السابقة
+        
+        // إعادة تعيين تتبع التلميحات والأخطاء للتقييم
+        this.hintsUsed = 0;
+        this.errorsCount = 0;
         
         // إعادة تعيين المعلم المساعد
         this.tutorVisible = false;
@@ -503,11 +906,12 @@ class GaussianGame {
         
         this.elements.phase1.classList.add('active');
         this.elements.phase2.classList.remove('active');
+        this.elements.phase2.style.display = ''; // إعادة العرض بعد وضع المعكوس
         this.elements.phase1Indicator.classList.add('active');
         this.elements.phase2Indicator.classList.remove('active');
         
-        // إظهار/إخفاء زر التلميح حسب المستوى
-        if (this.tutorEnabledLevels.includes(levelId)) {
+        // إظهار زر التلميح لجميع المستويات (نظام جديد)
+        if (this.tutorEnabledLevels === null || this.tutorEnabledLevels.includes(levelId)) {
             this.elements.btnShowHint.style.display = 'inline-flex';
             // إظهار التلميح تلقائياً في المستوى الأول
             if (levelId === 1) {
@@ -526,6 +930,22 @@ class GaussianGame {
         this.elements.currentScore.textContent = this.score;
         this.elements.currentSteps.textContent = this.steps;
         this.elements.btnUndo.disabled = this.history.length === 0;
+        
+        // تحديث عرض النجوم الفوري
+        this.updateLiveStars();
+    }
+    
+    // عرض النجوم المتوقعة أثناء اللعب
+    updateLiveStars() {
+        const liveStarsEl = document.getElementById('live-stars');
+        if (liveStarsEl) {
+            const stars = this.calculateStars();
+            liveStarsEl.innerHTML = '⭐'.repeat(stars) + '☆'.repeat(5 - stars);
+            
+            // إضافة تأثير عند التغيير
+            liveStarsEl.classList.add('pulse');
+            setTimeout(() => liveStarsEl.classList.remove('pulse'), 300);
+        }
     }
     
     renderMatrix() {
@@ -556,8 +976,9 @@ class GaussianGame {
             
             // الخلايا
             for (let j = 0; j < this.matrix.cols; j++) {
-                // الفاصل قبل العمود الأخير
-                if (j === this.matrix.cols - 1) {
+                // الفاصل - موضعه يختلف بين وضع المعكوس والوضع العادي
+                const dividerPosition = this.isInverseMode ? this.inverseOriginalSize : this.matrix.cols - 1;
+                if (j === dividerPosition) {
                     const divider = document.createElement('span');
                     divider.className = 'matrix-divider';
                     row.appendChild(divider);
@@ -636,16 +1057,31 @@ class GaussianGame {
         const container = document.getElementById('goal-hint-container');
         if (!container) return;
 
+        // إزالة class الاختفاء إذا كان موجوداً (عند العودة للمستوى)
+        container.classList.remove('fade-out');
+        
         // تحديد نوع الهدف حسب الجزء الحالي
         const isGaussJordan = (this.currentPart === 2);
-        const goalTitle = isGaussJordan ? 'الهدف: الشكل المختصر (جاوس-جوردن)' : 'الهدف: الشكل المدرجي';
+        const isInverse = this.isInverseMode;
         
-        let html = '<div class="goal-title">' + goalTitle + '</div><div class="goal-grid" style="grid-template-columns: repeat(' + this.matrix.cols + ', 1fr);">';
+        let goalTitle;
+        if (isInverse) {
+            goalTitle = 'الهدف: حوّل الجزء الأيسر إلى مصفوفة الوحدة (I)';
+        } else if (isGaussJordan) {
+            goalTitle = 'الهدف: الشكل المختصر (جاوس-جوردن)';
+        } else {
+            goalTitle = 'الهدف: الشكل المدرجي';
+        }
+        
+        // في وضع المعكوس، نعرض فقط الأعمدة اليسرى
+        const displayCols = isInverse ? this.inverseOriginalSize : this.matrix.cols;
+        
+        let html = '<div class="goal-title">' + goalTitle + '</div><div class="goal-grid" style="grid-template-columns: repeat(' + displayCols + ', 1fr);">';
         
         for (let i = 0; i < this.matrix.rows; i++) {
-            for (let j = 0; j < this.matrix.cols; j++) {
-                // تخطي عمود الناتج في العرض المبسط
-                if (j === this.matrix.cols - 1) {
+            for (let j = 0; j < displayCols; j++) {
+                // في وضع المعكوس والوضع العادي: آخر عمود معروض هو الناتج (?)
+                if (!isInverse && j === this.matrix.cols - 1) {
                      html += `<div class="goal-cell ignore">?</div>`;
                      continue;
                 }
@@ -653,10 +1089,10 @@ class GaussianGame {
                 // المنطق:
                 // - القائد في (i, i) يجب أن يكون 1
                 // - في جاوس: ما تحته (j < i) يجب أن يكون 0
-                // - في جاوس-جوردن: ما تحته وما فوقه (i !== j في نفس العمود) يجب أن يكون 0
+                // - في جاوس-جوردن والمعكوس: ما تحته وما فوقه (i !== j) يجب أن يكون 0
                 const isPivot = (i === j);
-                const isBelowPivot = (j < i);  // في نفس العمود، صف أكبر
-                const isAbovePivot = (j > i);  // عنصر يسار القائد (في صف سابق، عمود أكبر)
+                const isBelowPivot = (j < i);
+                const isAbovePivot = (j > i && j < this.matrix.rows);
                 
                 let classes = 'goal-cell';
                 let content = '•';
@@ -664,20 +1100,18 @@ class GaussianGame {
                 if (isPivot) {
                      classes += ' pivot-target';
                      content = '1';
-                     if (this.matrix.isCellCorrect(i, j)) classes += ' done';
+                     const val = this.matrix.get(i, j);
+                     if (val.num === 1 && val.den === 1) classes += ' done';
                 } else if (isBelowPivot) {
-                    // جاوس وجاوس-جوردن: صفر تحت القائد
+                    // جاوس وجاوس-جوردن والمعكوس: صفر تحت القائد
                     classes += ' zero-target';
                     content = '0';
-                    if (this.matrix.isCellCorrect(i, j)) classes += ' done';
-                } else if (isGaussJordan && isAbovePivot && j < this.matrix.rows) {
-                    // جاوس-جوردن فقط: صفر فوق القائد أيضاً
-                    // هذا يعني الخلايا التي في عمود أكبر من رقم الصف
-                    // للتبسيط: نريد أن يكون العمود j يساوي رقم صف القائد الذي تحته
-                    // أي إذا كنا في صف i وعمود j حيث j > i، فالقائد في الصف j يحتاج صفر فوقه
+                    const val = this.matrix.get(i, j);
+                    if (val.num === 0) classes += ' done';
+                } else if ((isGaussJordan || isInverse) && isAbovePivot) {
+                    // جاوس-جوردن والمعكوس: صفر فوق القائد أيضاً
                     classes += ' zero-target-above';
                     content = '0';
-                    // تحقق مما إذا كان العنصر صحيحاً
                     const val = this.matrix.get(i, j);
                     if (val.num === 0) classes += ' done';
                 } else {
@@ -688,13 +1122,29 @@ class GaussianGame {
             }
         }
         
-        // في جاوس-جوردن: إضافة ملاحظة توضيحية
         html += '</div>';
         if (isGaussJordan) {
             html += '<div class="goal-note">📌 جاوس-جوردن: صفّر <strong>فوق</strong> وتحت كل قائد!</div>';
+        } else if (isInverse) {
+            html += '<div class="goal-note">📌 المعكوس: حوّل الجزء الأيسر إلى مصفوفة الوحدة، ثم اضرب المعكوس في B</div>';
         }
         
         container.innerHTML = html;
+        
+        // إضافة الضغط للإخفاء
+        container.onclick = () => {
+            container.classList.add('fade-out');
+        };
+        
+        // إلغاء المؤقت السابق إن وجد
+        if (this.goalHintTimer) {
+            clearTimeout(this.goalHintTimer);
+        }
+        
+        // إخفاء تلقائي بعد 10 ثواني
+        this.goalHintTimer = setTimeout(() => {
+            container.classList.add('fade-out');
+        }, 10000);
     }
     
     renderEquations() {
@@ -1076,7 +1526,16 @@ class GaussianGame {
         // استخدام الفحص المناسب حسب الجزء الحالي
         let isComplete = false;
         
-        if (this.currentPart === 2) {
+        console.log('checkPhase1Complete called');
+        console.log('isInverseMode:', this.isInverseMode);
+        console.log('inverseOriginalSize:', this.inverseOriginalSize);
+        console.log('currentPart:', this.currentPart);
+        
+        if (this.isInverseMode) {
+            // وضع المعكوس: التحقق من أن الجزء الأيسر هو مصفوفة الوحدة
+            isComplete = this.isLeftSideIdentity();
+            console.log('Inverse mode - isLeftSideIdentity:', isComplete);
+        } else if (this.currentPart === 2) {
             // جاوس-جوردن: الشكل المدرجي المختصر
             isComplete = this.matrix.isReducedRowEchelon();
         } else {
@@ -1085,10 +1544,311 @@ class GaussianGame {
         }
         
         if (isComplete) {
+            console.log('Phase 1 complete! isInverseMode:', this.isInverseMode);
             setTimeout(() => {
-                this.startPhase2();
+                console.log('Timeout executing, isInverseMode:', this.isInverseMode);
+                if (this.isInverseMode) {
+                    console.log('Calling startInversePhase2');
+                    this.startInversePhase2();
+                } else {
+                    console.log('Calling startPhase2');
+                    this.startPhase2();
+                }
             }, 500);
         }
+    }
+    
+    // التحقق من أن الجزء الأيسر من المصفوفة هو مصفوفة الوحدة
+    isLeftSideIdentity() {
+        const n = this.inverseOriginalSize;
+        for (let i = 0; i < n; i++) {
+            for (let j = 0; j < n; j++) {
+                const cell = this.matrix.get(i, j);
+                const expected = (i === j) ? 1 : 0;
+                if (i === j) {
+                    // القطر يجب أن يكون 1
+                    if (cell.num !== 1 || cell.den !== 1) return false;
+                } else {
+                    // باقي العناصر يجب أن تكون 0
+                    if (cell.num !== 0) return false;
+                }
+            }
+        }
+        return true;
+    }
+    
+    // المرحلة الثانية للمعكوس - عرض X = A⁻¹ × B
+    startInversePhase2() {
+        console.log('startInversePhase2 executing...');
+        try {
+            this.phase = 2;
+            
+            // إخفاء المعلم المساعد
+            this.hideTutor();
+            
+            // استخراج المعكوس من الجزء الأيمن
+            const n = this.inverseOriginalSize;
+            console.log('n =', n);
+            
+            const inverseMatrix = [];
+            for (let i = 0; i < n; i++) {
+                const row = [];
+                for (let j = n; j < 2 * n; j++) {
+                    row.push(this.matrix.get(i, j));
+                }
+                inverseMatrix.push(row);
+            }
+            console.log('inverseMatrix:', inverseMatrix);
+            
+            // حساب الحل X = A⁻¹ × B
+            const solution = [];
+            for (let i = 0; i < n; i++) {
+                let sum = new Fraction(0, 1);
+                for (let j = 0; j < n; j++) {
+                    const invCell = inverseMatrix[i][j];
+                    const constant = new Fraction(this.inverseConstants[j], 1);
+                    sum = sum.add(invCell.multiply(constant));
+                }
+                solution.push(sum);
+            }
+            console.log('solution:', solution);
+            
+            // حفظ الحل
+            this.inverseSolution = solution;
+            
+            // عرض واجهة المرحلة الثانية للمعكوس
+            console.log('Calling renderInversePhase2');
+            this.renderInversePhase2(inverseMatrix, solution);
+            console.log('renderInversePhase2 done');
+            
+            // في وضع المعكوس: نُبقي phase1 مرئياً لأن المحتوى فيه
+            // لكن نُحدث مؤشرات المرحلة
+            this.elements.phase1Indicator.classList.remove('active');
+            this.elements.phase2Indicator.classList.add('active');
+            
+            // إخفاء phase2 العادية تماماً
+            this.elements.phase2.classList.remove('active');
+            this.elements.phase2.style.display = 'none';
+            
+            this.score += 200;
+            this.updateUI();
+            console.log('startInversePhase2 completed successfully');
+        } catch (error) {
+            console.error('Error in startInversePhase2:', error);
+        }
+    }
+    
+    renderInversePhase2(inverseMatrix, solution) {
+        const n = this.inverseOriginalSize;
+        const vars = this.currentLevel.variables;
+        const constants = this.inverseConstants;
+        
+        // إنشاء HTML لخطوات الضرب التفصيلية
+        let multiplicationSteps = '';
+        for (let i = 0; i < n; i++) {
+            let stepParts = [];
+            for (let j = 0; j < n; j++) {
+                const invVal = inverseMatrix[i][j].toString();
+                const constVal = constants[j];
+                stepParts.push(`(${invVal} × ${constVal})`);
+            }
+            multiplicationSteps += `
+                <div class="mult-step-row">
+                    <span class="mult-var">${vars[i]} = </span>
+                    <span class="mult-calc">${stepParts.join(' + ')}</span>
+                    <span class="mult-result">= ${solution[i].toString()}</span>
+                </div>
+            `;
+        }
+        
+        // إنشاء واجهة المرحلة الثانية للمعكوس بشرح مفصل
+        let html = `
+            <div class="inverse-phase2">
+                <div class="inverse-found-title">🎉 تم إيجاد المعكوس A⁻¹</div>
+                
+                <!-- الخطوة 1: من أين جاء المعكوس -->
+                <div class="inverse-step-section">
+                    <div class="step-header">
+                        <span class="step-number">1</span>
+                        <span class="step-title">استخراج المعكوس من الجزء الأيمن</span>
+                    </div>
+                    <div class="step-content">
+                        <p class="step-explanation">
+                            عند تحويل الجزء الأيسر من المصفوفة الموسعة [A|I] إلى مصفوفة الوحدة I،
+                            <br>يصبح الجزء الأيمن هو <strong>المعكوس A⁻¹</strong>
+                        </p>
+                        <div class="transform-visual">
+                            <div class="transform-box">
+                                <div class="transform-label">كان: [A | I]</div>
+                            </div>
+                            <span class="transform-arrow">➜</span>
+                            <div class="transform-box highlight">
+                                <div class="transform-label">أصبح: [I | A⁻¹]</div>
+                            </div>
+                        </div>
+                        <div class="extracted-inverse">
+                            <div class="extracted-label">المعكوس A⁻¹:</div>
+                            ${this.renderInverseMatrixMini(inverseMatrix)}
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- الخطوة 2: ضرب المعكوس في B -->
+                <div class="inverse-step-section">
+                    <div class="step-header">
+                        <span class="step-number">2</span>
+                        <span class="step-title">حساب X = A⁻¹ × B</span>
+                    </div>
+                    <div class="step-content">
+                        <div class="formula-box-large">X = A⁻¹ × B</div>
+                        
+                        <div class="multiplication-visual">
+                            <div class="mult-matrix-box">
+                                <div class="mult-label">A⁻¹</div>
+                                <div class="mult-matrix-content">
+                                    ${this.renderInverseMatrixMini(inverseMatrix)}
+                                </div>
+                            </div>
+                            <span class="mult-operator">×</span>
+                            <div class="mult-vector-box">
+                                <div class="mult-label">B</div>
+                                <div class="mult-vector-content">
+                                    ${constants.map(c => `<div class="mult-cell const">${c}</div>`).join('')}
+                                </div>
+                            </div>
+                            <span class="mult-operator">=</span>
+                            <div class="mult-vector-box result">
+                                <div class="mult-label">X</div>
+                                <div class="mult-vector-content">
+                                    ${solution.map(s => `<div class="mult-cell result-val">${s.toString()}</div>`).join('')}
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="multiplication-breakdown">
+                            <div class="breakdown-title">📝 تفاصيل الحساب:</div>
+                            ${multiplicationSteps}
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- الخطوة 3: الحل النهائي -->
+                <div class="inverse-step-section final">
+                    <div class="step-header">
+                        <span class="step-number">✓</span>
+                        <span class="step-title">الحل النهائي</span>
+                    </div>
+                    <div class="step-content">
+                        <div class="solution-values">
+                            ${vars.map((v, i) => `
+                                <span class="solution-item">${v} = ${solution[i].toString()}</span>
+                            `).join('')}
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="inverse-complete-btn">
+                    <button class="btn btn-primary btn-lg" onclick="game.completeInverseLevel()">
+                        إنهاء المستوى ✓
+                    </button>
+                </div>
+            </div>
+        `;
+        
+        this.elements.matrixContainer.innerHTML = html;
+        
+        // إخفاء عناصر المرحلة الثانية العادية
+        const phase2Content = document.getElementById('phase2-content');
+        if (phase2Content) phase2Content.style.display = 'none';
+    }
+    
+    renderInverseMatrixMini(matrix) {
+        const cols = matrix[0] ? matrix[0].length : 2;
+        let html = `<div class="mini-matrix-grid" style="grid-template-columns: repeat(${cols}, 1fr);">`;
+        for (let i = 0; i < matrix.length; i++) {
+            for (let j = 0; j < matrix[i].length; j++) {
+                html += `<div class="mult-cell">${matrix[i][j].toString()}</div>`;
+            }
+        }
+        html += '</div>';
+        return html;
+    }
+    
+    completeInverseLevel() {
+        // حساب النجوم
+        const stars = this.calculateStars();
+        
+        // حفظ التقدم لمستويات المعكوس
+        if (typeof inverseGame !== 'undefined') {
+            const levelNum = this.currentLevel.id;
+            if (!inverseGame.completedLevels.includes(levelNum)) {
+                inverseGame.completedLevels.push(levelNum);
+            }
+            if (!inverseGame.levelStars[levelNum] || stars > inverseGame.levelStars[levelNum]) {
+                inverseGame.levelStars[levelNum] = stars;
+            }
+            inverseGame.saveProgress();
+        }
+        
+        // عرض شاشة الفوز
+        this.showInverseWinScreen(stars);
+    }
+    
+    showInverseWinScreen(stars) {
+        const starsDisplay = '⭐'.repeat(stars) + '☆'.repeat(3 - stars);
+        const levelNum = this.currentLevel.id;
+        
+        this.elements.matrixContainer.innerHTML = `
+            <div class="inverse-win-screen">
+                <div class="win-icon">🎉</div>
+                <h2>أحسنت!</h2>
+                <div class="win-stars">${starsDisplay}</div>
+                <p>أكملت المستوى ${levelNum} في ${this.steps} خطوة</p>
+                <div class="win-buttons">
+                    <button class="btn btn-secondary" onclick="game.backToInverseLevels()">
+                        قائمة المستويات
+                    </button>
+                    ${levelNum < 10 ? `
+                        <button class="btn btn-primary" onclick="game.startInverseLevel(${levelNum + 1})">
+                            المستوى التالي ▶
+                        </button>
+                    ` : ''}
+                </div>
+            </div>
+        `;
+    }
+    
+    backToInverseLevels() {
+        this.isInverseMode = false;
+        // إعادة عرض phase2 للاستخدام العادي
+        if (this.elements.phase2) {
+            this.elements.phase2.style.display = '';
+        }
+        this.showInverseLevelSelect();
+    }
+    
+    calculateStars() {
+        // نظام 5 نجوم يعتمد على التلميحات والأخطاء
+        // 5 نجوم: 0 تلميحات + 0 أخطاء
+        // 4 نجوم: 1 تلميح أو 1-2 أخطاء
+        // 3 نجوم: 2 تلميحات أو 3-4 أخطاء
+        // 2 نجوم: 3 تلميحات أو 5-6 أخطاء
+        // 1 نجمة: 4+ تلميحات أو 7+ أخطاء
+        
+        const hints = this.hintsUsed || 0;
+        const errors = this.errorsCount || 0;
+        
+        // حساب خصم النجوم من التلميحات
+        let hintPenalty = hints; // كل تلميح ينقص نجمة
+        
+        // حساب خصم النجوم من الأخطاء
+        let errorPenalty = Math.floor(errors / 2); // كل خطأين ينقصان نجمة
+        
+        // أخذ الأسوأ بين العقوبتين
+        const totalPenalty = Math.max(hintPenalty, errorPenalty);
+        
+        // النجوم = 5 - العقوبة (الحد الأدنى 1)
+        return Math.max(1, 5 - totalPenalty);
     }
     
     startPhase2() {
@@ -1365,14 +2125,52 @@ class GaussianGame {
         }
     }
     
+    // تلميحات المرحلة الثانية
+    showPhase2Hint() {
+        this.hintsUsed++;
+        this.updateLiveStars();
+        
+        const solutions = solveByBackSubstitution(this.matrix);
+        const inputs = this.elements.variablesForm.querySelectorAll('.variable-input:not([readonly])');
+        const variables = this.currentLevel.variables;
+        
+        // البحث عن أول متغير فارغ
+        for (let input of inputs) {
+            if (!input.value.trim()) {
+                const varIndex = parseInt(input.dataset.var);
+                const solution = solutions[varIndex];
+                if (solution) {
+                    // عرض التلميح
+                    const varName = variables[varIndex];
+                    const hintBox = document.createElement('div');
+                    hintBox.className = 'phase2-hint-popup';
+                    hintBox.innerHTML = `💡 ${varName} = ${solution.toString()}`;
+                    hintBox.style.cssText = 'position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);background:linear-gradient(135deg,#F59E0B,#D97706);color:#1a1a1a;padding:20px 40px;border-radius:15px;font-size:1.5rem;font-weight:bold;z-index:9999;animation:fadeIn 0.3s ease;';
+                    document.body.appendChild(hintBox);
+                    
+                    // ملء الحقل
+                    input.value = solution.toString();
+                    input.classList.add('hint-filled');
+                    
+                    // إزالة التلميح بعد 2 ثانية
+                    setTimeout(() => {
+                        hintBox.remove();
+                    }, 2000);
+                    
+                    return;
+                }
+            }
+        }
+        
+        // إذا كل الحقول ممتلئة
+        alert('💡 جميع الحقول ممتلئة! اضغط "تحقق من الإجابة"');
+    }
+    
     // ==================== الفوز والإنهاء ====================
     
     winLevel() {
-        // حساب النجوم
-        const minSteps = this.currentLevel.minSteps;
-        let stars = 1;
-        if (this.steps <= minSteps * 1.5) stars = 2;
-        if (this.steps <= minSteps * 1.2) stars = 3;
+        // حساب النجوم بالنظام الجديد (5 نجوم)
+        const stars = this.calculateStars();
         
         this.score += 500; // مكافأة إكمال المستوى
         
@@ -1391,19 +2189,62 @@ class GaussianGame {
         // عرض شاشة الفوز
         this.elements.finalScore.textContent = this.score;
         this.elements.finalSteps.textContent = this.steps;
-        this.elements.winStars.textContent = '⭐'.repeat(stars) + '☆'.repeat(3 - stars);
+        this.elements.winStars.textContent = '⭐'.repeat(stars) + '☆'.repeat(5 - stars);
         
-        // عرض قواعد التقييم
-        const threeStarsMax = Math.floor(minSteps * 1.2);
-        const twoStarsMax = Math.floor(minSteps * 1.5);
+        // عرض قواعد التقييم الجديدة
+        const hintsInfo = this.hintsUsed === 0 ? 'بدون تلميحات 🌟' : `${this.hintsUsed} تلميحات`;
+        const errorsInfo = this.errorsCount === 0 ? 'بدون أخطاء 💯' : `${this.errorsCount} أخطاء`;
         
-        document.getElementById('rule-3-stars').textContent = `≤ ${threeStarsMax} خطوات`;
-        document.getElementById('rule-2-stars').textContent = `≤ ${twoStarsMax} خطوات`;
-        document.getElementById('rule-1-star').textContent = `> ${twoStarsMax} خطوات`;
+        // تحديث عناصر القواعد
+        const rule5 = document.getElementById('rule-3-stars'); // نعيد استخدام العناصر الموجودة
+        const rule2 = document.getElementById('rule-2-stars');
+        const rule1 = document.getElementById('rule-1-star');
+        
+        if (rule5) rule5.textContent = hintsInfo;
+        if (rule2) rule2.textContent = errorsInfo;
+        if (rule1) rule1.textContent = `${this.steps} خطوات`;
+        
+        // عرض الشارات
+        this.showBadges();
         
         setTimeout(() => {
             this.showScreen('win');
         }, 500);
+    }
+    
+    // عرض شارات الإنجاز
+    showBadges() {
+        const badges = this.getBadges();
+        const badgesContainer = document.getElementById('win-badges');
+        
+        if (badgesContainer) {
+            if (badges.length > 0) {
+                badgesContainer.innerHTML = badges.map(b => 
+                    `<span class="badge ${b.class}">${b.icon} ${b.name}</span>`
+                ).join('');
+                badgesContainer.style.display = 'flex';
+            } else {
+                badgesContainer.style.display = 'none';
+            }
+        }
+    }
+    
+    // حساب الشارات المستحقة
+    getBadges() {
+        const badges = [];
+        
+        if (this.hintsUsed === 0 && this.errorsCount === 0) {
+            badges.push({ icon: '👑', name: 'مثالي', class: 'badge-perfect' });
+        } else {
+            if (this.hintsUsed === 0) {
+                badges.push({ icon: '🏅', name: 'بدون تلميحات', class: 'badge-no-hints' });
+            }
+            if (this.errorsCount === 0) {
+                badges.push({ icon: '💎', name: 'بلا أخطاء', class: 'badge-no-errors' });
+            }
+        }
+        
+        return badges;
     }
     
     nextLevel() {
@@ -1544,20 +2385,36 @@ class GaussianGame {
     isPartUnlocked(partNumber) {
         if (partNumber === 1) return true;
         
-        // الجزء 2 يفتح بعد المرحلة 5 من الجزء 1
-        // الجزء 3 يفتح بعد المرحلة 5 من الجزء 2
-        // الجزء 4 يفتح بعد المرحلة 5 من الجزء 3
-        const previousPart = partNumber - 1;
-        const requiredLevel = this.partsInfo[partNumber].unlockLevel;
-        const completedInPrevious = this.completedLevels[previousPart] || [];
+        // نظام جديد: فتح الأقسام بـ 20 نجمة
+        const requiredStars = 20;
         
-        return completedInPrevious.includes(requiredLevel);
+        if (partNumber === 2 || partNumber === 3) {
+            // جاوس-جوردن والمحددات يفتحان بعد 20 نجمة من جاوس
+            return this.getTotalStars(1) >= requiredStars;
+        }
+        
+        if (partNumber === 4 || partNumber === 5) {
+            // كرامر والمعكوس يفتحان بعد 20 نجمة من المحددات
+            if (typeof detGame !== 'undefined' && detGame.levelStars) {
+                const detStars = Object.values(detGame.levelStars).reduce((sum, s) => sum + s, 0);
+                return detStars >= requiredStars;
+            }
+            return false;
+        }
+        
+        return false;
+    }
+    
+    // حساب إجمالي النجوم لقسم معين
+    getTotalStars(partNumber) {
+        const scores = this.levelScores[partNumber] || {};
+        return Object.values(scores).reduce((sum, s) => sum + s, 0);
     }
     
     getStars(levelId) {
         const scores = this.levelScores[this.currentPart] || {};
         const stars = scores[levelId] || 0;
-        return '⭐'.repeat(stars) + '☆'.repeat(3 - stars);
+        return '⭐'.repeat(stars) + '☆'.repeat(5 - stars);
     }
     
     saveStars(levelId, stars) {
@@ -1622,9 +2479,13 @@ class GaussianGame {
     getTutorHint() {
         // تحليل المصفوفة وتقديم التلميح المناسب
         const n = this.matrix.rows;
-        const isGaussJordan = this.currentPart === 2;
+        // المعكوس يحتاج نفس منطق جاوس-جوردن (تصفير فوق وتحت المحور)
+        const isGaussJordan = this.currentPart === 2 || this.isInverseMode;
         
-        for (let col = 0; col < n && col < this.matrix.cols - 1; col++) {
+        // في وضع المعكوس نتحقق فقط من الأعمدة اليسرى
+        const maxCol = this.isInverseMode ? this.inverseOriginalSize : this.matrix.cols - 1;
+        
+        for (let col = 0; col < n && col < maxCol; col++) {
             // التحقق من العمود الحالي
             const pivot = this.matrix.get(col, col);
             
@@ -1664,7 +2525,7 @@ class GaussianGame {
                 }
             }
             
-            // جاوس-جوردن: هل العناصر فوق المحور = 0؟
+            // جاوس-جوردن والمعكوس: هل العناصر فوق المحور = 0؟
             if (isGaussJordan) {
                 for (let i = 0; i < col; i++) {
                     const abovePivot = this.matrix.get(i, col);
@@ -1672,8 +2533,9 @@ class GaussianGame {
                         const factor = abovePivot.num < 0 ? 
                             `${Math.abs(abovePivot.num)}/${abovePivot.den}` : 
                             `-${abovePivot.num}/${abovePivot.den}`;
+                        const methodName = this.isInverseMode ? 'المعكوس' : 'جاوس-جوردن';
                         return {
-                            message: `🎯 جاوس-جوردن: اجعل العنصر <strong>فوق</strong> المحور في <strong>R${i + 1}</strong> يساوي 0.<br>أضف <code>${factor}</code> × <strong>R${col + 1}</strong> إلى <strong>R${i + 1}</strong>`,
+                            message: `🎯 ${methodName}: اجعل العنصر <strong>فوق</strong> المحور في <strong>R${i + 1}</strong> يساوي 0.<br>أضف <code>${factor}</code> × <strong>R${col + 1}</strong> إلى <strong>R${i + 1}</strong>`,
                             action: { type: 'add', target: i, source: col, num: -abovePivot.num, den: abovePivot.den }
                         };
                     }
@@ -1681,27 +2543,39 @@ class GaussianGame {
             }
         }
         
-        // المصفوفة في الشكل المدرجي
-        if (isGaussJordan && this.matrix.isReducedRowEchelon()) {
+        // التحقق من اكتمال المصفوفة
+        if (this.isInverseMode && this.isLeftSideIdentity()) {
+            return {
+                message: `🎉 ممتاز! وصل الجزء الأيسر لمصفوفة الوحدة!<br>الجزء الأيمن الآن هو <strong>المعكوس A⁻¹</strong>`,
+                action: null
+            };
+        } else if (isGaussJordan && this.matrix.isReducedRowEchelon()) {
             return {
                 message: `🎉 ممتاز! وصلت للشكل المدرجي المختصر.<br>الحل واضح مباشرة!`,
                 action: null
             };
         } else if (this.matrix.isRowEchelon()) {
             return {
-                message: `🎉 ممتاز! وصلت للشكل المدرجي الصفي.<br>الآن أوجد قيم المتغيرات!`,
+                message: `🎉 ممتازاً وصلت للشكل المدرجي الصفي.<br>الآن أوجد قيم المتغيرات!`,
                 action: null
             };
         }
         
+        const goalText = this.isInverseMode ? 'مصفوفة الوحدة (على اليسار)' : 'الشكل المدرجي';
         return {
-            message: 'استمر في العمل! 💪 حاول جعل المصفوفة في الشكل المدرجي.',
+            message: `استمر في العمل! 💪 حاول جعل المصفوفة في ${goalText}.`,
             action: null
         };
     }
     
     applyTutorHint() {
         if (!this.currentHint || !this.currentHint.action) return;
+        
+        // تتبع استخدام التلميح
+        this.hintsUsed++;
+        
+        // تحديث عرض النجوم الفوري
+        this.updateLiveStars();
         
         const action = this.currentHint.action;
         

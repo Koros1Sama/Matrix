@@ -108,7 +108,7 @@
             <div class="part-icon">🎯</div>
             <div class="part-name">جاوس-جوردن</div>
             <div class="part-desc">الشكل المدرجي المختصر</div>
-            <div class="part-status">🔒 أكمل المرحلة 5 من جاوس</div>
+            <div class="part-status">🔒 اجمع 20 نجمة من جاوس</div>
           </div>
 
           <!-- الجزء 3: المحددات -->
@@ -120,29 +120,31 @@
             <div class="part-icon">🧮</div>
             <div class="part-name">المحددات</div>
             <div class="part-desc">حساب محددات المصفوفات</div>
-            <div class="part-status">🔒 أكمل المرحلة 5 من جاوس</div>
+            <div class="part-status">🔒 اجمع 20 نجمة من جاوس</div>
           </div>
 
           <!-- الجزء 4: كرامر -->
           <div
-            class="part-card locked coming-soon"
+            class="part-card locked"
+            id="part-card-4"
             onclick="game.selectPart(4)"
           >
             <div class="part-icon">📊</div>
             <div class="part-name">كرامر</div>
             <div class="part-desc">حل المعادلات بالمحددات</div>
-            <div class="part-status">قريباً ⏳</div>
+            <div class="part-status">🔒 اجمع 20 نجمة من جاوس</div>
           </div>
 
           <!-- الجزء 5: طريقة المعكوس -->
           <div
-            class="part-card locked coming-soon"
+            class="part-card locked"
+            id="part-card-5"
             onclick="game.selectPart(5)"
           >
             <div class="part-icon">🔄</div>
             <div class="part-name">المعكوس</div>
-            <div class="part-desc">إيجاد معكوس المصفوفة</div>
-            <div class="part-status">قريباً ⏳</div>
+            <div class="part-desc">حل المعادلات بالمعكوس</div>
+            <div class="part-status">🔒 اجمع 20 نجمة من المحددات</div>
           </div>
         </div>
       </div>
@@ -734,6 +736,10 @@
               <span class="stat-label">الخطوات</span>
               <span class="stat-value" id="current-steps">0</span>
             </div>
+            <!-- عرض النجوم الفوري -->
+            <div class="stat live-stars-stat">
+              <span id="live-stars" class="live-stars-display">⭐⭐⭐⭐⭐</span>
+            </div>
           </div>
         </div>
 
@@ -861,6 +867,13 @@
             >
               ✓ تحقق من الإجابة
             </button>
+            <button
+              class="btn btn-hint btn-large"
+              id="btn-phase2-hint"
+              onclick="game.showPhase2Hint()"
+            >
+              💡 تلميح
+            </button>
           </div>
         </div>
       </div>
@@ -885,19 +898,22 @@
             </div>
           </div>
 
-          <div class="win-stars" id="win-stars">⭐⭐⭐</div>
+          <div class="win-stars" id="win-stars">⭐⭐⭐⭐⭐</div>
+
+          <!-- شارات الإنجاز -->
+          <div class="win-badges" id="win-badges" style="display: none"></div>
 
           <!-- قواعد التقييم -->
           <div class="scoring-rules" id="scoring-rules">
-            <div class="rule-title">قواعد التقييم:</div>
+            <div class="rule-title">الإحصائيات:</div>
             <div class="rule-item">
-              ⭐⭐⭐ <span id="rule-3-stars">≤ 3 خطوات</span>
+              💡 <span id="rule-3-stars">بدون تلميحات</span>
             </div>
             <div class="rule-item">
-              ⭐⭐☆ <span id="rule-2-stars">≤ 4 خطوات</span>
+              ✅ <span id="rule-2-stars">بدون أخطاء</span>
             </div>
             <div class="rule-item">
-              ⭐☆☆ <span id="rule-1-star">إكمال المستوى</span>
+              👣 <span id="rule-1-star">الخطوات</span>
             </div>
           </div>
 
@@ -1102,6 +1118,12 @@
     <script src="js/determinant-levels.js"></script>
     <script src="js/determinant-game.js"></script>
     <script src="js/determinant-tutorial.js"></script>
+    <script src="js/cramer-levels.js"></script>
+    <script src="js/cramer-game.js"></script>
+    <script src="js/cramer-tutorial.js"></script>
+    <script src="js/inverse-levels.js"></script>
+    <script src="js/inverse-game.js"></script>
+    <script src="js/inverse-tutorial.js"></script>
     <script src="js/app.js"></script>
   </body>
 </html>

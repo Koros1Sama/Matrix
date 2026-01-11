@@ -2249,18 +2249,38 @@ body::before {
 
 /* زر تعلم في شبكة المستويات */
 .level-card.learn-card {
-    background: linear-gradient(135deg, rgba(99, 102, 241, 0.2), rgba(139, 92, 246, 0.15));
+    background: linear-gradient(135deg, rgba(99, 102, 241, 0.25), rgba(139, 92, 246, 0.2));
     border: 2px dashed var(--primary);
+    cursor: pointer;
+    position: relative;
+    overflow: hidden;
+}
+
+.level-card.learn-card::before {
+    content: '📚';
+    position: absolute;
+    top: -10px;
+    right: -10px;
+    font-size: 2rem;
+    opacity: 0.3;
 }
 
 .level-card.learn-card:hover {
     border-style: solid;
-    background: linear-gradient(135deg, rgba(99, 102, 241, 0.3), rgba(139, 92, 246, 0.25));
+    background: linear-gradient(135deg, rgba(99, 102, 241, 0.4), rgba(139, 92, 246, 0.35));
+    transform: scale(1.05);
+    box-shadow: 0 8px 30px rgba(99, 102, 241, 0.4);
 }
 
 .level-card.learn-card .level-number {
     background: linear-gradient(135deg, var(--primary), #8b5cf6);
     font-size: 1.5rem;
+}
+
+.level-card.learn-card .level-stars {
+    font-size: 0.85rem;
+    color: var(--primary-light);
+    font-weight: 600;
 }
 
 @media (max-width: 768px) {
@@ -2702,13 +2722,20 @@ body::before {
     z-index: 90;
     width: 140px;
     opacity: 0.9;
-    transition: all 0.3s ease;
+    transition: all 0.5s ease;
     border: 1px solid #e0e0e0;
+    cursor: pointer;
 }
 
 #goal-hint-container:hover {
     opacity: 1;
     transform: scale(1.05);
+}
+
+#goal-hint-container.fade-out {
+    opacity: 0;
+    transform: translateX(-20px);
+    pointer-events: none;
 }
 
 .goal-title {
@@ -3369,4 +3396,141 @@ body::before {
 .lesson-step.active .lesson-tip {
     opacity: 1;
     transform: translateY(0);
+}
+
+/* ============================================
+   نظام النجوم 5 نجوم وعرض فوري
+   ========================================== */
+
+/* عرض النجوم الفوري أثناء اللعب */
+.live-stars-stat {
+    border-left: 2px solid rgba(255, 255, 255, 0.1);
+    padding-left: 20px;
+}
+
+.live-stars-display {
+    font-size: 1.2rem;
+    letter-spacing: 2px;
+    transition: all 0.3s ease;
+}
+
+.live-stars-display.pulse {
+    animation: starPulse 0.3s ease;
+}
+
+@keyframes starPulse {
+    0% {
+        transform: scale(1);
+    }
+
+    50% {
+        transform: scale(1.15);
+    }
+
+    100% {
+        transform: scale(1);
+    }
+}
+
+/* شارات الإنجاز */
+.win-badges {
+    display: flex;
+    justify-content: center;
+    gap: 15px;
+    margin: 20px 0;
+    flex-wrap: wrap;
+}
+
+.badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 20px;
+    border-radius: 25px;
+    font-size: 1rem;
+    font-weight: 600;
+    animation: badgePopIn 0.5s ease backwards;
+}
+
+.badge:nth-child(1) {
+    animation-delay: 0.2s;
+}
+
+.badge:nth-child(2) {
+    animation-delay: 0.4s;
+}
+
+.badge:nth-child(3) {
+    animation-delay: 0.6s;
+}
+
+@keyframes badgePopIn {
+    0% {
+        opacity: 0;
+        transform: scale(0.5);
+    }
+
+    100% {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+.badge-perfect {
+    background: linear-gradient(135deg, #FFD700, #FFA500);
+    color: #1a1a1a;
+    box-shadow: 0 4px 15px rgba(255, 215, 0, 0.4);
+}
+
+.badge-no-hints {
+    background: linear-gradient(135deg, #10B981, #059669);
+    color: white;
+    box-shadow: 0 4px 15px rgba(16, 185, 129, 0.4);
+}
+
+.badge-no-errors {
+    background: linear-gradient(135deg, #3B82F6, #2563EB);
+    color: white;
+    box-shadow: 0 4px 15px rgba(59, 130, 246, 0.4);
+}
+
+/* تحسين عرض النجوم في شاشة الفوز */
+.win-stars {
+    font-size: 2.5rem;
+    letter-spacing: 5px;
+    margin: 20px 0;
+    animation: starsAppear 0.8s ease;
+}
+
+@keyframes starsAppear {
+    0% {
+        opacity: 0;
+        transform: scale(0.5) rotate(-10deg);
+    }
+
+    50% {
+        transform: scale(1.1) rotate(5deg);
+    }
+
+    100% {
+        opacity: 1;
+        transform: scale(1) rotate(0deg);
+    }
+}
+
+/* تحديث قواعد التقييم لتعرض الإحصائيات */
+.scoring-rules .rule-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    justify-content: center;
+    font-size: 0.95rem;
+    color: var(--text-secondary);
+}
+
+/* عرض تقدم فتح الأقسام */
+.unlock-progress {
+    font-weight: 700;
+    color: var(--accent);
+    font-size: 1.1em;
 }

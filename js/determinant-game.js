@@ -11,7 +11,8 @@ class DeterminantGame {
         this.correctAnswer = null;
         this.currentStep = 0;
         this.totalSteps = 0;
-        this.stepCount = 0; // Wrong attempts
+        this.stepCount = 0; // Wrong attempts (errors)
+        this.hintsUsed = 0; // Hints used (separate from errors)
         this.isPlaying = false;
         
         // Step data for current game
@@ -313,52 +314,152 @@ class DeterminantGame {
                 continue;
             }
             
-            // For 3x3 minors (from 4x4 matrix), calculate using Sarrus with detailed steps
+            // For 3x3 minors (from 4x4 matrix), use FULL Sarrus method with extension step
             if (minor.length === 3) {
                 const [[a, b, c], [d, e, f], [g, h, i]] = minor;
                 
-                // Down diagonals
+                // Step 1: Extend the 3x3 minor matrix (add two columns)
+                steps.push({
+                    type: `minor-extend-${j}`,
+                    prompt: `المحدد الفرعي ${j + 1}: أكمل توسيع المصفوفة بنسخ العمود الأول والثاني`,
+                    highlight: minorCells,
+                    highlightClass: 'highlight-minor',
+                    answer: 'extend',
+                    answerType: 'minor-extend',
+                    minorIndex: j,
+                    subMatrix: minor,
+                    expectedCols: [
+                        [a, d, g], // Column 1
+                        [b, e, h]  // Column 2
+                    ],
+                    explanation: 'تم توسيع المصفوفة الفرعية!'
+                });
+                
+                // Down diagonals (3 separate steps)
                 const down1 = a * e * i;
                 const down2 = b * f * g;
                 const down3 = c * d * h;
                 const downSum = down1 + down2 + down3;
                 
-                // Up diagonals
+                steps.push({
+                    type: `minor-down1-${j}`,
+                    prompt: `القطر الهابط 1: ${a} × ${e} × ${i} = ؟`,
+                    highlight: minorCells,
+                    highlightClass: 'highlight-minor',
+                    answer: down1,
+                    explanation: `${a} × ${e} × ${i} = ${down1}`,
+                    subMatrix: minor,
+                    useMinorExtended: true,
+                    minorIndex: j,
+                    subMatrixHighlight: [
+                        { cells: [[0,0], [1,1], [2,2]], class: 'diag-down-active' }
+                    ]
+                });
+                
+                steps.push({
+                    type: `minor-down2-${j}`,
+                    prompt: `القطر الهابط 2: ${b} × ${f} × ${g} = ؟`,
+                    highlight: minorCells,
+                    highlightClass: 'highlight-minor',
+                    answer: down2,
+                    explanation: `${b} × ${f} × ${g} = ${down2}`,
+                    subMatrix: minor,
+                    useMinorExtended: true,
+                    minorIndex: j,
+                    subMatrixHighlight: [
+                        { cells: [[0,1], [1,2], [2,3]], class: 'diag-down-active' }
+                    ]
+                });
+                
+                steps.push({
+                    type: `minor-down3-${j}`,
+                    prompt: `القطر الهابط 3: ${c} × ${d} × ${h} = ؟`,
+                    highlight: minorCells,
+                    highlightClass: 'highlight-minor',
+                    answer: down3,
+                    explanation: `${c} × ${d} × ${h} = ${down3}`,
+                    subMatrix: minor,
+                    useMinorExtended: true,
+                    minorIndex: j,
+                    subMatrixHighlight: [
+                        { cells: [[0,2], [1,3], [2,4]], class: 'diag-down-active' }
+                    ]
+                });
+                
+                // Up diagonals (3 separate steps)
                 const up1 = c * e * g;
                 const up2 = a * f * h;
                 const up3 = b * d * i;
                 const upSum = up1 + up2 + up3;
                 
                 steps.push({
-                    type: `minor-down-${j}`,
-                    prompt: `المحدد الفرعي ${j + 1} - الأقطار الرئيسية: (${a}×${e}×${i}) + (${b}×${f}×${g}) + (${c}×${d}×${h}) = ؟`,
+                    type: `minor-up1-${j}`,
+                    prompt: `القطر الصاعد 1: ${c} × ${e} × ${g} = ؟`,
                     highlight: minorCells,
                     highlightClass: 'highlight-minor',
-                    answer: downSum,
-                    explanation: `${down1} + ${down2} + ${down3} = ${downSum}`,
+                    answer: up1,
+                    explanation: `${c} × ${e} × ${g} = ${up1}`,
                     subMatrix: minor,
+                    useMinorExtended: true,
+                    minorIndex: j,
                     subMatrixHighlight: [
-                        { cells: [[0,0], [1,1], [2,2]], class: 'diag-down-1' },
-                        { cells: [[0,1], [1,2], [2,0]], class: 'diag-down-2' },
-                        { cells: [[0,2], [1,0], [2,1]], class: 'diag-down-3' }
+                        { cells: [[2,0], [1,1], [0,2]], class: 'diag-up-active' }
                     ]
                 });
                 
                 steps.push({
-                    type: `minor-up-${j}`,
-                    prompt: `المحدد الفرعي ${j + 1} - الأقطار الثانوية: (${c}×${e}×${g}) + (${a}×${f}×${h}) + (${b}×${d}×${i}) = ؟`,
+                    type: `minor-up2-${j}`,
+                    prompt: `القطر الصاعد 2: ${a} × ${f} × ${h} = ؟`,
+                    highlight: minorCells,
+                    highlightClass: 'highlight-minor',
+                    answer: up2,
+                    explanation: `${a} × ${f} × ${h} = ${up2}`,
+                    subMatrix: minor,
+                    useMinorExtended: true,
+                    minorIndex: j,
+                    subMatrixHighlight: [
+                        { cells: [[2,1], [1,2], [0,3]], class: 'diag-up-active' }
+                    ]
+                });
+                
+                steps.push({
+                    type: `minor-up3-${j}`,
+                    prompt: `القطر الصاعد 3: ${b} × ${d} × ${i} = ؟`,
+                    highlight: minorCells,
+                    highlightClass: 'highlight-minor',
+                    answer: up3,
+                    explanation: `${b} × ${d} × ${i} = ${up3}`,
+                    subMatrix: minor,
+                    useMinorExtended: true,
+                    minorIndex: j,
+                    subMatrixHighlight: [
+                        { cells: [[2,2], [1,3], [0,4]], class: 'diag-up-active' }
+                    ]
+                });
+                
+                // Sum of down diagonals
+                steps.push({
+                    type: `minor-down-sum-${j}`,
+                    prompt: `مجموع الأقطار الهابطة: ${down1} + ${down2} + ${down3} = ؟`,
+                    highlight: minorCells,
+                    highlightClass: 'highlight-minor',
+                    answer: downSum,
+                    explanation: `${down1} + ${down2} + ${down3} = ${downSum}`,
+                    subMatrix: minor
+                });
+                
+                // Sum of up diagonals
+                steps.push({
+                    type: `minor-up-sum-${j}`,
+                    prompt: `مجموع الأقطار الصاعدة: ${up1} + ${up2} + ${up3} = ؟`,
                     highlight: minorCells,
                     highlightClass: 'highlight-minor',
                     answer: upSum,
                     explanation: `${up1} + ${up2} + ${up3} = ${upSum}`,
-                    subMatrix: minor,
-                    subMatrixHighlight: [
-                        { cells: [[0,2], [1,1], [2,0]], class: 'diag-up-1' },
-                        { cells: [[0,0], [1,2], [2,1]], class: 'diag-up-2' },
-                        { cells: [[0,1], [1,0], [2,2]], class: 'diag-up-3' }
-                    ]
+                    subMatrix: minor
                 });
                 
+                // Final minor determinant
                 steps.push({
                     type: `minor-det-${j}`,
                     prompt: `المحدد الفرعي ${j + 1} = ${downSum} − ${upSum} = ؟`,
@@ -442,12 +543,14 @@ class DeterminantGame {
         this.correctAnswer = levelData.answer;
         this.currentStep = 0;
         this.stepCount = 0;
+        this.hintsUsed = 0;
         this.userAnswers = [];
         this.isPlaying = true;
         
         // إعادة تعيين حالة التوسيع
         this.isExtended = false;
         this.extendedMatrix = null;
+        this.extendedMinors = {}; // للمحددات الفرعية الموسعة
         
         // Generate steps based on level and matrix size
         const n = this.matrix.length;
@@ -532,8 +635,19 @@ class DeterminantGame {
     
     winLevel() {
         const levelData = determinantLevels[this.currentLevel];
-        // Stars based on wrong attempts
-        const stars = this.stepCount === 0 ? 3 : (this.stepCount <= 2 ? 2 : 1);
+        
+        // نظام 5 نجوم يعتمد على التلميحات والأخطاء
+        const hints = this.hintsUsed || 0;
+        const errors = this.stepCount || 0;
+        
+        // خصم من التلميحات
+        let hintPenalty = hints;
+        
+        // خصم من الأخطاء
+        let errorPenalty = Math.floor(errors / 2);
+        
+        const totalPenalty = Math.max(hintPenalty, errorPenalty);
+        const stars = Math.max(1, 5 - totalPenalty);
         
         this.saveStars(this.currentLevel, stars);
         this.markLevelComplete(this.currentLevel);
@@ -609,6 +723,42 @@ class DeterminantGame {
                     <button class="btn btn-primary" onclick="detGame.checkExtendAnswer()">تحقق ✓</button>
                 </div>
             `;
+        } else if (step.answerType === 'minor-extend') {
+            // Minor extension input (for 3x3 minors in cofactor method)
+            const [[a, b, c], [d, e, f], [g, h, i]] = step.subMatrix;
+            inputSection = `
+                <div class="minor-extend-container">
+                    <div class="minor-extend-label">وسّع المصفوفة الفرعية ${step.minorIndex + 1}:</div>
+                    <div class="minor-extend-matrix">
+                        <div class="extend-row">
+                            <span class="extend-fixed-cell">${a}</span>
+                            <span class="extend-fixed-cell">${b}</span>
+                            <span class="extend-fixed-cell">${c}</span>
+                            <input type="number" class="minor-extend-input" data-row="0" data-col="3" data-expected="${a}" placeholder="?">
+                            <input type="number" class="minor-extend-input" data-row="0" data-col="4" data-expected="${b}" placeholder="?">
+                        </div>
+                        <div class="extend-row">
+                            <span class="extend-fixed-cell">${d}</span>
+                            <span class="extend-fixed-cell">${e}</span>
+                            <span class="extend-fixed-cell">${f}</span>
+                            <input type="number" class="minor-extend-input" data-row="1" data-col="3" data-expected="${d}" placeholder="?">
+                            <input type="number" class="minor-extend-input" data-row="1" data-col="4" data-expected="${e}" placeholder="?">
+                        </div>
+                        <div class="extend-row">
+                            <span class="extend-fixed-cell">${g}</span>
+                            <span class="extend-fixed-cell">${h}</span>
+                            <span class="extend-fixed-cell">${i}</span>
+                            <input type="number" class="minor-extend-input" data-row="2" data-col="3" data-expected="${g}" placeholder="?">
+                            <input type="number" class="minor-extend-input" data-row="2" data-col="4" data-expected="${h}" placeholder="?">
+                        </div>
+                    </div>
+                    <div class="extend-hints">
+                        <span class="extend-hint col1">العمود 4 = نسخة العمود 1</span>
+                        <span class="extend-hint col2">العمود 5 = نسخة العمود 2</span>
+                    </div>
+                    <button class="btn btn-primary" onclick="detGame.checkMinorExtendAnswer(${step.minorIndex})">تحقق ✓</button>
+                </div>
+            `;
         } else if (step.answerType === 'sign') {
             inputSection = `
                 <div class="step-input-row sign-input-row">
@@ -668,13 +818,35 @@ class DeterminantGame {
                 <div class="step-prompt">${step.prompt}</div>
                 ${step.subPrompt ? `<div class="step-sub-prompt">${step.subPrompt}</div>` : ''}
                 
-                ${step.subMatrix ? `
+                ${step.subMatrix && !step.useMinorExtended && step.answerType !== 'minor-extend' ? `
                     <div class="step-sub-matrix">
                         <div class="sub-matrix-label">المحدد الفرعي:</div>
                         <div class="sub-matrix-grid" style="grid-template-columns: repeat(${step.subMatrix.length}, 1fr);">
                             ${step.subMatrix.map((row, ri) => 
                                 row.map((val, ci) => {
                                     let cellClass = 'sub-matrix-cell';
+                                    if (step.subMatrixHighlight) {
+                                        for (const group of step.subMatrixHighlight) {
+                                            if (group.cells.some(c => c[0] === ri && c[1] === ci)) {
+                                                cellClass += ' ' + group.class;
+                                            }
+                                        }
+                                    }
+                                    return `<span class="${cellClass}">${val}</span>`;
+                                }).join('')
+                            ).join('')}
+                        </div>
+                    </div>
+                ` : ''}
+                
+                ${step.useMinorExtended && this.extendedMinors && this.extendedMinors[step.minorIndex] ? `
+                    <div class="step-sub-matrix extended-minor">
+                        <div class="sub-matrix-label">المحدد الفرعي الموسّع:</div>
+                        <div class="sub-matrix-grid" style="grid-template-columns: repeat(5, 1fr);">
+                            ${this.extendedMinors[step.minorIndex].map((row, ri) => 
+                                row.map((val, ci) => {
+                                    let cellClass = 'sub-matrix-cell';
+                                    if (ci >= 3) cellClass += ' extended-col';
                                     if (step.subMatrixHighlight) {
                                         for (const group of step.subMatrixHighlight) {
                                             if (group.cells.some(c => c[0] === ri && c[1] === ci)) {
@@ -702,7 +874,7 @@ class DeterminantGame {
                         extraClass = 'final-step';
                     } else if (stepType.includes('minor-det') || stepType.includes('cofactor-result')) {
                         extraClass = 'important-step';
-                    } else if (stepType === 'extend-matrix') {
+                    } else if (stepType === 'extend-matrix' || stepType.includes('minor-extend')) {
                         extraClass = 'extend-step';
                     }
                     return `
@@ -720,6 +892,11 @@ class DeterminantGame {
         // Setup extend inputs navigation with Enter key
         if (step.answerType === 'extend') {
             this.setupExtendInputNavigation();
+        }
+        
+        // Setup minor-extend inputs navigation with Enter key
+        if (step.answerType === 'minor-extend') {
+            this.setupMinorExtendInputNavigation(step.minorIndex);
         }
         
         // Focus input
@@ -751,6 +928,29 @@ class DeterminantGame {
                 }
             });
         });
+    }
+    
+    setupMinorExtendInputNavigation(minorIndex) {
+        const inputs = document.querySelectorAll('.minor-extend-input');
+        const inputArray = Array.from(inputs);
+        
+        inputArray.forEach((input, index) => {
+            input.addEventListener('keydown', (e) => {
+                if (e.key === 'Enter') {
+                    e.preventDefault();
+                    if (index < inputArray.length - 1) {
+                        // Move to next input
+                        inputArray[index + 1].focus();
+                    } else {
+                        // Last input, submit
+                        this.checkMinorExtendAnswer(minorIndex);
+                    }
+                }
+            });
+        });
+        
+        // Focus first input
+        if (inputArray.length > 0) inputArray[0].focus();
     }
     
     checkExtendAnswer() {
@@ -805,6 +1005,59 @@ class DeterminantGame {
         }
     }
     
+    checkMinorExtendAnswer(minorIndex) {
+        const inputs = document.querySelectorAll('.minor-extend-input');
+        const feedback = document.getElementById('step-feedback');
+        let allCorrect = true;
+        let incorrectCount = 0;
+        
+        inputs.forEach(input => {
+            const expected = parseInt(input.dataset.expected);
+            const value = parseInt(input.value);
+            
+            if (value === expected) {
+                input.classList.remove('incorrect');
+                input.classList.add('correct');
+            } else {
+                input.classList.remove('correct');
+                input.classList.add('incorrect');
+                allCorrect = false;
+                incorrectCount++;
+            }
+        });
+        
+        if (allCorrect) {
+            this.userAnswers.push('✓');
+            feedback.className = 'step-feedback correct';
+            feedback.innerHTML = '✅ ممتاز! تم توسيع المصفوفة الفرعية بشكل صحيح!';
+            feedback.style.display = 'block';
+            
+            // حفظ المصفوفة الفرعية الموسعة
+            const step = this.steps[this.currentStep];
+            const [[a, b, c], [d, e, f], [g, h, i]] = step.subMatrix;
+            if (!this.extendedMinors) this.extendedMinors = {};
+            this.extendedMinors[minorIndex] = [
+                [a, b, c, a, b],
+                [d, e, f, d, e],
+                [g, h, i, g, h]
+            ];
+            
+            setTimeout(() => {
+                this.currentStep++;
+                if (this.currentStep >= this.totalSteps) {
+                    this.winLevel();
+                } else {
+                    this.renderGame();
+                }
+            }, 1000);
+        } else {
+            this.stepCount++; // Count wrong attempts
+            feedback.className = 'step-feedback wrong';
+            feedback.innerHTML = `❌ يوجد ${incorrectCount} خطأ. تذكر: نسخ العمود الأول والثاني!`;
+            feedback.style.display = 'block';
+        }
+    }
+    
     submitStep() {
         const input = document.getElementById('step-answer-input');
         if (!input) return;
@@ -836,8 +1089,8 @@ class DeterminantGame {
         hintContent.innerHTML = hint.message;
         hintPanel.style.display = 'block';
         
-        // Penalty for using hint
-        this.stepCount++;
+        // تتبع استخدام التلميح (منفصل عن الأخطاء)
+        this.hintsUsed++;
     }
     
     getStepHint() {
