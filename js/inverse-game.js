@@ -271,6 +271,7 @@ class InverseGame {
     
     calculateStars() {
         // نظام 5 نجوم يعتمد على التلميحات والخطوات
+        // 0 نجوم: 5+ تلميحات أو خطوات كثيرة جداً (مبالغ فيه)
         const hints = this.hintsUsed || 0;
         const ratio = this.steps / this.minSteps;
         
@@ -279,11 +280,12 @@ class InverseGame {
         
         // خصم من الخطوات الزائدة
         let stepPenalty = 0;
-        if (ratio > 1.5) stepPenalty = 2;
+        if (ratio > 2.0) stepPenalty = 5; // مبالغ فيه
+        else if (ratio > 1.5) stepPenalty = 2;
         else if (ratio > 1.2) stepPenalty = 1;
         
         const totalPenalty = Math.max(hintPenalty, stepPenalty);
-        return Math.max(1, 5 - totalPenalty);
+        return Math.max(0, 5 - totalPenalty);
     }
     
     // ==================== RENDERING ====================

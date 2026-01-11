@@ -1833,7 +1833,8 @@ class GaussianGame {
         // 4 نجوم: 1 تلميح أو 1-2 أخطاء
         // 3 نجوم: 2 تلميحات أو 3-4 أخطاء
         // 2 نجوم: 3 تلميحات أو 5-6 أخطاء
-        // 1 نجمة: 4+ تلميحات أو 7+ أخطاء
+        // 1 نجمة: 4 تلميحات أو 7-8 أخطاء
+        // 0 نجوم: 5+ تلميحات أو 10+ أخطاء (مبالغ فيه)
         
         const hints = this.hintsUsed || 0;
         const errors = this.errorsCount || 0;
@@ -1847,8 +1848,8 @@ class GaussianGame {
         // أخذ الأسوأ بين العقوبتين
         const totalPenalty = Math.max(hintPenalty, errorPenalty);
         
-        // النجوم = 5 - العقوبة (الحد الأدنى 1)
-        return Math.max(1, 5 - totalPenalty);
+        // النجوم = 5 - العقوبة (الحد الأدنى 0)
+        return Math.max(0, 5 - totalPenalty);
     }
     
     startPhase2() {

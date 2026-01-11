@@ -637,6 +637,7 @@ class DeterminantGame {
         const levelData = determinantLevels[this.currentLevel];
         
         // نظام 5 نجوم يعتمد على التلميحات والأخطاء
+        // 0 نجوم: 5+ تلميحات أو 10+ أخطاء (مبالغ فيه)
         const hints = this.hintsUsed || 0;
         const errors = this.stepCount || 0;
         
@@ -647,7 +648,7 @@ class DeterminantGame {
         let errorPenalty = Math.floor(errors / 2);
         
         const totalPenalty = Math.max(hintPenalty, errorPenalty);
-        const stars = Math.max(1, 5 - totalPenalty);
+        const stars = Math.max(0, 5 - totalPenalty);
         
         this.saveStars(this.currentLevel, stars);
         this.markLevelComplete(this.currentLevel);

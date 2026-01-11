@@ -8,7 +8,6 @@ const determinantLevels = {
     1: {
         name: "المستوى 1",
         description: "مصفوفة 2×2 بسيطة",
-        tutorial: 1, // Tutorial needed before this level
         matrix: [
             [3, 2],
             [1, 4]
@@ -34,7 +33,6 @@ const determinantLevels = {
     3: {
         name: "المستوى 3",
         description: "مصفوفة 3×3 بسيطة",
-        tutorial: 2, // Tutorial needed before this level
         matrix: [
             [1, 2, 3],
             [4, 5, 6],
@@ -86,7 +84,6 @@ const determinantLevels = {
     6: {
         name: "المستوى 6",
         description: "مصفوفة 3×3 بطريقة التوسيع",
-        tutorial: 3, // Tutorial needed before this level
         matrix: [
             [1, 2, 1],
             [3, 1, 0],

@@ -1118,3 +1118,126 @@
         justify-content: center;
     }
 }
+
+/* ============================================
+   CINEMATIC MOBILE RESPONSIVE (480px)
+   ============================================ */
+@media (max-width: 480px) {
+    .cinematic-tutorial {
+        padding: 15px;
+        border-radius: 16px;
+    }
+
+    .cinema-stage {
+        padding: 18px 15px;
+        min-height: 320px;
+    }
+
+    .narration {
+        font-size: 0.9rem;
+        padding: 10px 15px;
+        line-height: 1.6;
+    }
+
+    /* Matrix cells in cinema */
+    .preview-cell {
+        width: 35px;
+        height: 35px;
+        font-size: 0.95rem;
+    }
+
+    .preview-row {
+        gap: 6px;
+    }
+
+    /* Navigation */
+    .cinema-nav {
+        padding: 10px 12px;
+        flex-wrap: wrap;
+        gap: 10px;
+    }
+
+    .step-counter {
+        font-size: 0.8rem;
+        order: 3;
+        width: 100%;
+        text-align: center;
+    }
+
+    .nav-controls {
+        gap: 8px;
+    }
+
+    .ctrl-btn {
+        padding: 8px 12px;
+        font-size: 0.8rem;
+    }
+
+    /* Progress indicator */
+    .cinema-progress {
+        height: 4px;
+    }
+
+    /* Hint text */
+    .cinema-hint {
+        font-size: 0.75rem;
+        padding: 6px;
+    }
+
+    /* Operation labels */
+    .operation-label {
+        font-size: 0.85rem;
+        padding: 6px 12px;
+    }
+
+    /* Transform arrow */
+    .transform-arrow {
+        font-size: 1.5rem;
+    }
+}
+
+/* ============================================
+   CINEMATIC MOBILE RESPONSIVE (360px)
+   ============================================ */
+@media (max-width: 360px) {
+    .cinematic-tutorial {
+        padding: 10px;
+    }
+
+    .cinema-stage {
+        padding: 15px 12px;
+        min-height: 280px;
+    }
+
+    .narration {
+        font-size: 0.85rem;
+        padding: 8px 12px;
+    }
+
+    /* Matrix cells even smaller */
+    .preview-cell {
+        width: 30px;
+        height: 30px;
+        font-size: 0.85rem;
+    }
+
+    .preview-row {
+        gap: 4px;
+    }
+
+    /* Navigation buttons */
+    .ctrl-btn {
+        padding: 6px 10px;
+        font-size: 0.75rem;
+    }
+
+    .step-counter {
+        font-size: 0.75rem;
+    }
+
+    /* Operation label */
+    .operation-label {
+        font-size: 0.8rem;
+        padding: 5px 10px;
+    }
+}

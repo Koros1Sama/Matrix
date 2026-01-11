@@ -8360,3 +8360,466 @@
     font-size: 1.1rem;
     font-family: 'Fira Code', monospace;
 }
+
+/* ============================================
+   DETERMINANT MOBILE RESPONSIVE (480px)
+   ============================================ */
+@media (max-width: 480px) {
+
+    /* Determinant cells */
+    .det-cell {
+        width: 38px;
+        height: 38px;
+        font-size: 1rem;
+    }
+
+    .det-bars {
+        font-size: 35px;
+    }
+
+    .det-matrix-display {
+        gap: 3px;
+    }
+
+    .det-matrix-grid {
+        gap: 4px;
+        padding: 8px;
+    }
+
+    /* Cramer elements */
+    .cramer-cell {
+        width: 38px;
+        height: 38px;
+        font-size: 1rem;
+    }
+
+    .matrix-bars {
+        font-size: 45px;
+    }
+
+    .cramer-matrix-grid {
+        gap: 4px;
+        padding: 8px;
+    }
+
+    /* Method buttons */
+    .method-btn {
+        min-width: 140px;
+        padding: 18px 20px;
+    }
+
+    .method-icon {
+        font-size: 2rem;
+    }
+
+    .method-name {
+        font-size: 1rem;
+    }
+
+    .method-desc {
+        font-size: 0.8rem;
+    }
+
+    /* Tutorial containers */
+    .det-tutorial-container {
+        padding: 15px;
+    }
+
+    .det-tutorial-step {
+        padding: 15px;
+    }
+
+    /* Sarrus visual */
+    .sarrus-visual {
+        padding: 15px;
+    }
+
+    .sarrus-matrix-container {
+        padding: 10px;
+    }
+
+    /* Diagonals phase */
+    .diagonals-phase {
+        flex-direction: column;
+        gap: 20px;
+    }
+
+    .diagonal-group {
+        width: 100%;
+    }
+
+    /* Final calculation */
+    .final-calc-visual {
+        padding: 15px;
+    }
+
+    .calc-breakdown {
+        gap: 10px;
+    }
+
+    .calc-part {
+        padding: 12px 15px;
+    }
+
+    .part-value {
+        font-size: 1.5rem;
+    }
+
+    .calc-operator,
+    .calc-equals {
+        font-size: 1.8rem;
+    }
+
+    .result-value {
+        font-size: 2rem;
+    }
+
+    /* Tutorial navigation */
+    .det-tutorial-nav {
+        flex-wrap: wrap;
+        gap: 10px;
+    }
+
+    .det-nav-btn {
+        padding: 10px 15px;
+        font-size: 0.9rem;
+    }
+
+    /* Game header */
+    .cramer-game-header {
+        flex-wrap: wrap;
+        gap: 10px;
+    }
+
+    .cramer-game-header h3 {
+        font-size: 1rem;
+    }
+
+    .cramer-step-counter {
+        padding: 6px 12px;
+        font-size: 0.85rem;
+    }
+
+    /* Cramer step area */
+    .cramer-step-area {
+        padding: 15px;
+    }
+
+    /* Extension columns */
+    .extended-matrix-container {
+        overflow-x: auto;
+    }
+
+    /* Inverse game */
+    .inverse-cell {
+        width: 38px;
+        height: 38px;
+        font-size: 1rem;
+    }
+
+    .inverse-matrix-grid {
+        gap: 4px;
+    }
+
+    /* Formula display */
+    .formula-box-large {
+        font-size: 1.3rem;
+    }
+
+    /* Multiplication breakdown */
+    .multiplication-breakdown {
+        padding: 15px;
+    }
+
+    .mult-step-row {
+        padding: 8px 12px;
+        gap: 10px;
+    }
+
+    .mult-var {
+        font-size: 1rem;
+        min-width: 40px;
+    }
+
+    .mult-calc {
+        font-size: 0.85rem;
+    }
+
+    .mult-result {
+        font-size: 1rem;
+    }
+
+    /* Cofactor display */
+    .cofactor-matrix-display {
+        gap: 8px;
+    }
+
+    .minor-matrix-grid {
+        gap: 3px;
+    }
+
+    .minor-cell {
+        width: 30px;
+        height: 30px;
+        font-size: 0.9rem;
+    }
+
+    /* Input sections */
+    .det-answer-section {
+        flex-direction: column;
+        gap: 15px;
+    }
+
+    .det-input {
+        width: 60px;
+        height: 45px;
+        font-size: 1.2rem;
+    }
+
+    /* Diag results */
+    .diag-results-animated {
+        min-width: auto;
+        width: 100%;
+    }
+
+    .diag-result-item {
+        gap: 8px;
+        padding: 6px 10px;
+    }
+
+    .diag-calc {
+        font-size: 0.9rem;
+    }
+}
+
+/* ============================================
+   DETERMINANT MOBILE RESPONSIVE (360px)
+   ============================================ */
+@media (max-width: 360px) {
+
+    /* Determinant cells - even smaller */
+    .det-cell {
+        width: 32px;
+        height: 32px;
+        font-size: 0.9rem;
+    }
+
+    .det-bars {
+        font-size: 28px;
+    }
+
+    /* Cramer cells */
+    .cramer-cell {
+        width: 32px;
+        height: 32px;
+        font-size: 0.9rem;
+    }
+
+    .matrix-bars {
+        font-size: 35px;
+    }
+
+    /* Method options - stack vertically */
+    .method-options {
+        flex-direction: column;
+        gap: 15px;
+    }
+
+    .method-btn {
+        width: 100%;
+        min-width: auto;
+    }
+
+    /* Formula */
+    .formula-box-large {
+        font-size: 1.1rem;
+    }
+
+    /* Calculation parts */
+    .calc-part {
+        padding: 10px;
+    }
+
+    .part-value {
+        font-size: 1.2rem;
+    }
+
+    .part-label {
+        font-size: 0.8rem;
+    }
+
+    .result-value {
+        font-size: 1.7rem;
+    }
+
+    .calc-result-final {
+        padding: 15px 25px;
+    }
+
+    /* Inverse cells */
+    .inverse-cell {
+        width: 32px;
+        height: 32px;
+        font-size: 0.85rem;
+    }
+
+    /* Minor cells */
+    .minor-cell {
+        width: 26px;
+        height: 26px;
+        font-size: 0.8rem;
+    }
+
+    /* Input */
+    .det-input {
+        width: 50px;
+        height: 40px;
+        font-size: 1.1rem;
+    }
+
+    /* Tutorial text */
+    .det-tutorial-title {
+        font-size: 1.1rem;
+    }
+
+    .det-tutorial-desc {
+        font-size: 0.9rem;
+    }
+
+    /* Win screen */
+    .cramer-win-screen {
+        padding: 20px;
+    }
+
+    .cramer-win-screen h2 {
+        font-size: 1.5rem;
+    }
+
+    .cramer-win-screen .win-celebration {
+        font-size: 3rem;
+    }
+
+    .cramer-win-screen .solution-vars span {
+        font-size: 1.1rem;
+    }
+}
+
+/* ============================================
+   EXTRA COMPACT MODE FOR LARGE MATRICES (400px)
+   ============================================ */
+@media (max-width: 400px) {
+
+    /* Very compact determinant cells for 4x4+ */
+    .det-cell {
+        width: 28px;
+        height: 28px;
+        font-size: 0.8rem;
+    }
+
+    .det-bars {
+        font-size: 24px;
+    }
+
+    .det-matrix-grid {
+        gap: 2px;
+        padding: 5px;
+    }
+
+    /* Cramer - very compact */
+    .cramer-cell {
+        width: 28px;
+        height: 28px;
+        font-size: 0.8rem;
+    }
+
+    .matrix-bars {
+        font-size: 30px;
+    }
+
+    .cramer-matrix-grid {
+        gap: 2px;
+        padding: 5px;
+    }
+
+    /* Extended matrix - scroll if too wide */
+    .sarrus-matrix-container,
+    .extended-matrix-container,
+    .cramer-matrix-display {
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+    }
+
+    /* Minor cells even smaller */
+    .minor-cell {
+        width: 22px;
+        height: 22px;
+        font-size: 0.7rem;
+    }
+
+    /* Inverse cells */
+    .inverse-cell {
+        width: 28px;
+        height: 28px;
+        font-size: 0.75rem;
+    }
+
+    /* Method buttons - full width stacked */
+    .method-options {
+        flex-direction: column;
+        width: 100%;
+    }
+
+    .method-btn {
+        width: 100%;
+        min-width: auto;
+        padding: 15px;
+    }
+
+    .method-icon {
+        font-size: 1.8rem;
+    }
+
+    /* Tutorial steps - more compact */
+    .det-tutorial-step {
+        padding: 12px;
+    }
+
+    .det-tutorial-title {
+        font-size: 1rem;
+    }
+
+    /* Calculation displays */
+    .calc-breakdown {
+        flex-direction: column;
+        gap: 8px;
+    }
+
+    .calc-part {
+        padding: 8px;
+        width: 100%;
+    }
+
+    .part-value {
+        font-size: 1.1rem;
+    }
+
+    .calc-operator,
+    .calc-equals {
+        font-size: 1.3rem;
+        transform: rotate(90deg);
+    }
+
+    .result-value {
+        font-size: 1.5rem;
+    }
+
+    /* Diagonal results - compact */
+    .diag-results-animated {
+        padding: 10px;
+    }
+
+    .diag-result-item {
+        padding: 5px 8px;
+        font-size: 0.85rem;
+    }
+}

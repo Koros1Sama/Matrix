@@ -128,6 +128,15 @@ body::before {
     animation: float 3s ease-in-out infinite;
 }
 
+.logo-icon-img {
+    width: 120px;
+    height: 120px;
+    margin-bottom: 20px;
+    animation: float 3s ease-in-out infinite;
+    border-radius: 24px;
+    box-shadow: 0 10px 40px rgba(99, 102, 241, 0.4);
+}
+
 @keyframes float {
 
     0%,
@@ -3533,4 +3542,1341 @@ body::before {
     font-weight: 700;
     color: var(--accent);
     font-size: 1.1em;
+}
+
+/* ============================================
+   MOBILE RESPONSIVE - Small Phones (480px)
+   ============================================ */
+@media (max-width: 480px) {
+
+    /* Container */
+    .container {
+        padding: 15px;
+    }
+
+    /* Header & Title */
+    .title {
+        font-size: 2rem;
+    }
+
+    .subtitle {
+        font-size: 1rem;
+    }
+
+    .logo-icon {
+        font-size: 50px;
+    }
+
+    .logo-icon-img {
+        width: 80px;
+        height: 80px;
+    }
+
+    /* Screen header */
+    .screen-header {
+        flex-wrap: wrap;
+        gap: 10px;
+    }
+
+    .screen-header h2 {
+        font-size: 1.4rem;
+        flex: 1 1 100%;
+        text-align: center;
+        order: 2;
+    }
+
+    .btn-back {
+        order: 1;
+    }
+
+    /* Matrix cells - smaller for phones */
+    .matrix-cell {
+        width: 40px;
+        height: 40px;
+        font-size: 0.95rem;
+    }
+
+    .matrix-row {
+        gap: 6px;
+        padding: 6px 12px;
+    }
+
+    .matrix-divider {
+        height: 40px;
+        margin: 0 8px;
+    }
+
+    .matrix-container {
+        padding: 15px;
+    }
+
+    /* Row labels & handles */
+    .row-label {
+        font-size: 0.75rem;
+        margin-right: 5px;
+    }
+
+    .row-handle {
+        font-size: 1rem;
+        margin-right: 5px;
+    }
+
+    /* Game header - more compact */
+    .game-header {
+        flex-wrap: wrap;
+        gap: 10px;
+        padding: 10px 0;
+    }
+
+    .game-stats {
+        gap: 10px;
+        flex-wrap: wrap;
+        justify-content: center;
+        width: 100%;
+    }
+
+    .stat {
+        min-width: 50px;
+    }
+
+    .stat-label {
+        font-size: 0.7rem;
+    }
+
+    .stat-value {
+        font-size: 1rem;
+    }
+
+    .live-stars-display {
+        font-size: 0.85rem;
+    }
+
+    /* Phase indicator */
+    .phase-indicator {
+        flex-wrap: wrap;
+        gap: 8px;
+        margin-bottom: 15px;
+    }
+
+    .phase {
+        padding: 8px 12px;
+        font-size: 0.85rem;
+    }
+
+    .phase-num {
+        width: 24px;
+        height: 24px;
+        font-size: 0.8rem;
+    }
+
+    .phase-text {
+        font-size: 0.8rem;
+    }
+
+    .phase-arrow {
+        font-size: 1rem;
+    }
+
+    /* Equations */
+    .equations-box {
+        padding: 15px;
+        font-size: 0.95rem;
+    }
+
+    /* Operations bar */
+    .operations-bar {
+        gap: 10px;
+    }
+
+    .btn-operation {
+        padding: 12px 15px;
+        font-size: 0.85rem;
+        width: 100%;
+        max-width: 280px;
+    }
+
+    .btn-operation .op-icon {
+        font-size: 1.1rem;
+    }
+
+    /* Hint box */
+    .hint-box {
+        padding: 12px 15px;
+        font-size: 0.85rem;
+    }
+
+    /* Parts grid - single column */
+    .parts-grid {
+        grid-template-columns: 1fr;
+        gap: 15px;
+    }
+
+    .part-card {
+        padding: 20px 15px;
+    }
+
+    .part-icon {
+        font-size: 2.5rem;
+    }
+
+    .part-name {
+        font-size: 1.1rem;
+    }
+
+    .part-desc {
+        font-size: 0.85rem;
+    }
+
+    .part-status {
+        font-size: 0.8rem;
+    }
+
+    /* Levels grid */
+    .levels-grid {
+        grid-template-columns: repeat(auto-fill, minmax(70px, 1fr));
+        gap: 10px;
+    }
+
+    .level-card {
+        padding: 10px;
+    }
+
+    .level-num {
+        font-size: 1.5rem;
+    }
+
+    .level-stars {
+        font-size: 0.65rem;
+    }
+
+    /* Tutorial sections */
+    .tutorial-section {
+        padding: 18px;
+    }
+
+    .tutorial-section h3 {
+        font-size: 1.2rem;
+    }
+
+    /* Demo matrix in tutorials */
+    .demo-matrix {
+        padding: 15px 20px;
+    }
+
+    .demo-cell {
+        width: 35px;
+        height: 35px;
+        font-size: 1rem;
+    }
+
+    .demo-row {
+        gap: 8px;
+    }
+
+    .demo-divider {
+        height: 35px;
+    }
+
+    /* Lesson container */
+    .lesson-title {
+        font-size: 1.2rem;
+    }
+
+    .lesson-desc {
+        font-size: 1rem;
+    }
+
+    /* Win/Loss modals */
+    .modal-content,
+    .win-content {
+        padding: 20px;
+        max-width: 95vw;
+        margin: 10px;
+    }
+
+    .win-content h2 {
+        font-size: 1.5rem;
+    }
+
+    .win-celebration {
+        font-size: 3rem;
+    }
+
+    .win-stars {
+        font-size: 2rem;
+        letter-spacing: 3px;
+    }
+
+    .win-buttons {
+        flex-direction: column;
+        gap: 10px;
+    }
+
+    .win-buttons .btn {
+        width: 100%;
+    }
+
+    /* Substitution section */
+    .var-input-group {
+        flex-wrap: wrap;
+        gap: 10px;
+    }
+
+    .formula-box {
+        font-size: 0.9rem;
+        padding: 10px;
+    }
+
+    .inline-input {
+        width: 45px;
+        height: 35px;
+        font-size: 1rem;
+    }
+
+    /* Tutor section */
+    .tutor-section {
+        margin: 10px 0;
+    }
+
+    .tutor-hint {
+        font-size: 0.9rem;
+    }
+
+    /* Quick actions */
+    .row-quick-btn {
+        width: 28px;
+        height: 28px;
+        font-size: 0.8rem;
+    }
+
+    /* Buttons */
+    .btn-large {
+        padding: 14px 30px;
+        font-size: 1rem;
+    }
+
+    .menu-buttons {
+        max-width: 100%;
+    }
+
+    /* Lesson navigation */
+    .lesson-navigation {
+        gap: 10px;
+    }
+
+    .btn-nav {
+        padding: 10px 15px;
+        font-size: 0.9rem;
+    }
+
+    .lesson-dots {
+        gap: 8px;
+    }
+
+    .dot {
+        width: 10px;
+        height: 10px;
+    }
+}
+
+/* ============================================
+   MOBILE RESPONSIVE - Very Small Phones (360px)
+   ============================================ */
+@media (max-width: 360px) {
+    .container {
+        padding: 10px;
+    }
+
+    .title {
+        font-size: 1.7rem;
+    }
+
+    .subtitle {
+        font-size: 0.9rem;
+    }
+
+    .logo-icon {
+        font-size: 40px;
+    }
+
+    /* Matrix - even smaller */
+    .matrix-cell {
+        width: 34px;
+        height: 34px;
+        font-size: 0.85rem;
+    }
+
+    .matrix-row {
+        gap: 4px;
+        padding: 4px 8px;
+    }
+
+    .matrix-divider {
+        height: 34px;
+        margin: 0 5px;
+    }
+
+    .matrix-container {
+        padding: 12px;
+    }
+
+    .row-label {
+        display: none;
+    }
+
+    /* Demo matrix */
+    .demo-cell {
+        width: 30px;
+        height: 30px;
+        font-size: 0.9rem;
+    }
+
+    .demo-row {
+        gap: 5px;
+    }
+
+    .demo-divider {
+        height: 30px;
+    }
+
+    /* Phase indicator - stacked */
+    .phase-indicator {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .phase-arrow {
+        transform: rotate(90deg);
+        margin: 5px 0;
+    }
+
+    /* Game stats */
+    .game-stats {
+        gap: 8px;
+    }
+
+    .stat-value {
+        font-size: 0.9rem;
+    }
+
+    /* Operations - full width stack */
+    .btn-operation {
+        padding: 10px 12px;
+        font-size: 0.8rem;
+    }
+
+    /* Win screen */
+    .win-content h2 {
+        font-size: 1.3rem;
+    }
+
+    .win-celebration {
+        font-size: 2.5rem;
+    }
+
+    .win-stars {
+        font-size: 1.8rem;
+    }
+
+    /* Buttons */
+    .btn-large {
+        padding: 12px 25px;
+        font-size: 0.95rem;
+    }
+
+    .btn {
+        padding: 10px 18px;
+        font-size: 0.9rem;
+    }
+
+    /* Screen header */
+    .screen-header h2 {
+        font-size: 1.2rem;
+    }
+
+    /* Parts */
+    .part-card {
+        padding: 15px 12px;
+    }
+
+    .part-icon {
+        font-size: 2rem;
+    }
+
+    /* Levels */
+    .levels-grid {
+        grid-template-columns: repeat(auto-fill, minmax(60px, 1fr));
+    }
+
+    .level-num {
+        font-size: 1.3rem;
+    }
+
+    /* Equations */
+    .equations-box {
+        font-size: 0.85rem;
+        padding: 12px;
+    }
+
+    /* Tutorial */
+    .lesson-title {
+        font-size: 1.1rem;
+    }
+
+    .lesson-desc {
+        font-size: 0.9rem;
+    }
+
+    .lesson-points .point {
+        font-size: 0.85rem;
+    }
+
+    /* Operations demo */
+    .op-demo-item {
+        flex-direction: column;
+        text-align: center;
+    }
+}
+
+/* ============================================
+   MOBILE FIXES - Modals & Large Matrices
+   ============================================ */
+
+/* CRITICAL: Prevent page-level horizontal scroll on mobile */
+@media (max-width: 600px) {
+
+    html,
+    body {
+        overflow-x: hidden !important;
+        overflow-y: auto !important;
+        width: 100vw !important;
+        max-width: 100vw !important;
+    }
+
+    .container {
+        max-width: 100vw !important;
+        overflow-x: hidden !important;
+        padding-left: 5px !important;
+        padding-right: 5px !important;
+    }
+
+    /* Game screen - fill viewport height */
+    #game-screen .container {
+        min-height: 100vh;
+        display: flex;
+        flex-direction: column;
+    }
+
+    /* Minimize non-essential areas */
+    .phase-indicator {
+        margin: 5px 0 !important;
+        padding: 0 !important;
+    }
+
+    .phase {
+        padding: 4px 8px !important;
+        font-size: 0.7rem !important;
+    }
+
+    .phase-num {
+        width: 18px !important;
+        height: 18px !important;
+        font-size: 0.65rem !important;
+    }
+
+    /* Equations section - smaller */
+    .equations-section {
+        margin: 5px 0 !important;
+        padding: 8px !important;
+    }
+
+    .equations-section h3 {
+        font-size: 0.85rem !important;
+        margin-bottom: 5px !important;
+    }
+
+    .equations-box {
+        padding: 8px !important;
+        font-size: 0.75rem !important;
+    }
+
+    /* Matrix section - EXPAND */
+    .matrix-section {
+        flex: 1 !important;
+        display: flex !important;
+        flex-direction: column !important;
+    }
+
+    .matrix-section h3 {
+        font-size: 0.85rem !important;
+        margin: 5px 0 !important;
+    }
+
+    /* Matrix container - auto scale to fit */
+    .matrix-container {
+        flex: 1 !important;
+        max-width: 100% !important;
+        overflow: visible !important;
+        padding: 5px 2px !important;
+        transform-origin: center top;
+        display: flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+    }
+
+    /* Auto-scaling matrix wrapper */
+    #matrix-container,
+    .matrix-wrapper {
+        display: flex;
+        justify-content: center;
+        width: 100%;
+    }
+
+    /* Dynamic cell sizing based on BOTH viewport width AND height */
+    /* 
+     * For a 4-row matrix to fit without scroll:
+     * Available height ≈ 100vh - header(60px) - equations(80px) - buttons(90px) ≈ 50vh
+     * Each row needs: cell + gap ≈ cell * 1.2
+     * Max cell height = 50vh / (4 rows * 1.2) ≈ 10vh per cell
+     * But also must fit horizontally: 6 cells + divider ≈ 7 units, so 100vw / 7 ≈ 14vw per cell
+     * Use min() to take the smaller constraint
+     */
+    .matrix-cell {
+        width: min(clamp(24px, 8vw, 50px), clamp(24px, 9vh, 50px)) !important;
+        height: min(clamp(24px, 8vw, 50px), clamp(24px, 9vh, 50px)) !important;
+        min-width: 24px !important;
+        min-height: 24px !important;
+        max-width: 50px !important;
+        max-height: 50px !important;
+        font-size: clamp(0.7rem, 2vw, 1rem) !important;
+        padding: 0 !important;
+        aspect-ratio: 1 !important;
+    }
+
+    .matrix-row {
+        gap: clamp(2px, 0.5vw, 4px) !important;
+        padding: 2px 3px !important;
+    }
+
+    .matrix-divider {
+        height: min(clamp(24px, 8vw, 50px), clamp(24px, 9vh, 50px)) !important;
+        margin: 0 clamp(2px, 0.5vw, 3px) !important;
+        width: 2px !important;
+    }
+
+    /* Row quick buttons - dynamic size */
+    .row-quick-btn {
+        width: clamp(16px, 5vw, 24px) !important;
+        height: clamp(16px, 5vw, 24px) !important;
+        min-width: clamp(16px, 5vw, 24px) !important;
+        font-size: clamp(0.5rem, 1.5vw, 0.8rem) !important;
+    }
+
+    .row-quick-btns {
+        gap: 1px !important;
+    }
+
+    .row-label {
+        font-size: clamp(0.5rem, 1.5vw, 0.7rem) !important;
+        min-width: 14px !important;
+        margin-right: 1px !important;
+    }
+
+    .row-handle {
+        display: none !important;
+    }
+
+    /* Operation buttons - 2x2 grid layout */
+    .operations-bar {
+        display: grid !important;
+        grid-template-columns: 1fr 1fr !important;
+        gap: 6px !important;
+        margin: 10px 0 !important;
+        padding: 0 5px !important;
+    }
+
+    .btn-operation,
+    .btn-undo {
+        padding: 8px 10px !important;
+        font-size: 0.75rem !important;
+        min-height: 36px !important;
+        display: flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        gap: 4px !important;
+    }
+
+    .btn-operation .op-icon,
+    .btn-undo .op-icon {
+        font-size: 0.9rem !important;
+    }
+
+    .btn-operation span:not(.op-icon),
+    .btn-undo span:not(.op-icon) {
+        font-size: 0.7rem !important;
+    }
+
+    /* Hint button in same grid */
+    #btn-show-hint,
+    .btn-hint {
+        padding: 8px 10px !important;
+        font-size: 0.75rem !important;
+    }
+
+    /* Tutor section as POPUP - visible by default when rendered */
+    .tutor-section,
+    #tutor-section {
+        position: fixed !important;
+        bottom: 0 !important;
+        left: 0 !important;
+        right: 0 !important;
+        background: var(--bg-card) !important;
+        border-radius: 16px 16px 0 0 !important;
+        padding: 12px !important;
+        margin: 0 !important;
+        box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.5) !important;
+        z-index: 500 !important;
+        max-height: 40vh !important;
+        overflow-y: auto !important;
+        animation: slideUp 0.25s ease !important;
+    }
+
+    /* Close button for tutor popup on mobile */
+    .tutor-section::before,
+    #tutor-section::before {
+        content: '✕';
+        position: absolute;
+        top: 10px;
+        left: 10px;
+        width: 24px;
+        height: 24px;
+        background: rgba(255, 255, 255, 0.1);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        font-size: 0.8rem;
+    }
+
+    /* Goal hint container - TINY with scale, left side, lower */
+    #goal-hint-container,
+    .goal-hint-container,
+    [id="goal-hint-container"] {
+        position: fixed !important;
+        top: 130px !important;
+        left: 5px !important;
+        right: auto !important;
+        transform: scale(0.5) !important;
+        transform-origin: top left !important;
+        padding: 5px !important;
+        border-radius: 6px !important;
+        z-index: 90 !important;
+        opacity: 0.9 !important;
+        transition: opacity 0.5s ease, transform 0.5s ease !important;
+        cursor: pointer !important;
+    }
+
+    /* Hide goal-hint when fade-out class is added */
+    #goal-hint-container.fade-out,
+    .goal-hint-container.fade-out,
+    [id="goal-hint-container"].fade-out {
+        opacity: 0 !important;
+        transform: scale(0.3) !important;
+        pointer-events: none !important;
+    }
+
+    /* Win screen - center content vertically */
+    #win-screen .container {
+        min-height: 100vh !important;
+        display: flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        padding: 20px !important;
+    }
+
+    .win-content {
+        padding: 25px !important;
+        max-width: 100% !important;
+    }
+
+    .win-icon {
+        font-size: 4rem !important;
+        margin-bottom: 15px !important;
+    }
+
+    .win-content h2 {
+        font-size: 1.8rem !important;
+        margin-bottom: 10px !important;
+    }
+
+    .win-message {
+        font-size: 1rem !important;
+        margin-bottom: 15px !important;
+    }
+
+    .win-stats {
+        gap: 20px !important;
+        margin: 15px 0 !important;
+    }
+
+    .win-stat {
+        padding: 12px 20px !important;
+    }
+
+    .win-stat-value {
+        font-size: 1.5rem !important;
+    }
+
+    .win-stat-label {
+        font-size: 0.85rem !important;
+    }
+
+    .win-stars {
+        font-size: 2rem !important;
+        margin: 15px 0 !important;
+    }
+
+    .scoring-rules {
+        padding: 12px !important;
+        margin: 15px 0 !important;
+        font-size: 0.9rem !important;
+    }
+
+    .win-buttons {
+        gap: 12px !important;
+        margin-top: 20px !important;
+    }
+
+    .win-buttons .btn {
+        padding: 14px 24px !important;
+        font-size: 1rem !important;
+    }
+
+    /* Win badges */
+    .win-badges {
+        gap: 8px !important;
+        margin: 12px 0 !important;
+    }
+
+    .badge {
+        padding: 6px 12px !important;
+        font-size: 0.8rem !important;
+    }
+}
+
+/* Modal as bottom sheet on mobile */
+@media (max-width: 600px) {
+    .modal {
+        align-items: flex-end;
+        justify-content: center;
+        padding: 0;
+        background: rgba(0, 0, 0, 0.5);
+        overflow: hidden;
+    }
+
+    .modal-content {
+        width: 100vw;
+        max-width: 100vw;
+        margin: 0;
+        border-radius: 16px 16px 0 0;
+        max-height: 50vh;
+        overflow-y: auto;
+        overflow-x: hidden;
+        box-sizing: border-box;
+        animation: slideUp 0.25s ease;
+    }
+
+    .modal-header {
+        padding: 10px 12px;
+    }
+
+    .modal-header h3 {
+        font-size: 0.95rem;
+    }
+
+    .modal-body {
+        padding: 10px 12px;
+        overflow-x: hidden;
+    }
+
+    .modal-footer {
+        padding: 10px 12px;
+    }
+
+    /* Row preview - very compact */
+    .rows-preview {
+        padding: 6px;
+        gap: 4px;
+    }
+
+    .row-preview-item {
+        padding: 4px 8px;
+        font-size: 0.7rem;
+    }
+
+    .row-preview-label {
+        font-size: 0.7rem;
+        min-width: 25px;
+    }
+
+    .row-preview-values {
+        font-size: 0.65rem !important;
+        font-family: monospace;
+    }
+
+    /* Scale preview compact */
+    .scale-row-preview {
+        padding: 6px;
+    }
+
+    .scale-row-preview .preview-row {
+        font-size: 0.7rem;
+        padding: 4px 8px;
+    }
+
+    /* Form elements smaller */
+    .form-group {
+        margin-bottom: 8px;
+    }
+
+    .form-group label {
+        font-size: 0.75rem;
+        margin-bottom: 4px;
+    }
+
+    .form-select {
+        padding: 6px 8px;
+        font-size: 0.8rem;
+    }
+
+    /* Fraction inputs very compact */
+    .fraction-input-vertical {
+        flex-direction: row;
+        gap: 6px;
+        align-items: center;
+    }
+
+    .frac-input-num,
+    .frac-input-den {
+        width: 40px !important;
+        height: 32px !important;
+        padding: 4px !important;
+        font-size: 14px !important;
+    }
+
+    .frac-input-line {
+        width: 1px;
+        height: 20px;
+        transform: rotate(20deg);
+    }
+
+    .fraction-preview {
+        font-size: 0.75rem;
+        padding: 4px 8px;
+        margin-top: 6px;
+    }
+
+    /* Result preview compact */
+    .result-preview {
+        margin-top: 8px;
+    }
+
+    .result-preview .preview-label {
+        font-size: 0.7rem;
+    }
+
+    .result-preview .preview-row {
+        font-size: 0.7rem;
+        padding: 4px 8px;
+    }
+
+    /* Formula very compact */
+    .operation-formula {
+        margin: 6px 0;
+    }
+
+    .formula-box {
+        padding: 6px 8px;
+        font-size: 0.75rem;
+        flex-wrap: wrap;
+        gap: 3px;
+    }
+
+    .inline-select {
+        padding: 4px 6px;
+        font-size: 0.75rem;
+        min-width: 40px;
+    }
+
+    .inline-input {
+        width: 35px !important;
+        height: 28px !important;
+        padding: 3px !important;
+        font-size: 14px !important;
+    }
+
+    .formula-symbol,
+    .formula-text,
+    .formula-bracket {
+        font-size: 0.75rem;
+    }
+
+    /* Hide explanation on mobile */
+    .operation-explain {
+        display: none;
+    }
+
+    /* Modal footer buttons */
+    .modal-footer .btn {
+        flex: 1;
+        padding: 10px 8px;
+        font-size: 0.85rem;
+    }
+}
+
+@keyframes slideUp {
+    from {
+        transform: translateY(100%);
+    }
+
+    to {
+        transform: translateY(0);
+    }
+}
+
+.modal-header {
+    padding: 12px 15px;
+    position: sticky;
+    top: 0;
+    background: var(--bg-card);
+    z-index: 10;
+}
+
+.modal-header h3 {
+    font-size: 1rem;
+}
+
+.modal-close {
+    width: 32px;
+    height: 32px;
+    font-size: 1.3rem;
+}
+
+.modal-body {
+    padding: 12px 15px;
+}
+
+.modal-footer {
+    padding: 12px 15px;
+    position: sticky;
+    bottom: 0;
+    background: var(--bg-card);
+}
+
+.modal-footer .btn {
+    flex: 1;
+    padding: 12px;
+}
+
+/* Compact row preview */
+.rows-preview {
+    padding: 8px;
+    margin-bottom: 12px;
+    gap: 6px;
+}
+
+.row-preview-item {
+    padding: 6px 10px;
+    font-size: 0.85rem;
+    gap: 8px;
+}
+
+.row-preview-values {
+    font-size: 0.8rem;
+}
+
+/* Compact scale preview */
+.scale-row-preview {
+    padding: 8px;
+    margin-bottom: 10px;
+}
+
+.scale-row-preview .preview-label {
+    font-size: 0.8rem;
+}
+
+.scale-row-preview .preview-row {
+    font-size: 0.85rem;
+    padding: 6px 10px;
+}
+
+/* Form groups more compact */
+.form-group {
+    margin-bottom: 12px;
+}
+
+.form-group label {
+    font-size: 0.85rem;
+    margin-bottom: 6px;
+}
+
+/* Fraction inputs inline and compact */
+.fraction-input-vertical {
+    flex-direction: row;
+    gap: 10px;
+    align-items: center;
+}
+
+.frac-input-num,
+.frac-input-den {
+    width: 50px !important;
+    height: 40px !important;
+    padding: 6px !important;
+    font-size: 16px !important;
+}
+
+.frac-input-line,
+.frac-input-line-small {
+    width: 2px;
+    height: 25px;
+    transform: rotate(20deg);
+}
+
+.fraction-preview {
+    margin-top: 8px;
+    padding: 6px 10px;
+    font-size: 0.9rem;
+}
+
+/* Result preview compact */
+.result-preview {
+    margin-top: 10px;
+}
+
+.result-preview .preview-label {
+    font-size: 0.8rem;
+    margin-bottom: 6px;
+}
+
+.result-preview .preview-row {
+    padding: 8px 12px;
+    font-size: 0.85rem;
+}
+
+/* Operation formula compact */
+.operation-formula {
+    margin: 10px 0;
+}
+
+.formula-box {
+    padding: 10px;
+    font-size: 0.9rem;
+    flex-wrap: wrap;
+    gap: 5px;
+}
+
+.inline-select {
+    padding: 6px 8px;
+    font-size: 0.85rem;
+    min-width: 50px;
+}
+
+.inline-input {
+    width: 45px !important;
+    padding: 6px !important;
+}
+
+.inline-frac-vertical {
+    flex-direction: row;
+    gap: 5px;
+}
+
+.inline-frac-vertical .frac-input-line-small {
+    width: 1px;
+    height: 20px;
+}
+
+/* Operation explain hidden on mobile to save space */
+.operation-explain {
+    display: none;
+}
+
+/* Even smaller matrix cells for ALL matrices on mobile */
+@media (max-width: 480px) {
+
+    /* All matrix cells - SQUARE */
+    .matrix-cell {
+        width: 26px;
+        height: 26px;
+        min-width: 26px;
+        min-height: 26px;
+        font-size: 0.75rem;
+        border-radius: 4px;
+        aspect-ratio: 1;
+        padding: 0;
+    }
+
+    .matrix-row {
+        gap: 2px;
+        padding: 3px 4px;
+    }
+
+    .matrix-divider {
+        height: 26px;
+        margin: 0 2px;
+        width: 2px;
+    }
+
+    /* Hide row handle and shrink label */
+    .row-handle {
+        display: none;
+    }
+
+    .row-label {
+        font-size: 0.6rem;
+        margin-right: 2px;
+        min-width: 18px;
+    }
+
+    /* Shrink matrix action buttons (X and +) */
+    .matrix-cell.action-btn,
+    .cell-action {
+        width: 22px !important;
+        height: 22px !important;
+        font-size: 0.7rem !important;
+        padding: 0 !important;
+    }
+
+    /* Shrink row quick buttons (× and +) */
+    .row-quick-btn {
+        width: 24px !important;
+        height: 24px !important;
+        font-size: 0.8rem !important;
+        min-width: 24px !important;
+    }
+
+    .row-quick-btns {
+        gap: 3px !important;
+    }
+
+    /* Matrix container tighter */
+    .matrix-container {
+        padding: 10px 5px;
+    }
+}
+
+/* Extra small phones - ultra compact */
+@media (max-width: 380px) {
+    .matrix-cell {
+        width: 24px;
+        height: 24px;
+        font-size: 0.7rem;
+        border-radius: 3px;
+    }
+
+    .matrix-row {
+        gap: 2px;
+        padding: 3px 4px;
+    }
+
+    .matrix-divider {
+        height: 24px;
+        margin: 0 2px;
+        width: 1px;
+    }
+
+    .row-label {
+        display: none;
+    }
+
+    /* Action buttons even smaller */
+    .matrix-cell.action-btn,
+    .cell-action {
+        width: 18px !important;
+        height: 18px !important;
+        font-size: 0.6rem !important;
+    }
+
+    /* Row quick buttons smaller */
+    .row-quick-btn {
+        width: 20px !important;
+        height: 20px !important;
+        font-size: 0.7rem !important;
+        min-width: 20px !important;
+    }
+
+    .row-quick-btns {
+        gap: 2px !important;
+    }
+
+    /* Modal even more compact */
+    .modal-content {
+        max-height: 60vh;
+    }
+
+    .modal-header {
+        padding: 10px 12px;
+    }
+
+    .modal-body {
+        padding: 10px 12px;
+    }
+
+    .modal-footer {
+        padding: 10px 12px;
+    }
+
+    .frac-input-num,
+    .frac-input-den {
+        width: 45px !important;
+        height: 36px !important;
+    }
+}
+
+/* Very small phones (320px) - minimal mode */
+@media (max-width: 340px) {
+    .matrix-cell {
+        width: 20px;
+        height: 20px;
+        font-size: 0.6rem;
+    }
+
+    .matrix-row {
+        gap: 1px;
+        padding: 2px 3px;
+    }
+
+    .matrix-divider {
+        height: 20px;
+        margin: 0 1px;
+    }
+
+    /* Hide action buttons on very small screens */
+    .matrix-cell.action-btn,
+    .cell-action {
+        display: none;
+    }
+
+    /* Hide or minimize row quick buttons */
+    .row-quick-btn {
+        width: 16px !important;
+        height: 16px !important;
+        font-size: 0.55rem !important;
+        min-width: 16px !important;
+    }
+
+    .row-quick-btns {
+        gap: 1px !important;
+    }
+}
+
+/* Prevent zoom on input focus - mobile */
+@media (max-width: 480px) {
+
+    input[type="number"],
+    input[type="text"],
+    select {
+        font-size: 16px !important;
+    }
 }
