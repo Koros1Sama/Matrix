@@ -17,6 +17,7 @@
     <link rel="stylesheet" href="css/style.css" />
     <link rel="stylesheet" href="css/cinematic-tutorial.css" />
     <link rel="stylesheet" href="css/determinant.css" />
+    <link rel="stylesheet" href="css/custom-level.css" />
   </head>
   <body>
     <!-- الشاشة الرئيسية -->
@@ -62,9 +63,9 @@
             <span class="btn-icon">🎮</span>
             <span>ابدأ اللعب</span>
           </button>
-          <button class="btn btn-secondary" onclick="game.showTutorial()">
-            <span class="btn-icon">📖</span>
-            <span>كيف تلعب؟</span>
+          <button class="btn btn-secondary" onclick="game.showAbout()">
+            <span class="btn-icon">ℹ️</span>
+            <span>حول</span>
           </button>
         </div>
 
@@ -236,6 +237,69 @@
       </div>
     </div>
 
+    <!-- شاشة حول -->
+    <div id="about-screen" class="screen">
+      <div class="container">
+        <div class="screen-header">
+          <button class="btn btn-back" onclick="game.showHome()">
+            <span>→</span> رجوع
+          </button>
+          <h2>حول اللعبة</h2>
+        </div>
+
+        <div class="tutorial-content" style="text-align: center">
+          <div class="tutorial-section">
+            <h3>👨‍💻 المبرمج</h3>
+            <p
+              style="
+                font-size: 1.2rem;
+                margin-top: 0.5rem;
+                color: var(--text-color);
+              "
+            >
+              عبدالرحمن اسماعيل سيف المخلافي
+            </p>
+          </div>
+
+          <div class="tutorial-section">
+            <h3>👩‍🏫 مراجعة</h3>
+            <p
+              style="
+                font-size: 1.2rem;
+                margin-top: 0.5rem;
+                color: var(--text-color);
+              "
+            >
+              الدكتورة حنان الصرمي
+            </p>
+          </div>
+
+          <div class="tutorial-section">
+            <h3>📅 وتاريخ التصميم</h3>
+            <p
+              style="
+                font-size: 1.2rem;
+                margin-top: 0.5rem;
+                color: var(--text-color);
+              "
+            >
+              صممت اللعبة في نهاية 2025
+            </p>
+          </div>
+
+          <div class="logo-section" style="margin-top: 3rem; opacity: 0.7">
+            <img
+              src="icon.png"
+              alt="Koros Matrix"
+              class="logo-icon-img"
+              style="width: 60px; height: 60px; margin-bottom: 10px"
+            />
+            <p class="subtitle" style="font-size: 0.9rem">Koros Matrix</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
     <!-- شاشة الدرس التعليمي (Level 0) -->
     <div id="lesson-screen" class="screen">
       <div class="container">
@@ -304,6 +368,10 @@
               </div>
               <div class="point">
                 <span class="point-icon">✅</span>
+                <span>الصفوف الصفرية إن وجدت تكون في الصفوف الاخيرة</span>
+              </div>
+              <div class="point">
+                <span class="point-icon">💡</span>
                 <span
                   >كل العناصر <strong>تحت</strong> أي قائد =
                   <strong>0</strong></span
@@ -954,26 +1022,15 @@
 
           <div class="form-group">
             <label>اضرب في k:</label>
-            <div class="fraction-input-vertical">
+            <div class="fraction-input-single">
               <input
-                type="number"
-                id="scale-num"
-                class="form-input frac-input-num"
-                value="1"
-                data-prev="1"
-                placeholder="البسط"
-                oninput="if(this.value==0){this.value=parseInt(this.dataset.prev)<0?1:-1;} this.dataset.prev=this.value; game.updateScalePreview();"
-                onkeydown="if(event.key==='Enter'){event.preventDefault(); document.getElementById('scale-den').focus();}"
-              />
-              <div class="frac-input-line"></div>
-              <input
-                type="number"
-                id="scale-den"
-                class="form-input frac-input-den"
-                value="1"
-                min="1"
-                placeholder="المقام"
-                onchange="if(this.value<1) this.value=1; game.updateScalePreview();"
+                type="text"
+                inputmode="text"
+                id="scale-k"
+                class="form-input frac-input-single"
+                value=""
+                placeholder="e.g. -3/4 or 2"
+                oninput="game.updateScalePreview();"
                 onkeydown="if(event.key==='Enter'){event.preventDefault(); game.executeScale();}"
               />
             </div>
@@ -1031,27 +1088,16 @@
               <span class="formula-text" id="formula-target-text">R1</span>
               <span class="formula-symbol">+</span>
               <span class="formula-bracket">(</span>
-              <div class="inline-frac-vertical">
-                <input
-                  type="number"
-                  id="add-num"
-                  class="inline-input frac-input-num"
-                  value="-1"
-                  data-prev="-1"
-                  oninput="if(this.value==0){this.value=parseInt(this.dataset.prev)<0?1:-1;} this.dataset.prev=this.value; game.updateAddPreview();"
-                  onkeydown="if(event.key==='Enter'){event.preventDefault(); document.getElementById('add-den').focus();}"
-                />
-                <div class="frac-input-line-small"></div>
-                <input
-                  type="number"
-                  id="add-den"
-                  class="inline-input frac-input-den"
-                  value="1"
-                  min="1"
-                  onchange="if(this.value<1) this.value=1; game.updateAddPreview();"
-                  onkeydown="if(event.key==='Enter'){event.preventDefault(); game.executeAdd();}"
-                />
-              </div>
+              <input
+                type="text"
+                inputmode="text"
+                id="add-k"
+                class="inline-input frac-input-single"
+                value=""
+                placeholder="-3/4"
+                oninput="game.updateAddPreview();"
+                onkeydown="if(event.key==='Enter'){event.preventDefault(); game.executeAdd();}"
+              />
               <span class="formula-bracket">)</span>
               <span class="formula-symbol">×</span>
               <select id="add-source" class="inline-select"></select>
@@ -1109,6 +1155,9 @@
       Created by <span class="signature">Koros Sama</span>
     </div>
 
+    <!-- حاوية شرح التبسيط المتحرك (Cinematic) -->
+    <div id="det-simplify-container"></div>
+
     <!-- حاوية تعليم المحددات (Modal) -->
     <div id="determinant-tutorial-container"></div>
 
@@ -1120,12 +1169,14 @@
     <script src="js/determinant-levels.js"></script>
     <script src="js/determinant-game.js"></script>
     <script src="js/determinant-tutorial.js"></script>
+    <script src="js/det-simplify-tutorial.js"></script>
     <script src="js/cramer-levels.js"></script>
     <script src="js/cramer-game.js"></script>
     <script src="js/cramer-tutorial.js"></script>
     <script src="js/inverse-levels.js"></script>
     <script src="js/inverse-game.js"></script>
     <script src="js/inverse-tutorial.js"></script>
+    <script src="js/custom-level.js"></script>
     <script src="js/app.js"></script>
   </body>
 </html>

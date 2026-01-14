@@ -69,7 +69,8 @@ class GaussianGame {
             tutorial: document.getElementById('tutorial-screen'),
             lesson: document.getElementById('lesson-screen'),
             game: document.getElementById('game-screen'),
-            win: document.getElementById('win-screen')
+            win: document.getElementById('win-screen'),
+            about: document.getElementById('about-screen')
         };
         
         this.elements = {
@@ -106,12 +107,10 @@ class GaussianGame {
     
     bindEvents() {
         // أحداث نوافذ الحوار
-        document.getElementById('scale-num').addEventListener('input', () => this.updateScalePreview());
-        document.getElementById('scale-den').addEventListener('input', () => this.updateScalePreview());
+        document.getElementById('scale-k').addEventListener('input', () => this.updateScalePreview());
         document.getElementById('scale-row').addEventListener('change', () => this.updateScalePreview());
         
-        document.getElementById('add-num').addEventListener('input', () => this.updateAddPreview());
-        document.getElementById('add-den').addEventListener('input', () => this.updateAddPreview());
+        document.getElementById('add-k').addEventListener('input', () => this.updateAddPreview());
         document.getElementById('add-target').addEventListener('change', () => this.updateAddPreview());
         document.getElementById('add-source').addEventListener('change', () => this.updateAddPreview());
         
@@ -185,6 +184,10 @@ class GaussianGame {
     
     showHome() {
         this.showScreen('home');
+    }
+
+    showAbout() {
+        this.showScreen('about');
     }
     
     showPartsSelect() {
@@ -292,6 +295,11 @@ class GaussianGame {
         for (let i = 6; i <= 10; i++) {
             grid.appendChild(this.createDeterminantLevelCard(i));
         }
+        
+        // إضافة زر المرحلة المخصصة
+        if (typeof CustomLevelManager !== 'undefined') {
+            grid.appendChild(CustomLevelManager.createCustomLevelButton('determinant'));
+        }
     }
     
     createDeterminantLevelCard(levelNum) {
@@ -336,6 +344,21 @@ class GaussianGame {
             }
             
             detGame.startLevel(levelNum);
+            this.showScreen('game');
+        }
+    }
+    
+    // بدء مرحلة مخصصة للمحددات
+    startCustomDeterminantLevel(levelData) {
+        if (typeof detGame !== 'undefined') {
+            this.hideGaussUI();
+            
+            const gameContainer = document.getElementById('determinant-game-container');
+            if (gameContainer) {
+                gameContainer.style.display = 'block';
+            }
+            
+            detGame.startCustomLevel(levelData);
             this.showScreen('game');
         }
     }
@@ -426,8 +449,8 @@ class GaussianGame {
         });
         grid.appendChild(learnCard1);
         
-        // المستويات 1-2 (2x2)
-        for (let i = 1; i <= 2; i++) {
+        // المستويات 1-3 (2x2 بما فيها الحالة الخاصة)
+        for (let i = 1; i <= 3; i++) {
             grid.appendChild(this.createCramerLevelCard(i));
         }
         
@@ -445,8 +468,8 @@ class GaussianGame {
         });
         grid.appendChild(learnCard2);
         
-        // المستويات 3-8 (3x3)
-        for (let i = 3; i <= 8; i++) {
+        // المستويات 4-9 (3x3)
+        for (let i = 4; i <= 9; i++) {
             grid.appendChild(this.createCramerLevelCard(i));
         }
         
@@ -464,9 +487,14 @@ class GaussianGame {
         });
         grid.appendChild(learnCard3);
         
-        // المستويات 9-10 (4x4)
-        for (let i = 9; i <= 10; i++) {
+        // المستويات 10-11 (4x4)
+        for (let i = 10; i <= 11; i++) {
             grid.appendChild(this.createCramerLevelCard(i));
+        }
+        
+        // إضافة زر المرحلة المخصصة
+        if (typeof CustomLevelManager !== 'undefined') {
+            grid.appendChild(CustomLevelManager.createCustomLevelButton('cramer'));
         }
     }
     
@@ -520,6 +548,24 @@ class GaussianGame {
         }
     }
     
+    // بدء مرحلة مخصصة لكرامر
+    startCustomCramerLevel(levelData) {
+        if (typeof cramerGame !== 'undefined') {
+            this.hideGaussUI();
+            
+            let gameContainer = document.getElementById('cramer-game-container');
+            if (!gameContainer) {
+                gameContainer = document.createElement('div');
+                gameContainer.id = 'cramer-game-container';
+                document.getElementById('game-screen')?.querySelector('.container')?.appendChild(gameContainer);
+            }
+            gameContainer.style.display = 'block';
+            
+            cramerGame.startCustomLevel(levelData);
+            this.showScreen('game');
+        }
+    }
+    
     endCramerGame() {
         // إخفاء كرامر
         const gameContainer = document.getElementById('cramer-game-container');
@@ -564,8 +610,8 @@ class GaussianGame {
         });
         grid.appendChild(learnCard1);
         
-        // المستويات 1-4 (2x2)
-        for (let i = 1; i <= 4; i++) {
+        // المستويات 1-5 (2x2 بما فيها الحالة الشاذة)
+        for (let i = 1; i <= 5; i++) {
             grid.appendChild(this.createInverseLevelCard(i));
         }
         
@@ -583,8 +629,8 @@ class GaussianGame {
         });
         grid.appendChild(learnCard2);
         
-        // المستويات 5-9 (3x3)
-        for (let i = 5; i <= 9; i++) {
+        // المستويات 6-10 (3x3)
+        for (let i = 6; i <= 10; i++) {
             grid.appendChild(this.createInverseLevelCard(i));
         }
         
@@ -602,8 +648,13 @@ class GaussianGame {
         });
         grid.appendChild(learnCard3);
         
-        // المستوى 10 (4x4)
-        grid.appendChild(this.createInverseLevelCard(10));
+        // المستوى 11 (4x4)
+        grid.appendChild(this.createInverseLevelCard(11));
+        
+        // إضافة زر المرحلة المخصصة
+        if (typeof CustomLevelManager !== 'undefined') {
+            grid.appendChild(CustomLevelManager.createCustomLevelButton('inverse'));
+        }
     }
     
     createInverseLevelCard(levelNum) {
@@ -710,6 +761,90 @@ class GaussianGame {
         if (levelNum === 1) {
             setTimeout(() => this.showTutor(), 500);
         }
+    }
+    
+    // بدء مرحلة مخصصة للمعكوس
+    startCustomInverseLevel(levelData) {
+        // إنشاء المصفوفة الموسعة [A | I]
+        const n = levelData.size;
+        const augmentedMatrix = [];
+        
+        for (let i = 0; i < n; i++) {
+            const row = [];
+            // إضافة معاملات A
+            for (let j = 0; j < n; j++) {
+                row.push(levelData.coefficients[i][j]);
+            }
+            // إضافة مصفوفة الوحدة I
+            for (let j = 0; j < n; j++) {
+                row.push(i === j ? 1 : 0);
+            }
+            augmentedMatrix.push(row);
+        }
+        
+        // إنشاء كائن المستوى بنفس بنية مستويات جاوس
+        const inverseAsLevel = {
+            id: 'custom',
+            name: 'مرحلة مخصصة',
+            size: [n, n * 2],
+            variables: levelData.variables,
+            matrix: augmentedMatrix,
+            solution: null,
+            minSteps: levelData.minSteps || n * 4,
+            isInverseLevel: true,
+            originalSize: n,
+            constants: levelData.constants,
+            isCustom: true
+        };
+        
+        this.currentLevel = inverseAsLevel;
+        this.matrix = Matrix.fromArray(augmentedMatrix);
+        this.originalMatrix = Matrix.fromArray(augmentedMatrix);
+        this.history = [];
+        this.score = 1000;
+        this.steps = 0;
+        this.phase = 1;
+        this.userSolvedAnswers = {};
+        
+        // تعيين علامة وضع المعكوس
+        this.isInverseMode = true;
+        this.inverseOriginalSize = n;
+        this.inverseConstants = levelData.constants;
+        
+        // إعادة تعيين المعلم المساعد
+        this.tutorVisible = false;
+        this.currentHint = null;
+        
+        this.updateUI();
+        this.renderMatrix();
+        
+        // عرض المعادلات
+        const display = this.elements.equationsDisplay;
+        let html = '<div class="inverse-system-title">النظام المخصص:</div>';
+        for (let i = 0; i < n; i++) {
+            let eq = '';
+            for (let j = 0; j < n; j++) {
+                const coef = levelData.coefficients[i][j];
+                if (j > 0) {
+                    eq += coef >= 0 ? ' + ' : ' - ';
+                    eq += `${Math.abs(coef)}${levelData.variables[j]}`;
+                } else {
+                    eq += `${coef}${levelData.variables[j]}`;
+                }
+            }
+            eq += ` = ${levelData.constants[i]}`;
+            html += `<div class="equation-line">${eq}</div>`;
+        }
+        display.innerHTML = html;
+        
+        this.showScreen('game');
+        
+        this.elements.phase1.classList.add('active');
+        this.elements.phase2.classList.remove('active');
+        this.elements.phase1Indicator.classList.add('active');
+        this.elements.phase2Indicator.classList.remove('active');
+        
+        this.elements.btnShowHint.style.display = 'inline-flex';
     }
     
     renderInverseEquations(levelData) {
@@ -853,6 +988,11 @@ class GaussianGame {
             
             grid.appendChild(card);
         });
+        
+        // إضافة زر المرحلة المخصصة
+        if (typeof CustomLevelManager !== 'undefined') {
+            grid.appendChild(CustomLevelManager.createCustomLevelButton('gauss'));
+        }
     }
     
     // التحقق من كود الفتح السري
@@ -921,6 +1061,46 @@ class GaussianGame {
             this.elements.btnShowHint.style.display = 'none';
             this.hideTutor();
         }
+    }
+    
+    // ==================== المرحلة المخصصة ====================
+    
+    startCustomLevel(levelData) {
+        // إعادة تعيين وضع المعكوس
+        this.isInverseMode = false;
+        this.inverseOriginalSize = 0;
+        this.inverseConstants = [];
+        
+        this.currentLevel = levelData;
+        this.matrix = Matrix.fromArray(levelData.matrix);
+        this.originalMatrix = Matrix.fromArray(levelData.matrix);
+        this.history = [];
+        this.score = 1000;
+        this.steps = 0;
+        this.phase = 1;
+        this.userSolvedAnswers = {};
+        
+        // إعادة تعيين تتبع التلميحات والأخطاء للتقييم
+        this.hintsUsed = 0;
+        this.errorsCount = 0;
+        
+        // إعادة تعيين المعلم المساعد
+        this.tutorVisible = false;
+        this.currentHint = null;
+        
+        this.updateUI();
+        this.renderMatrix();
+        this.renderEquations();
+        this.showScreen('game');
+        
+        this.elements.phase1.classList.add('active');
+        this.elements.phase2.classList.remove('active');
+        this.elements.phase2.style.display = '';
+        this.elements.phase1Indicator.classList.add('active');
+        this.elements.phase2Indicator.classList.remove('active');
+        
+        // إظهار زر التلميح
+        this.elements.btnShowHint.style.display = 'inline-flex';
     }
     
     // ==================== العرض ====================
@@ -1196,6 +1376,24 @@ class GaussianGame {
         });
     }
     
+    // تحليل قيمة الكسر من نص واحد (مثل: "-3/4" أو "2")
+    parseFractionInput(value) {
+        const str = String(value).trim();
+        if (!str) return { num: 0, den: 1 };
+        
+        // التحقق من وجود سلاش
+        if (str.includes('/')) {
+            const parts = str.split('/');
+            const num = parseInt(parts[0]) || 0;
+            const den = parseInt(parts[1]) || 1;
+            return { num, den: den === 0 ? 1 : den };
+        } else {
+            // رقم بدون سلاش
+            const num = parseInt(str) || 0;
+            return { num, den: 1 };
+        }
+    }
+    
     showScaleModal() {
         const select = document.getElementById('scale-row');
         select.innerHTML = '';
@@ -1207,16 +1405,15 @@ class GaussianGame {
             select.appendChild(option);
         }
         
-        document.getElementById('scale-num').value = 1;
-        document.getElementById('scale-den').value = 1;
+        document.getElementById('scale-k').value = '';
         
         this.updateScalePreview();
         this.modals.scale.classList.add('active');
     }
     
     updateScalePreview() {
-        const num = parseInt(document.getElementById('scale-num').value) || 0;
-        const den = parseInt(document.getElementById('scale-den').value) || 1;
+        const kValue = document.getElementById('scale-k').value;
+        const { num, den } = this.parseFractionInput(kValue);
         const row = parseInt(document.getElementById('scale-row').value);
         
         if (!this.matrix || isNaN(row)) return;
@@ -1335,8 +1532,8 @@ class GaussianGame {
     }
     
     executeScale() {
-        const num = parseInt(document.getElementById('scale-num').value) || 0;
-        const den = parseInt(document.getElementById('scale-den').value) || 1;
+        const kValue = document.getElementById('scale-k').value;
+        const { num, den } = this.parseFractionInput(kValue);
         const row = parseInt(document.getElementById('scale-row').value);
         
         if (den === 0 || num === 0) {
@@ -1402,16 +1599,15 @@ class GaussianGame {
             this.updateAddPreview();
         };
         
-        document.getElementById('add-num').value = -1;
-        document.getElementById('add-den').value = 1;
+        document.getElementById('add-k').value = '';
         
         this.updateAddPreview();
         this.modals.add.classList.add('active');
     }
     
     updateAddPreview() {
-        const num = parseInt(document.getElementById('add-num').value) || 0;
-        const den = parseInt(document.getElementById('add-den').value) || 1;
+        const kValue = document.getElementById('add-k').value;
+        const { num, den } = this.parseFractionInput(kValue);
         const target = parseInt(document.getElementById('add-target').value);
         const source = parseInt(document.getElementById('add-source').value);
         
@@ -1487,8 +1683,8 @@ class GaussianGame {
     }
     
     executeAdd() {
-        const num = parseInt(document.getElementById('add-num').value) || 0;
-        const den = parseInt(document.getElementById('add-den').value) || 1;
+        const kValue = document.getElementById('add-k').value;
+        const { num, den } = this.parseFractionInput(kValue);
         const target = parseInt(document.getElementById('add-target').value);
         const source = parseInt(document.getElementById('add-source').value);
         
@@ -1530,6 +1726,54 @@ class GaussianGame {
         console.log('isInverseMode:', this.isInverseMode);
         console.log('inverseOriginalSize:', this.inverseOriginalSize);
         console.log('currentPart:', this.currentPart);
+        
+        // ==================== فحص الحالات الخاصة ====================
+        if (this.isInverseMode) {
+            // وضع المعكوس: فحص الصف الصفري في الجزء الأيسر
+            const n = this.inverseOriginalSize;
+            for (let i = 0; i < n; i++) {
+                let rowIsZero = true;
+                for (let j = 0; j < n; j++) {
+                    if (!this.matrix.get(i, j).isZero()) {
+                        rowIsZero = false;
+                        break;
+                    }
+                }
+                if (rowIsZero) {
+                    console.log('Singular matrix detected! Row', i, 'is all zeros on left side');
+                    setTimeout(() => {
+                        this.showInverseNoInverseScreen(i);
+                    }, 500);
+                    return;
+                }
+            }
+        } else {
+            // فحص عدم وجود حل (صف متناقض: 0 = k حيث k ≠ 0)
+            if (this.matrix.hasNoSolution()) {
+                console.log('No solution detected!');
+                setTimeout(() => {
+                    this.showNoSolutionScreen();
+                }, 500);
+                return;
+            }
+            
+            // فحص عدد لا نهائي من الحلول (صف صفري بالكامل)
+            if (this.matrix.hasInfiniteSolutions()) {
+                // نتحقق أولاً أن المصفوفة في الشكل المدرجي
+                const isEchelon = this.currentPart === 2 
+                    ? this.matrix.isReducedRowEchelon() 
+                    : this.matrix.isRowEchelon();
+                    
+                if (isEchelon) {
+                    console.log('Infinite solutions detected!');
+                    setTimeout(() => {
+                        this.showInfiniteSolutionsScreen();
+                    }, 500);
+                    return;
+                }
+            }
+        }
+        // ==================== نهاية فحص الحالات الخاصة ====================
         
         if (this.isInverseMode) {
             // وضع المعكوس: التحقق من أن الجزء الأيسر هو مصفوفة الوحدة
@@ -1795,7 +2039,7 @@ class GaussianGame {
     }
     
     showInverseWinScreen(stars) {
-        const starsDisplay = '⭐'.repeat(stars) + '☆'.repeat(3 - stars);
+        const starsDisplay = '⭐'.repeat(stars) + '☆'.repeat(5 - stars);
         const levelNum = this.currentLevel.id;
         
         this.elements.matrixContainer.innerHTML = `
@@ -1851,6 +2095,332 @@ class GaussianGame {
         // النجوم = 5 - العقوبة (الحد الأدنى 0)
         return Math.max(0, 5 - totalPenalty);
     }
+    
+    // ==================== شاشات الحالات الخاصة ====================
+    
+    // شاشة لا يوجد حل (معادلات متناقضة)
+    showNoSolutionScreen() {
+        this.phase = 2;
+        this.hideTutor();
+        
+        // إيجاد الصف المتناقض
+        let contradictoryRowIndex = -1;
+        for (let i = 0; i < this.matrix.rows; i++) {
+            let allZeros = true;
+            for (let j = 0; j < this.matrix.cols - 1; j++) {
+                if (!this.matrix.get(i, j).isZero()) {
+                    allZeros = false;
+                    break;
+                }
+            }
+            if (allZeros && !this.matrix.get(i, this.matrix.cols - 1).isZero()) {
+                contradictoryRowIndex = i;
+                break;
+            }
+        }
+        
+        const contradictoryValue = contradictoryRowIndex >= 0 
+            ? this.matrix.get(contradictoryRowIndex, this.matrix.cols - 1).toString()
+            : '?';
+        
+        // عرض المصفوفة مع تحديد الصف المتناقض
+        let matrixHtml = '<div class="special-case-matrix">';
+        for (let i = 0; i < this.matrix.rows; i++) {
+            const isContradictory = i === contradictoryRowIndex;
+            matrixHtml += `<div class="matrix-row ${isContradictory ? 'contradiction-row' : ''}" style="cursor: default;">`;
+            
+            for (let j = 0; j < this.matrix.cols; j++) {
+                if (j === this.matrix.cols - 1) {
+                    matrixHtml += '<span class="matrix-divider"></span>';
+                }
+                
+                const value = this.matrix.get(i, j);
+                const displayValue = value.den === 1 ? value.num : `<small>${value.num}/${value.den}</small>`;
+                
+                let cellClass = 'matrix-cell';
+                if (isContradictory && j === this.matrix.cols - 1) {
+                    cellClass += ' error';
+                } else if (isContradictory) {
+                    cellClass += ' zero';
+                }
+                
+                matrixHtml += `<span class="${cellClass}">${displayValue}</span>`;
+            }
+            matrixHtml += '</div>';
+        }
+        matrixHtml += '</div>';
+        
+        const stars = this.calculateStars();
+        const starsDisplay = '⭐'.repeat(stars) + '☆'.repeat(5 - stars);
+        
+        this.elements.matrixContainer.innerHTML = `
+            <div class="special-case-screen no-solution-screen">
+                <div class="special-case-icon">❌</div>
+                <h2 class="special-case-title">لا يوجد حل!</h2>
+                
+                <div class="special-case-matrix-container">
+                    ${matrixHtml}
+                </div>
+                
+                <div class="special-case-explanation">
+                    <div class="explanation-box error">
+                        <div class="explanation-icon">⚠️</div>
+                        <div class="explanation-content">
+                            <p><strong>الصف الأخير يقول:</strong></p>
+                            <div class="math-expression">0 = ${contradictoryValue}</div>
+                            <p>وهذا <strong>مستحيل!</strong></p>
+                        </div>
+                    </div>
+                    
+                    <div class="explanation-details">
+                        <p>📚 <strong>معنى ذلك:</strong></p>
+                        <p>المعادلات الأصلية <strong>متناقضة</strong> - لا يوجد قيم للمتغيرات تحقق جميع المعادلات معاً.</p>
+                    </div>
+                </div>
+                
+                <div class="special-case-result">
+                    <div class="result-stars">${starsDisplay}</div>
+                    <p>اكتشفت التناقض في ${this.steps} خطوة</p>
+                </div>
+                
+                <div class="special-case-buttons">
+                    <button class="btn btn-secondary" onclick="game.backToLevels()">
+                        قائمة المستويات
+                    </button>
+                    <button class="btn btn-primary" onclick="game.nextLevel()">
+                        المستوى التالي ▶
+                    </button>
+                </div>
+            </div>
+        `;
+        
+        // حفظ التقدم
+        this.saveLevelCompletion(stars);
+    }
+    
+    // شاشة عدد لا نهائي من الحلول
+    showInfiniteSolutionsScreen() {
+        this.phase = 2;
+        this.hideTutor();
+        
+        // إيجاد الصف الصفري
+        let zeroRowIndex = -1;
+        for (let i = 0; i < this.matrix.rows; i++) {
+            let allZeros = true;
+            for (let j = 0; j < this.matrix.cols; j++) {
+                if (!this.matrix.get(i, j).isZero()) {
+                    allZeros = false;
+                    break;
+                }
+            }
+            if (allZeros) {
+                zeroRowIndex = i;
+                break;
+            }
+        }
+        
+        // عرض المصفوفة مع تحديد الصف الصفري
+        let matrixHtml = '<div class="special-case-matrix">';
+        for (let i = 0; i < this.matrix.rows; i++) {
+            const isZeroRow = i === zeroRowIndex;
+            matrixHtml += `<div class="matrix-row ${isZeroRow ? 'zero-row-highlight' : ''}" style="cursor: default;">`;
+            
+            for (let j = 0; j < this.matrix.cols; j++) {
+                if (j === this.matrix.cols - 1) {
+                    matrixHtml += '<span class="matrix-divider"></span>';
+                }
+                
+                const value = this.matrix.get(i, j);
+                const displayValue = value.den === 1 ? value.num : `<small>${value.num}/${value.den}</small>`;
+                
+                let cellClass = 'matrix-cell';
+                if (isZeroRow) {
+                    cellClass += ' zero';
+                }
+                
+                matrixHtml += `<span class="${cellClass}">${displayValue}</span>`;
+            }
+            matrixHtml += '</div>';
+        }
+        matrixHtml += '</div>';
+        
+        const stars = this.calculateStars();
+        const starsDisplay = '⭐'.repeat(stars) + '☆'.repeat(5 - stars);
+        
+        this.elements.matrixContainer.innerHTML = `
+            <div class="special-case-screen infinite-solutions-screen">
+                <div class="special-case-icon">♾️</div>
+                <h2 class="special-case-title">عدد لا نهائي من الحلول!</h2>
+                
+                <div class="special-case-matrix-container">
+                    ${matrixHtml}
+                </div>
+                
+                <div class="special-case-explanation">
+                    <div class="explanation-box warning">
+                        <div class="explanation-icon">💡</div>
+                        <div class="explanation-content">
+                            <p><strong>الصف المحدد:</strong></p>
+                            <div class="math-expression">0 = 0</div>
+                            <p>وهذا صحيح <strong>دائماً!</strong></p>
+                        </div>
+                    </div>
+                    
+                    <div class="explanation-details">
+                        <p>📚 <strong>معنى ذلك:</strong></p>
+                        <p>أحد المعادلات <strong>تابع</strong> للمعادلات الأخرى. يوجد متغير <strong>حر</strong> يمكن أن يأخذ أي قيمة!</p>
+                    </div>
+                </div>
+                
+                <div class="special-case-result">
+                    <div class="result-stars">${starsDisplay}</div>
+                    <p>اكتشفت الحلول اللانهائية في ${this.steps} خطوة</p>
+                </div>
+                
+                <div class="special-case-buttons">
+                    <button class="btn btn-secondary" onclick="game.backToLevels()">
+                        قائمة المستويات
+                    </button>
+                    <button class="btn btn-primary" onclick="game.nextLevel()">
+                        المستوى التالي ▶
+                    </button>
+                </div>
+            </div>
+        `;
+        
+        // حفظ التقدم
+        this.saveLevelCompletion(stars);
+    }
+    
+    // شاشة لا يوجد معكوس (مصفوفة شاذة في وضع المعكوس)
+    showInverseNoInverseScreen(zeroRowIndex) {
+        this.phase = 2;
+        this.hideTutor();
+        
+        const n = this.inverseOriginalSize;
+        
+        // عرض المصفوفة الموسعة مع تحديد الصف الصفري
+        let matrixHtml = '<div class="special-case-matrix inverse-matrix">';
+        for (let i = 0; i < n; i++) {
+            const isZeroRow = i === zeroRowIndex;
+            matrixHtml += `<div class="matrix-row ${isZeroRow ? 'zero-row-highlight' : ''}" style="cursor: default;">`;
+            
+            // الجزء الأيسر (A)
+            for (let j = 0; j < n; j++) {
+                const value = this.matrix.get(i, j);
+                const displayValue = value.den === 1 ? value.num : `<small>${value.num}/${value.den}</small>`;
+                let cellClass = 'matrix-cell';
+                if (isZeroRow) cellClass += ' zero';
+                matrixHtml += `<span class="${cellClass}">${displayValue}</span>`;
+            }
+            
+            matrixHtml += '<span class="matrix-divider"></span>';
+            
+            // الجزء الأيمن (I المتحولة)
+            for (let j = n; j < 2 * n; j++) {
+                const value = this.matrix.get(i, j);
+                const displayValue = value.den === 1 ? value.num : `<small>${value.num}/${value.den}</small>`;
+                matrixHtml += `<span class="matrix-cell">${displayValue}</span>`;
+            }
+            matrixHtml += '</div>';
+        }
+        matrixHtml += '</div>';
+        
+        const stars = this.calculateStars();
+        const starsDisplay = '⭐'.repeat(stars) + '☆'.repeat(5 - stars);
+        const levelNum = this.currentLevel.id;
+        
+        this.elements.matrixContainer.innerHTML = `
+            <div class="special-case-screen no-inverse-screen">
+                <div class="special-case-icon">❌</div>
+                <h2 class="special-case-title">لا يوجد معكوس!</h2>
+                
+                <div class="special-case-matrix-container">
+                    ${matrixHtml}
+                </div>
+                
+                <div class="special-case-explanation">
+                    <div class="explanation-box error">
+                        <div class="explanation-icon">⚠️</div>
+                        <div class="explanation-content">
+                            <p><strong>الصف ${zeroRowIndex + 1} في الجزء الأيسر:</strong></p>
+                            <div class="math-expression">[ ${'0 '.repeat(n).trim().replace(/ /g, ', ')} ]</div>
+                            <p>صف صفري بالكامل!</p>
+                        </div>
+                    </div>
+                    
+                    <div class="explanation-details">
+                        <p>📚 <strong>معنى ذلك:</strong></p>
+                        <p>المصفوفة <strong>شاذة</strong> (Singular) - محددها = 0</p>
+                        <p>لا يمكن تحويل الجزء الأيسر إلى مصفوفة الوحدة، وبالتالي <strong>لا يوجد معكوس</strong>!</p>
+                    </div>
+                </div>
+                
+                <div class="special-case-result">
+                    <div class="result-stars">${starsDisplay}</div>
+                    <p>اكتشفت أن المصفوفة شاذة في ${this.steps} خطوة</p>
+                </div>
+                
+                <div class="special-case-buttons">
+                    <button class="btn btn-secondary" onclick="game.backToInverseLevels()">
+                        قائمة المستويات
+                    </button>
+                    ${levelNum < 11 ? `
+                        <button class="btn btn-primary" onclick="game.startInverseLevel(${levelNum + 1})">
+                            المستوى التالي ▶
+                        </button>
+                    ` : ''}
+                </div>
+            </div>
+        `;
+        
+        // حفظ التقدم
+        if (typeof inverseGame !== 'undefined') {
+            if (!inverseGame.completedLevels.includes(levelNum)) {
+                inverseGame.completedLevels.push(levelNum);
+            }
+            if (!inverseGame.levelStars[levelNum] || stars > inverseGame.levelStars[levelNum]) {
+                inverseGame.levelStars[levelNum] = stars;
+            }
+            inverseGame.saveProgress();
+        }
+    }
+    
+    // دالة مساعدة لحفظ إكمال المستوى
+    saveLevelCompletion(stars) {
+        const levelId = this.currentLevel.id;
+        
+        // إضافة للمستويات المكتملة
+        if (!this.completedLevels.includes(levelId)) {
+            this.completedLevels.push(levelId);
+        }
+        
+        // تحديث النجوم
+        if (!this.levelStars[levelId] || stars > this.levelStars[levelId]) {
+            this.levelStars[levelId] = stars;
+        }
+        
+        this.saveProgress();
+    }
+    
+    // دالة للعودة للمستويات
+    backToLevels() {
+        this.showLevelSelect();
+    }
+    
+    // دالة للانتقال للمستوى التالي
+    nextLevel() {
+        const nextLevelId = this.currentLevel.id + 1;
+        const nextLevel = getLevel(nextLevelId);
+        
+        if (nextLevel) {
+            this.startLevel(nextLevelId);
+        } else {
+            this.showLevelSelect();
+        }
+    }
+    
+    // ==================== نهاية شاشات الحالات الخاصة ====================
     
     startPhase2() {
         this.phase = 2;

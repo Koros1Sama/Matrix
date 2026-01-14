@@ -4880,3 +4880,478 @@ body::before {
         font-size: 16px !important;
     }
 }
+
+/* ============================================
+   عرض النجوم الحي في ألعاب المحددات وكرامر
+   ============================================ */
+
+/* النجوم الحية في لعبة المحددات */
+.det-live-stats,
+.cramer-live-stats {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+    padding: 8px 15px;
+    background: rgba(0, 0, 0, 0.2);
+    border-radius: 10px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.det-live-stars,
+.cramer-live-stars {
+    font-size: 1.1rem;
+    letter-spacing: 2px;
+    animation: starsGlow 2s ease-in-out infinite;
+}
+
+.det-stats-info,
+.cramer-stats-info {
+    font-size: 0.75rem;
+    color: var(--text-muted);
+    display: flex;
+    gap: 10px;
+}
+
+@keyframes starsGlow {
+
+    0%,
+    100% {
+        filter: drop-shadow(0 0 3px rgba(255, 215, 0, 0.3));
+    }
+
+    50% {
+        filter: drop-shadow(0 0 8px rgba(255, 215, 0, 0.6));
+    }
+}
+
+/* تنسيق الرأس في ألعاب المحددات وكرامر */
+.det-game-header,
+.cramer-game-header {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    padding: 15px;
+    background: var(--bg-card);
+    border-radius: var(--radius-md);
+    margin-bottom: 15px;
+}
+
+/* Responsive للجوال */
+@media (max-width: 600px) {
+
+    .det-live-stats,
+    .cramer-live-stats,
+    .inv-live-stats {
+        flex-direction: row;
+        padding: 6px 10px;
+        gap: 8px;
+    }
+
+    .det-live-stars,
+    .cramer-live-stars,
+    .inv-live-stars {
+        font-size: 0.9rem;
+    }
+
+    .det-stats-info,
+    .cramer-stats-info,
+    .inv-stats-info {
+        font-size: 0.65rem;
+    }
+}
+
+/* النجوم الحية في لعبة المعكوس */
+.inv-live-stats {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+    padding: 8px 15px;
+    background: rgba(0, 0, 0, 0.2);
+    border-radius: 10px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.inv-live-stars {
+    font-size: 1.1rem;
+    letter-spacing: 2px;
+    animation: starsGlow 2s ease-in-out infinite;
+}
+
+.inv-stats-info {
+    font-size: 0.75rem;
+    color: var(--text-muted);
+}
+
+.inv-game-header {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    padding: 15px;
+    background: var(--bg-card);
+    border-radius: var(--radius-md);
+    margin-bottom: 15px;
+}
+
+/* ============================================
+   حقل إدخال الكسر الموحد (بدلاً من حقلين)
+   ============================================ */
+
+.fraction-input-single {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.frac-input-single {
+    width: 120px !important;
+    height: 44px !important;
+    padding: 8px 12px !important;
+    font-size: 16px !important;
+    text-align: center !important;
+    direction: ltr !important;
+    border: 2px solid rgba(255, 255, 255, 0.3) !important;
+    border-radius: 8px !important;
+    background: rgba(255, 255, 255, 0.1) !important;
+    color: var(--text-primary) !important;
+    font-family: 'Courier New', monospace !important;
+    transition: border-color 0.2s, background 0.2s !important;
+}
+
+.frac-input-single:hover {
+    border-color: rgba(255, 255, 255, 0.5) !important;
+    background: rgba(255, 255, 255, 0.15) !important;
+}
+
+.frac-input-single:focus {
+    outline: none !important;
+    border-color: var(--primary) !important;
+    background: rgba(255, 255, 255, 0.2) !important;
+    box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.2) !important;
+}
+
+.frac-input-single::placeholder {
+    color: rgba(255, 255, 255, 0.4) !important;
+    font-size: 13px !important;
+    direction: ltr !important;
+}
+
+/* Inline single fraction input (for formula box) */
+.inline-input.frac-input-single {
+    width: 80px !important;
+    height: 36px !important;
+    padding: 4px 8px !important;
+    font-size: 14px !important;
+}
+
+/* Responsive for mobile */
+@media (max-width: 600px) {
+    .frac-input-single {
+        width: 110px !important;
+        height: 40px !important;
+        font-size: 14px !important;
+        padding: 6px 10px !important;
+    }
+
+    .frac-input-single::placeholder {
+        font-size: 11px !important;
+    }
+
+    .inline-input.frac-input-single {
+        width: 70px !important;
+        height: 32px !important;
+        font-size: 13px !important;
+    }
+}
+
+/* ============================================
+   شاشات الحالات الخاصة (لا حل / لا نهائي / لا معكوس)
+   ============================================ */
+
+.special-case-screen {
+    text-align: center;
+    padding: 30px 20px;
+    animation: fadeIn 0.5s ease;
+}
+
+.special-case-icon {
+    font-size: 4rem;
+    margin-bottom: 15px;
+    animation: float 3s ease-in-out infinite;
+}
+
+.special-case-title {
+    font-size: 1.8rem;
+    font-weight: 700;
+    margin-bottom: 25px;
+    direction: rtl;
+}
+
+.no-solution-screen .special-case-title {
+    color: var(--danger);
+}
+
+.infinite-solutions-screen .special-case-title {
+    color: var(--accent);
+}
+
+.no-inverse-screen .special-case-title {
+    color: var(--danger);
+}
+
+.special-case-matrix-container {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 25px;
+}
+
+.special-case-matrix {
+    display: inline-flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+/* الصف المتناقض */
+.contradiction-row {
+    background: rgba(239, 68, 68, 0.15) !important;
+    border-radius: var(--radius-md);
+    animation: pulse-error 2s ease-in-out infinite;
+}
+
+@keyframes pulse-error {
+
+    0%,
+    100% {
+        box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.4);
+    }
+
+    50% {
+        box-shadow: 0 0 15px 5px rgba(239, 68, 68, 0.3);
+    }
+}
+
+/* الصف الصفري */
+.zero-row-highlight {
+    background: rgba(245, 158, 11, 0.15) !important;
+    border-radius: var(--radius-md);
+    animation: pulse-warning 2s ease-in-out infinite;
+}
+
+@keyframes pulse-warning {
+
+    0%,
+    100% {
+        box-shadow: 0 0 0 0 rgba(245, 158, 11, 0.4);
+    }
+
+    50% {
+        box-shadow: 0 0 15px 5px rgba(245, 158, 11, 0.3);
+    }
+}
+
+.special-case-explanation {
+    max-width: 500px;
+    margin: 0 auto 25px;
+    direction: rtl;
+}
+
+.explanation-box {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    padding: 20px;
+    border-radius: var(--radius-lg);
+    margin-bottom: 15px;
+    flex-direction: row-reverse;
+}
+
+.explanation-box.error {
+    background: rgba(239, 68, 68, 0.1);
+    border: 2px solid rgba(239, 68, 68, 0.3);
+}
+
+.explanation-box.warning {
+    background: rgba(245, 158, 11, 0.1);
+    border: 2px solid rgba(245, 158, 11, 0.3);
+}
+
+.explanation-icon {
+    font-size: 2.5rem;
+    flex-shrink: 0;
+}
+
+.explanation-content {
+    text-align: right;
+}
+
+.explanation-content p {
+    margin: 5px 0;
+    color: var(--text-secondary);
+}
+
+.math-expression {
+    font-size: 1.5rem;
+    font-weight: 700;
+    font-family: 'Fira Code', monospace;
+    padding: 10px 20px;
+    background: var(--bg-dark);
+    border-radius: var(--radius-md);
+    margin: 10px 0;
+    display: inline-block;
+    direction: ltr;
+}
+
+.explanation-box.error .math-expression {
+    color: var(--danger);
+}
+
+.explanation-box.warning .math-expression {
+    color: var(--accent);
+}
+
+.explanation-details {
+    background: var(--bg-card);
+    padding: 15px 20px;
+    border-radius: var(--radius-md);
+    border-right: 4px solid var(--primary);
+    text-align: right;
+}
+
+.explanation-details p {
+    margin: 5px 0;
+    color: var(--text-secondary);
+    line-height: 1.7;
+}
+
+.special-case-result {
+    margin-bottom: 25px;
+}
+
+.result-stars {
+    font-size: 2rem;
+    letter-spacing: 5px;
+    margin-bottom: 10px;
+}
+
+.special-case-result p {
+    color: var(--text-muted);
+    direction: rtl;
+}
+
+.special-case-buttons {
+    display: flex;
+    gap: 15px;
+    justify-content: center;
+    flex-wrap: wrap;
+}
+
+/* Responsive */
+@media (max-width: 600px) {
+    .special-case-icon {
+        font-size: 3rem;
+    }
+
+    .special-case-title {
+        font-size: 1.4rem;
+    }
+
+    .explanation-box {
+        flex-direction: column;
+        text-align: center;
+    }
+
+    .explanation-content {
+        text-align: center;
+    }
+
+    .math-expression {
+        font-size: 1.2rem;
+    }
+
+    .special-case-buttons {
+        flex-direction: column;
+    }
+
+    .special-case-buttons .btn {
+        width: 100%;
+    }
+}
+
+/* ============================================
+   كرامر - شاشة det(A) = 0
+   ============================================ */
+
+.cramer-det-zero-screen {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 2rem;
+    text-align: center;
+    min-height: 60vh;
+}
+
+.det-zero-explanation {
+    background: var(--bg-card);
+    border-radius: var(--radius-lg);
+    padding: 2rem;
+    margin: 1.5rem 0;
+    max-width: 500px;
+    width: 100%;
+    direction: rtl;
+}
+
+.det-zero-matrix {
+    background: rgba(99, 102, 241, 0.1);
+    border-radius: var(--radius-md);
+    padding: 1rem;
+    margin: 1rem 0;
+    display: inline-block;
+}
+
+.det-zero-matrix .matrix-row {
+    display: flex;
+    justify-content: center;
+    gap: 0.5rem;
+    margin: 0.25rem 0;
+}
+
+.det-zero-matrix .matrix-cell {
+    background: var(--bg-card-hover);
+    padding: 0.5rem 1rem;
+    border-radius: var(--radius-sm);
+    font-family: 'Fira Code', monospace;
+    min-width: 40px;
+}
+
+.matrix-section {
+    margin-bottom: 1.5rem;
+}
+
+.matrix-label {
+    color: var(--text-secondary);
+    margin-bottom: 0.5rem;
+    font-size: 0.9rem;
+}
+
+.det-zero-explanation ul {
+    text-align: right;
+    padding-right: 1.5rem;
+    margin: 0.5rem 0;
+}
+
+.det-zero-explanation li {
+    margin: 0.3rem 0;
+    color: var(--text-secondary);
+}
+
+/* Zero row highlight for inverse */
+.zero-row-highlight {
+    background: rgba(239, 68, 68, 0.15) !important;
+    border-radius: var(--radius-sm);
+}

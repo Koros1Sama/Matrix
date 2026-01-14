@@ -395,14 +395,134 @@ class DeterminantTutorial {
                     `,
                     note: 'المحدد = 0 يعني المصفوفة ليس لها معكوس!'
                 },
+                // ========== SIMPLIFICATION PHASES ==========
+                {
+                    type: 'simplify-intro',
+                    title: '✨ تبسيط المحدد',
+                    content: `
+                        <div class="tut-intro">
+                            <p>قبل الحساب، يمكنك <strong>تبسيط</strong> المصفوفة لجعل الأرقام أسهل!</p>
+                            <div class="tut-uses">
+                                <div class="use-item">🎯 إنشاء أصفار = حسابات أقل</div>
+                                <div class="use-item">📉 أرقام أصغر = أخطاء أقل</div>
+                            </div>
+                            <p class="tut-note">لكن لكل عملية تأثير على قيمة المحدد!</p>
+                        </div>
+                    `
+                },
+                {
+                    type: 'simplify-swap',
+                    title: '🔄 تبديل صفين',
+                    content: `
+                        <div class="property-demo">
+                            <div class="property-rule">
+                                <span class="rule-icon">⚠️</span>
+                                <span class="rule-text">
+                                    عند تبديل صفين، <strong>يتغير إشارة المحدد</strong><br>
+                                    المحدد الجديد = المحدد القديم × <strong class="negative-mult">(−1)</strong>
+                                </span>
+                            </div>
+                            
+                            <div class="when-to-use">
+                                <div class="when-title">📍 متى نستخدم التبديل؟</div>
+                                <div class="when-item">• عندما يكون العنصر المراد استخدامه للتصفير = <strong>صفر</strong></div>
+                                <div class="when-item">• نبدل بصف يحوي رقماً مناسباً للتبسيط</div>
+                            </div>
+                            
+                            <div class="property-example">
+                                <div class="example-before">
+                                    <div class="mini-label">قبل:</div>
+                                    <div class="mini-matrix">
+                                        <div class="mini-row highlight-row">[ <span class="zero">0</span>  3 ]</div>
+                                        <div class="mini-row">[ 4  5 ]</div>
+                                    </div>
+                                </div>
+                                
+                                <div class="example-arrow">R₁ ↔ R₂ →</div>
+                                
+                                <div class="example-after">
+                                    <div class="mini-label">بعد:</div>
+                                    <div class="mini-matrix">
+                                        <div class="mini-row">[ <span class="pivot">4</span>  5 ]</div>
+                                        <div class="mini-row highlight-row">[ 0  3 ]</div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="property-note">
+                                💡 تذكر: في النهاية اضرب الناتج في (−1) لكل تبديل!
+                            </div>
+                        </div>
+                    `
+                },
+                {
+                    type: 'simplify-add',
+                    title: '➕ جمع مضاعف صف',
+                    content: `
+                        <div class="property-demo">
+                            <div class="property-rule property-rule-free">
+                                <span class="rule-icon">✨</span>
+                                <span class="rule-text">
+                                    جمع صف مع مضاعف صف آخر <strong class="free-text">لا يغير المحدد!</strong>
+                                </span>
+                            </div>
+                            
+                            <div class="when-to-use when-to-use-green">
+                                <div class="when-title">📍 متى نستخدم الجمع؟</div>
+                                <div class="when-formula">R₂ → R₂ + k × R₁</div>
+                                <div class="when-item">• <strong>دائماً!</strong> هذه العملية الأساسية للتبسيط</div>
+                                <div class="when-item">• لإنشاء <strong>أصفار</strong> في العمود</div>
+                                <div class="when-item">• اختر k بحيث يُلغي العنصر المطلوب</div>
+                            </div>
+                            
+                            <div class="property-example">
+                                <div class="example-before">
+                                    <div class="mini-label">قبل:</div>
+                                    <div class="mini-matrix">
+                                        <div class="mini-row">[ 2  3 ]</div>
+                                        <div class="mini-row highlight-row">[ 4  5 ]</div>
+                                    </div>
+                                </div>
+                                
+                                <div class="example-arrow">R₂ + (−2)R₁ →</div>
+                                
+                                <div class="example-after">
+                                    <div class="mini-label">بعد:</div>
+                                    <div class="mini-matrix">
+                                        <div class="mini-row">[ 2  3 ]</div>
+                                        <div class="mini-row highlight-row zero-row">[ <span class="zero">0</span>  −1 ]</div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="property-note property-note-green">
+                                🎯 k = −4 ÷ 2 = −2 (لإلغاء الـ 4)
+                            </div>
+                        </div>
+                    `
+                },
+                {
+                    type: 'cinematic-example',
+                    title: '🎬 شاهد التبسيط خطوة بخطوة',
+                    content: `
+                        <div class="cinematic-trigger">
+                            <div class="cinema-icon">🎥</div>
+                            <p class="cinema-desc">شاهد مثالاً عملياً متحركاً يوضح كيف نستخدم خاصية الجمع لتبسيط مصفوفة 3×3!</p>
+                            <button class="btn btn-primary btn-lg" onclick="determinantTutorial.showSimplifyTutorial()">
+                                ▶ شاهد الشرح المتحرك
+                            </button>
+                        </div>
+                    `
+                },
                 {
                     type: 'practice',
                     title: '🎮 جاهز للتطبيق!',
                     content: `
                         <div class="tut-ready">
-                            <p>أتقنت طريقة ساروس للمحدد 3×3!</p>
+                            <p>أتقنت طريقة ساروس وتبسيط المحددات!</p>
                             <div class="formula-reminder">
-                                الرئيسية (+) - الثانوية (-)
+                                <div class="reminder-row">🔄 التبديل → المحدد × (−1)</div>
+                                <div class="reminder-row highlight-row">➕ الجمع → مجاني! ✨</div>
                             </div>
                             <button class="btn btn-primary btn-lg" onclick="determinantTutorial.complete(2)">
                                 ابدأ اللعب! 🚀
@@ -762,8 +882,9 @@ class DeterminantTutorial {
             ]
         };
     }
-                    
+    
     // ==================== DISPLAY METHODS ====================
+    
     
     show(tutorialNum) {
         const tutorial = this.tutorials[tutorialNum];
@@ -864,6 +985,14 @@ class DeterminantTutorial {
             case 'minor-calculation':
             case 'extend-visual':
             case 'extend-practice':
+            // Simplification phases (3x3 tutorial and properties tutorial)
+            case 'simplify-intro':
+            case 'simplify-swap':
+            case 'simplify-add':
+            case 'property-swap':
+            case 'property-add':
+            case 'summary-table':
+            case 'cinematic-example':
                 return phase.content;
             
             case 'formula':
@@ -926,7 +1055,7 @@ class DeterminantTutorial {
     renderVisualPhase(phase) {
         const n = phase.matrix.length;
         // Render matrix with diagonal data for highlighting
-        let matrixHtml = `<div class="tut-matrix visual-matrix" style="grid-template-columns: repeat(${n}, 1fr);">`;
+        let matrixHtml = `<div class="tut-matrix" style="grid-template-columns: repeat(${n}, 1fr);">`;
         for (let i = 0; i < n; i++) {
             for (let j = 0; j < n; j++) {
                 // Determine if cell is on main diagonal (i === j) or anti-diagonal (i + j === n - 1)
@@ -1151,6 +1280,40 @@ class DeterminantTutorial {
         if (this.boundKeyHandler) {
             document.removeEventListener('keydown', this.boundKeyHandler);
         }
+        
+        // Navigate back to level select screen
+        if (typeof game !== 'undefined') {
+            game.showDeterminantLevelSelect();
+        }
+    }
+    
+    // ==================== CINEMATIC SIMPLIFY TUTORIAL ====================
+    
+    showSimplifyTutorial() {
+        // Hide the current tutorial container
+        const tutContainer = document.getElementById('determinant-tutorial-container');
+        if (tutContainer) tutContainer.style.display = 'none';
+        
+        // Show the cinematic container as full-screen overlay
+        const simpContainer = document.getElementById('det-simplify-container');
+        if (simpContainer && typeof detSimplifyTutorial !== 'undefined') {
+            simpContainer.classList.add('active');
+            simpContainer.style.display = 'block';
+            detSimplifyTutorial.init('det-simplify-container');
+        }
+    }
+    
+    closeSimplifyTutorial() {
+        // Hide ccinematic container
+        const simpContainer = document.getElementById('det-simplify-container');
+        if (simpContainer) {
+            simpContainer.style.display = 'none';
+            simpContainer.classList.remove('active');
+        }
+        
+        // Show main tutorial again
+        const tutContainer = document.getElementById('determinant-tutorial-container');
+        if (tutContainer) tutContainer.style.display = 'block';
     }
     
     // ==================== EXTEND PRACTICE ====================

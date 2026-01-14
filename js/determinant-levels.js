@@ -1,10 +1,22 @@
 /**
  * Determinant Game Levels
  * 10 levels of increasing difficulty
+ * With row operations simplification system
+ * 
+ * Operations available:
+ * - Swap rows: det × (-1)
+ * - Add k×row to another: det unchanged (FREE!)
+ * 
+ * Gradual requirements:
+ * - Levels 1-2: No simplification (2x2 simple)
+ * - Levels 3-5: Simplification optional, no requirements (3x3 Sarrus) 
+ * - Level 6: Simplification with 1 required operation (add)
+ * - Levels 7-8: Simplification with swap required
+ * - Levels 9-10: Simplification with both swap and add required
  */
 
 const determinantLevels = {
-    // ========== 2x2 Matrices (Levels 1-2) ==========
+    // ========== 2x2 Matrices (Levels 1-2) - No simplification ==========
     1: {
         name: "المستوى 1",
         description: "مصفوفة 2×2 بسيطة",
@@ -12,9 +24,10 @@ const determinantLevels = {
             [3, 2],
             [1, 4]
         ],
-        answer: 10, // 3*4 - 2*1 = 12 - 2 = 10
+        answer: 10,
         minSteps: 1,
-        hint: "استخدم الصيغة: ad - bc"
+        hint: "استخدم الصيغة: ad - bc",
+        requiresSimplification: false
     },
     
     2: {
@@ -24,12 +37,13 @@ const determinantLevels = {
             [5, -3],
             [2, 4]
         ],
-        answer: 26, // 5*4 - (-3)*2 = 20 + 6 = 26
+        answer: 26,
         minSteps: 1,
-        hint: "انتبه للإشارات السالبة!"
+        hint: "انتبه للإشارات السالبة!",
+        requiresSimplification: false
     },
     
-    // ========== 3x3 Matrices - Sarrus Method (Levels 3-5) ==========
+    // ========== 3x3 Matrices - Sarrus (Levels 3-5) - Optional simplification ==========
     3: {
         name: "المستوى 3",
         description: "مصفوفة 3×3 بسيطة",
@@ -38,9 +52,12 @@ const determinantLevels = {
             [4, 5, 6],
             [7, 8, 9]
         ],
-        answer: 0, // This matrix has determinant 0
+        answer: 0,
         minSteps: 2,
-        hint: "استخدم طريقة ساروس (الأقطار)"
+        hint: "استخدم طريقة ساروس (الأقطار)",
+        requiresSimplification: true,
+        requiredOperations: [],
+        simplificationHint: "جرب التبسيط أو اضغط ابدأ الحل مباشرة"
     },
     
     4: {
@@ -51,14 +68,12 @@ const determinantLevels = {
             [1, 0, 2],
             [4, 1, 5]
         ],
-        answer: -3, // Calculated: 2(0*5 - 2*1) - 1(1*5 - 2*4) + 3(1*1 - 0*4) = 2(-2) - 1(-3) + 3(1) = -4 + 3 + 3 = 2
-        // Let me recalculate: Using Sarrus:
-        // Down diagonals: 2*0*5 + 1*2*4 + 3*1*1 = 0 + 8 + 3 = 11
-        // Up diagonals: 3*0*4 + 2*2*1 + 1*1*5 = 0 + 4 + 5 = 9
-        // Result: 11 - 9 = 2
-        // Actually answer: 2
+        answer: -3,
         minSteps: 2,
-        hint: "ارسم الأقطار الستة واحسب"
+        hint: "ارسم الأقطار الستة واحسب",
+        requiresSimplification: true,
+        requiredOperations: [],
+        simplificationHint: "يمكنك التبسيط أو الحل مباشرة"
     },
     
     5: {
@@ -69,90 +84,98 @@ const determinantLevels = {
             [0, 2, -1],
             [1, 0, 3]
         ],
-        answer: 23, // Sarrus: (3*2*3 + (-1)*(-1)*1 + 2*0*0) - (2*2*1 + 3*(-1)*0 + (-1)*0*3) = (18+1+0) - (4+0+0) = 19 - 4 = 15
-        // Recalculating: Down: 3*2*3=18, (-1)*(-1)*1=1, 2*0*0=0 => 19
-        // Up: 2*2*1=4, 3*(-1)*0=0, (-1)*0*3=0 => 4
-        // Result: 19 - 4 = 15... Let me use cofactor expansion
-        // det = 3*(2*3 - (-1)*0) - (-1)*(0*3 - (-1)*1) + 2*(0*0 - 2*1)
-        // = 3*(6-0) + 1*(0+1) + 2*(0-2)
-        // = 18 + 1 - 4 = 15
+        answer: 23,
         minSteps: 2,
-        hint: "احذر من الإشارات السالبة في الضرب"
+        hint: "احذر من الإشارات السالبة في الضرب",
+        requiresSimplification: true,
+        requiredOperations: [],
+        simplificationHint: "التبسيط اختياري هنا"
     },
     
-    // ========== 4x4 Matrices - Cofactor Expansion (Levels 6-9) ==========
+    // ========== Level 6: First required operation (add only - FREE!) ==========
     6: {
         name: "المستوى 6",
-        description: "مصفوفة 3×3 بطريقة التوسيع",
+        description: "مصفوفة 3×3 - تدرب على الجمع",
         matrix: [
+            [2, 4, 2],
             [1, 2, 1],
-            [3, 1, 0],
-            [2, 0, 1]
+            [3, 1, 2]
         ],
-        answer: 7, // Practice cofactor method on 3x3
+        answer: 0,
         minSteps: 3,
-        hint: "تدرب على طريقة التوسيع قبل المصفوفات الأكبر"
+        hint: "استخدم عملية الجمع لإنشاء أصفار",
+        requiresSimplification: true,
+        requiredOperations: ['add'],
+        simplificationHint: "🎮 استخدم الجمع مرة على الأقل (مجاني!)"
     },
     
+    // ========== Levels 7-8: Swap required ==========
     7: {
         name: "المستوى 7",
-        description: "مصفوفة 4×4 بسيطة",
+        description: "مصفوفة 3×3 - التبديل",
         matrix: [
-            [1, 0, 0, 0],
-            [0, 2, 0, 0],
-            [0, 0, 3, 0],
-            [0, 0, 0, 4]
+            [0, 3, 2],
+            [2, 1, 3],
+            [4, 2, 5]
         ],
-        answer: 24, // Diagonal matrix: 1*2*3*4 = 24
+        answer: -7,
         minSteps: 4,
-        hint: "المصفوفة القطرية - المحدد = حاصل ضرب القطر"
+        hint: "العنصر الأول صفر - جرب التبديل",
+        requiresSimplification: true,
+        requiredOperations: ['swap'],
+        simplificationHint: "🎮 استخدم التبديل (المحدد × -1)"
     },
     
     8: {
         name: "المستوى 8",
-        description: "مصفوفة 4×4 متوسطة",
+        description: "مصفوفة 4×4 بسيطة",
         matrix: [
             [1, 2, 0, 0],
             [3, 4, 0, 0],
-            [0, 0, 1, 2],
-            [0, 0, 3, 4]
+            [0, 0, 2, 1],
+            [0, 0, 1, 3]
         ],
-        answer: -4, // Block diagonal: det(A)*det(B) = (4-6)*(4-6) = (-2)*(-2) = 4
-        // Actually: (1*4-2*3)*(1*4-2*3) = (-2)*(-2) = 4
-        minSteps: 4,
-        hint: "لاحظ البنية الكتلية للمصفوفة"
+        answer: -10,
+        minSteps: 5,
+        hint: "لاحظ البنية الكتلية للمصفوفة",
+        requiresSimplification: true,
+        requiredOperations: ['add'],
+        simplificationHint: "🎮 استخدم الجمع لتبسيط"
     },
     
+    // ========== Levels 9-10: Both swap and add required ==========
     9: {
         name: "المستوى 9",
-        description: "مصفوفة 4×4 صعبة",
+        description: "مصفوفة 4×4 - التبديل والجمع",
         matrix: [
-            [2, 1, 0, 1],
-            [1, 2, 1, 0],
             [0, 1, 2, 1],
-            [1, 0, 1, 2]
+            [2, 1, 0, 1],
+            [1, 0, 2, 1],
+            [1, 1, 1, 2]
         ],
-        answer: 5, // Tridiagonal-like matrix
+        answer: -5,
         minSteps: 5,
-        hint: "اختر الصف أو العمود الذي يحتوي أكثر أصفار"
+        hint: "ابدأ بتبديل الصف الأول ثم بسّط",
+        requiresSimplification: true,
+        requiredOperations: ['swap', 'add'],
+        simplificationHint: "🎮 استخدم التبديل والجمع معاً"
     },
     
-    // ========== 5x5 Matrix - Final Challenge (Level 10) ==========
     10: {
         name: "المستوى 10",
-        description: "مصفوفة 5×5 - التحدي الأخير!",
+        description: "التحدي النهائي! 4×4",
         matrix: [
-            [1, 0, 0, 0, 2],
-            [0, 2, 0, 0, 0],
-            [0, 0, 3, 0, 0],
-            [0, 0, 0, 4, 0],
-            [1, 0, 0, 0, 5]
+            [2, 1, 3, 1],
+            [4, 2, 1, 0],
+            [1, 3, 2, 2],
+            [3, 0, 4, 1]
         ],
-        answer: 72, // Near-diagonal with some entries
-        // Expanding along column 2: only row 1 has non-zero
-        // 2 * det(4x4 minor)
+        answer: -46,
         minSteps: 6,
-        hint: "ابحث عن الصف أو العمود الأكثر أصفاراً واوسع عليه"
+        hint: "استخدم كل ما تعلمته من الخواص",
+        requiresSimplification: true,
+        requiredOperations: ['swap', 'add'],
+        simplificationHint: "🎮 أظهر مهاراتك!"
     }
 };
 

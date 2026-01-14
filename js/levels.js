@@ -60,9 +60,35 @@ const LEVELS = [
         minSteps: 5
     },
     
-    // المستويات 5-9: مصفوفات 3×4
+    // ==================== حالات خاصة (2×3) ====================
     {
         id: 5,
+        name: "❌ لا يوجد حل",
+        size: [2, 3],
+        variables: ['x', 'y'],
+        matrix: [
+            [1, 1, 5],
+            [1, 1, 7]
+        ],
+        solution: null, // معادلات متناقضة
+        minSteps: 2
+    },
+    {
+        id: 6,
+        name: "♾️ حلول لا نهائية",
+        size: [2, 3],
+        variables: ['x', 'y'],
+        matrix: [
+            [1, 1, 5],
+            [2, 2, 10]
+        ],
+        solution: null, // معادلات تابعة
+        minSteps: 2
+    },
+    
+    // المستويات 7-11: مصفوفات 3×4
+    {
+        id: 7,
         name: "ثلاث معادلات",
         size: [3, 4],
         variables: ['x', 'y', 'z'],
@@ -75,7 +101,7 @@ const LEVELS = [
         minSteps: 5
     },
     {
-        id: 6,
+        id: 8,
         name: "التعقيد يزداد",
         size: [3, 4],
         variables: ['x', 'y', 'z'],
@@ -88,7 +114,7 @@ const LEVELS = [
         minSteps: 5
     },
     {
-        id: 7,
+        id: 9,
         name: "إتقان الثلاثي",
         size: [3, 4],
         variables: ['x', 'y', 'z'],
@@ -101,7 +127,7 @@ const LEVELS = [
         minSteps: 6
     },
     {
-        id: 8,
+        id: 10,
         name: "دخول الكسور",
         size: [3, 4],
         variables: ['x', 'y', 'z'],
@@ -114,7 +140,7 @@ const LEVELS = [
         minSteps: 6
     },
     {
-        id: 9,
+        id: 11,
         name: "تحدي الكسور",
         size: [3, 4],
         variables: ['x', 'y', 'z'],
@@ -127,9 +153,9 @@ const LEVELS = [
         minSteps: 8
     },
     
-    // المستويات 10-14: مصفوفات 4×5
+    // المستويات 12-16: مصفوفات 4×5
     {
-        id: 10,
+        id: 12,
         name: "أربع معادلات",
         size: [4, 5],
         variables: ['w', 'x', 'y', 'z'],
@@ -143,7 +169,7 @@ const LEVELS = [
         minSteps: 8
     },
     {
-        id: 11,
+        id: 13,
         name: "التحدي الكبير",
         size: [4, 5],
         variables: ['w', 'x', 'y', 'z'],
@@ -157,7 +183,7 @@ const LEVELS = [
         minSteps: 10
     },
     {
-        id: 12,
+        id: 14,
         name: "رباعي صعب",
         size: [4, 5],
         variables: ['w', 'x', 'y', 'z'],
@@ -171,7 +197,7 @@ const LEVELS = [
         minSteps: 12
     },
     {
-        id: 13,
+        id: 15,
         name: "خبير المصفوفات",
         size: [4, 5],
         variables: ['a', 'b', 'c', 'd'],
@@ -185,7 +211,7 @@ const LEVELS = [
         minSteps: 14
     },
     {
-        id: 14,
+        id: 16,
         name: "قبل الأخير",
         size: [4, 5],
         variables: ['p', 'q', 'r', 's'],
@@ -199,9 +225,9 @@ const LEVELS = [
         minSteps: 11
     },
     
-    // المستوى 15: مصفوفة 6×7
+    // المستوى 17: مصفوفة 6×7
     {
-        id: 15,
+        id: 17,
         name: "الأسطورة",
         size: [6, 7],
         variables: ['a', 'b', 'c', 'd', 'e', 'f'],

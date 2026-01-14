@@ -14,6 +14,7 @@ class DeterminantGame {
         this.stepCount = 0; // Wrong attempts (errors)
         this.hintsUsed = 0; // Hints used (separate from errors)
         this.isPlaying = false;
+        this.isProcessingAnswer = false; // Prevent Enter spam during transition
         
         // Step data for current game
         this.steps = [];
@@ -23,17 +24,48 @@ class DeterminantGame {
         this.isExtended = false;
         this.extendedMatrix = null;
         
+        // === NEW: Simplification Phase State ===
+        this.isInSimplificationPhase = false;
+        this.determinantMultiplier = 1; // Cumulative multiplier from row operations
+        this.originalMatrix = null; // Store original for reference
+        this.operationsUsed = { swap: 0, scale: 0, add: 0 }; // Track operations used
+        this.requiredOperations = []; // Operations that must be used
+        this.simplificationHistory = []; // Undo history for simplification
+        
+        // === NEW: Expansion Choice State ===
+        this.expansionType = null; // 'row' or 'col'
+        this.expansionIndex = null; // Which row/column to expand on
+        
         // Tutorial tracking
         this.tutorialCompleted = {
             1: false, // 2x2
             2: false, // 3x3 Sarrus
-            3: false  // 4x4+ Cofactor
+            3: false, // 4x4+ Cofactor
+            4: false  // Properties (NEW)
         };
         
         this.completedLevels = [];
         this.levelStars = {};
         
         this.loadProgress();
+    }
+    
+    // حساب النجوم الحالية بناءً على التلميحات والأخطاء
+    calculateStars() {
+        const hints = this.hintsUsed || 0;
+        const errors = this.stepCount || 0;
+        
+        let hintPenalty = hints;
+        let errorPenalty = Math.floor(errors / 2);
+        
+        const totalPenalty = Math.max(hintPenalty, errorPenalty);
+        return Math.max(0, 5 - totalPenalty);
+    }
+    
+    // عرض النجوم الحي
+    getLiveStarsDisplay() {
+        const stars = this.calculateStars();
+        return '⭐'.repeat(stars) + '☆'.repeat(5 - stars);
     }
     
     // ==================== DETERMINANT CALCULATIONS ====================
@@ -85,7 +117,251 @@ class DeterminantGame {
         return minor;
     }
     
+    // Format a cell value for display (supports fractions)
+    formatCellValue(val) {
+        if (val === null || val === undefined) return '0';
+        
+        // Simple number
+        if (typeof val === 'number') {
+            return String(val);
+        }
+        
+        // Fraction object { n: numerator, d: denominator }
+        if (typeof val === 'object' && val.n !== undefined && val.d !== undefined) {
+            // Simplify the fraction
+            const gcd = this.gcd(Math.abs(val.n), Math.abs(val.d));
+            const num = val.n / gcd;
+            const den = val.d / gcd;
+            
+            // Handle sign
+            const sign = (num < 0) !== (den < 0) ? '-' : '';
+            const absNum = Math.abs(num);
+            const absDen = Math.abs(den);
+            
+            if (absDen === 1) {
+                return String(sign === '-' ? -absNum : absNum);
+            }
+            
+            // Return as fraction HTML
+            return `<span class="frac-display">${sign}<span class="frac-num">${absNum}</span><span class="frac-den">${absDen}</span></span>`;
+        }
+        
+        return String(val);
+    }
+    
+    // Greatest common divisor
+    gcd(a, b) {
+        return b === 0 ? a : this.gcd(b, a % b);
+    }
+    
+    // تحليل قيمة الكسر من نص واحد (مثل: "-3/4" أو "2")
+    parseFractionInput(value) {
+        const str = String(value).trim();
+        if (!str) return { num: 0, den: 1 };
+        
+        if (str.includes('/')) {
+            const parts = str.split('/');
+            const num = parseInt(parts[0]) || 0;
+            const den = parseInt(parts[1]) || 1;
+            return { num, den: den === 0 ? 1 : den };
+        } else {
+            const num = parseInt(str) || 0;
+            return { num, den: 1 };
+        }
+    }
+    
+    // ==================== ROW OPERATIONS FOR SIMPLIFICATION ====================
+    
+    // Save state for undo
+    saveSimplificationState() {
+        this.simplificationHistory.push({
+            matrix: JSON.parse(JSON.stringify(this.matrix)),
+            multiplier: this.determinantMultiplier,
+            operationsUsed: { ...this.operationsUsed }
+        });
+    }
+    
+    // Undo last simplification operation
+    undoSimplification() {
+        if (this.simplificationHistory.length === 0) return false;
+        
+        const lastState = this.simplificationHistory.pop();
+        this.matrix = lastState.matrix;
+        this.determinantMultiplier = lastState.multiplier;
+        this.operationsUsed = lastState.operationsUsed;
+        
+        this.renderSimplificationPhase();
+        return true;
+    }
+    
+    // Swap two rows: det multiplied by -1
+    simplifySwapRows(row1, row2) {
+        if (row1 === row2) return;
+        
+        this.saveSimplificationState();
+        
+        // Swap the rows
+        const temp = this.matrix[row1];
+        this.matrix[row1] = this.matrix[row2];
+        this.matrix[row2] = temp;
+        
+        // Update multiplier: multiply by -1
+        this.determinantMultiplier *= -1;
+        this.operationsUsed.swap++;
+        
+        this.animateRowOperation('swap', row1, row2, () => {
+            this.renderSimplificationPhase();
+        });
+    }
+    
+    // Scale a row by k: det multiplied by k
+    simplifyScaleRow(row, k) {
+        if (k === 0) return;
+        
+        this.saveSimplificationState();
+        
+        // Scale the row
+        for (let j = 0; j < this.matrix[row].length; j++) {
+            this.matrix[row][j] *= k;
+        }
+        
+        // Update multiplier: multiply by k
+        this.determinantMultiplier *= k;
+        this.operationsUsed.scale++;
+        
+        this.animateRowOperation('scale', row, null, () => {
+            this.renderSimplificationPhase();
+        });
+    }
+    
+    // Add k times source row to target row: det unchanged
+    // k is expressed as num/den fraction
+    simplifyAddRows(targetRow, sourceRow, num, den = 1) {
+        if (targetRow === sourceRow || num === 0) return;
+        
+        this.saveSimplificationState();
+        
+        // Add (num/den) * source to target - using fraction arithmetic
+        for (let j = 0; j < this.matrix[targetRow].length; j++) {
+            const sourceVal = this.matrix[sourceRow][j];
+            const targetVal = this.matrix[targetRow][j];
+            
+            // If values are Fraction objects, use Fraction arithmetic
+            if (typeof targetVal === 'object' && targetVal.n !== undefined) {
+                // Fraction object
+                const addVal = new Fraction(sourceVal).mul(new Fraction(num, den));
+                this.matrix[targetRow][j] = new Fraction(targetVal).add(addVal);
+            } else {
+                // Simple numbers - convert to fractions for precision
+                const result = (targetVal * den + sourceVal * num) / den;
+                // Simplify if it's a whole number
+                if (Number.isInteger(result)) {
+                    this.matrix[targetRow][j] = result;
+                } else {
+                    // Store as fraction
+                    this.matrix[targetRow][j] = { n: targetVal * den + sourceVal * num, d: den };
+                }
+            }
+        }
+        
+        // Multiplier unchanged for add operation
+        this.operationsUsed.add++;
+        
+        this.animateRowOperation('add', targetRow, sourceRow, () => {
+            this.renderSimplificationPhase();
+        });
+    }
+    
+    // Animate row operation
+    animateRowOperation(type, row1, row2, callback) {
+        const container = document.getElementById('det-simplify-matrix');
+        if (!container) {
+            if (callback) callback();
+            return;
+        }
+        
+        const rows = container.querySelectorAll('.det-simp-row');
+        
+        if (type === 'swap') {
+            rows[row1]?.classList.add('row-flash');
+            rows[row2]?.classList.add('row-flash');
+        } else {
+            rows[row1]?.classList.add('row-flash');
+        }
+        
+        setTimeout(() => {
+            rows.forEach(r => r.classList.remove('row-flash'));
+            if (callback) callback();
+        }, 400);
+    }
+    
+    // Check if all required operations have been used
+    canProceedToSolving() {
+        return this.requiredOperations.every(op => this.operationsUsed[op] > 0);
+    }
+    
+    // Get remaining required operations
+    getRemainingOperations() {
+        return this.requiredOperations.filter(op => this.operationsUsed[op] === 0);
+    }
+    
+    // Start solving phase (after simplification)
+    proceedToSolving() {
+        if (!this.canProceedToSolving()) {
+            // Show message about required operations
+            const remaining = this.getRemainingOperations();
+            const opNames = { swap: 'تبديل', scale: 'ضرب', add: 'جمع' };
+            const names = remaining.map(op => opNames[op]).join(' و ');
+            alert(`يجب استخدام عملية ${names} على الأقل مرة واحدة!`);
+            return;
+        }
+        
+        this.isInSimplificationPhase = false;
+        
+        // Check if this simplification was for Cramer's Rule
+        if (this.onSimplificationComplete) {
+            this.onSimplificationComplete();
+            return;
+        }
+        
+        // Generate steps based on simplified matrix
+        const n = this.matrix.length;
+        if (this.currentLevel <= 2) {
+            this.steps = this.generateSteps2x2(this.matrix);
+        } else if (this.currentLevel <= 5) {
+            this.steps = this.generateSteps3x3(this.matrix);
+        } else {
+            this.steps = this.generateSteps4x4Plus(this.matrix);
+        }
+        
+        // Store the simplified determinant for final calculation
+        this.simplifiedDeterminant = this.calculateDeterminant(this.matrix);
+        
+        // If we have a multiplier from row operations, add a final step
+        if (this.determinantMultiplier !== 1) {
+            const multiplierDisplay = this.determinantMultiplier === -1 ? '(−1)' : this.determinantMultiplier;
+            const finalAnswer = this.simplifiedDeterminant * this.determinantMultiplier;
+            
+            this.steps.push({
+                type: 'multiplier-apply',
+                prompt: `🔄 تطبيق معامل التبسيط`,
+                subPrompt: `المحدد المبسط = <span class="math-ltr">${this.simplifiedDeterminant}</span><br>المعامل = <span class="math-ltr">${multiplierDisplay}</span><br>ما الناتج النهائي؟`,
+                answer: finalAnswer,
+                answerType: 'number',
+                isMultiplierStep: true,
+                highlight: [],
+                highlightClass: '',
+                explanation: `<span class="math-ltr">${this.simplifiedDeterminant} × ${multiplierDisplay} = ${finalAnswer}</span>`
+            });
+        }
+        
+        this.totalSteps = this.steps.length;
+        
+        this.renderGame();
+    }
+    
     // ==================== STEP GENERATION ====================
+    
     
     generateSteps2x2(matrix) {
         const [[a, b], [c, d]] = matrix;
@@ -96,27 +372,27 @@ class DeterminantGame {
         return [
             {
                 type: 'main-diag',
-                prompt: `القطر الرئيسي: ${a} × ${d} = ؟`,
+                prompt: `القطر الرئيسي: <span class="math-ltr">${a} × ${d} = ؟</span>`,
                 highlight: [[0, 0], [1, 1]],
                 highlightClass: 'highlight-green',
                 answer: mainDiag,
-                explanation: `${a} × ${d} = ${mainDiag}`
+                explanation: `<span class="math-ltr">${a} × ${d} = ${mainDiag}</span>`
             },
             {
                 type: 'anti-diag',
-                prompt: `القطر الثانوي: ${b} × ${c} = ؟`,
+                prompt: `القطر الثانوي: <span class="math-ltr">${b} × ${c} = ؟</span>`,
                 highlight: [[0, 1], [1, 0]],
                 highlightClass: 'highlight-red',
                 answer: antiDiag,
-                explanation: `${b} × ${c} = ${antiDiag}`
+                explanation: `<span class="math-ltr">${b} × ${c} = ${antiDiag}</span>`
             },
             {
                 type: 'final',
-                prompt: `المحدد = ${mainDiag} - ${antiDiag} = ؟`,
+                prompt: `المحدد = <span class="math-ltr">${mainDiag} − ${antiDiag} = ؟</span>`,
                 highlight: [],
                 highlightClass: '',
                 answer: result,
-                explanation: `${mainDiag} - ${antiDiag} = ${result}`
+                explanation: `<span class="math-ltr">${mainDiag} − ${antiDiag} = ${result}</span>`
             }
         ];
     }
@@ -152,32 +428,32 @@ class DeterminantGame {
         
         steps.push({
             type: 'down-diag-1',
-            prompt: `القطر الهابط 1: ${a} × ${e} × ${i} = ؟`,
+            prompt: `القطر الرئيسي 1: <span class="math-ltr">${a} × ${e} × ${i} = ؟</span>`,
             highlight: [[0, 0], [1, 1], [2, 2]],
             highlightClass: 'highlight-green',
             useExtendedMatrix: true,
             answer: down1,
-            explanation: `${a} × ${e} × ${i} = ${down1}`
+            explanation: `<span class="math-ltr">${a} × ${e} × ${i} = ${down1}</span>`
         });
         
         steps.push({
             type: 'down-diag-2',
-            prompt: `القطر الهابط 2: ${b} × ${f} × ${g} = ؟`,
+            prompt: `القطر الرئيسي 2: <span class="math-ltr">${b} × ${f} × ${g} = ؟</span>`,
             highlight: [[0, 1], [1, 2], [2, 3]],
             highlightClass: 'highlight-green',
             useExtendedMatrix: true,
             answer: down2,
-            explanation: `${b} × ${f} × ${g} = ${down2}`
+            explanation: `<span class="math-ltr">${b} × ${f} × ${g} = ${down2}</span>`
         });
         
         steps.push({
             type: 'down-diag-3',
-            prompt: `القطر الهابط 3: ${c} × ${d} × ${h} = ؟`,
+            prompt: `القطر الرئيسي 3: <span class="math-ltr">${c} × ${d} × ${h} = ؟</span>`,
             highlight: [[0, 2], [1, 3], [2, 4]],
             highlightClass: 'highlight-green',
             useExtendedMatrix: true,
             answer: down3,
-            explanation: `${c} × ${d} × ${h} = ${down3}`
+            explanation: `<span class="math-ltr">${c} × ${d} × ${h} = ${down3}</span>`
         });
         
         // Up diagonals
@@ -192,32 +468,32 @@ class DeterminantGame {
         
         steps.push({
             type: 'up-diag-1',
-            prompt: `القطر الصاعد 1: ${c} × ${e} × ${g} = ؟`,
+            prompt: `القطر الثانوي 1: <span class="math-ltr">${c} × ${e} × ${g} = ؟</span>`,
             highlight: [[2, 0], [1, 1], [0, 2]],
             highlightClass: 'highlight-red',
             useExtendedMatrix: true,
             answer: up1,
-            explanation: `${c} × ${e} × ${g} = ${up1}`
+            explanation: `<span class="math-ltr">${c} × ${e} × ${g} = ${up1}</span>`
         });
         
         steps.push({
             type: 'up-diag-2',
-            prompt: `القطر الصاعد 2: ${a} × ${f} × ${h} = ؟`,
+            prompt: `القطر الثانوي 2: <span class="math-ltr">${a} × ${f} × ${h} = ؟</span>`,
             highlight: [[2, 1], [1, 2], [0, 3]],
             highlightClass: 'highlight-red',
             useExtendedMatrix: true,
             answer: up2,
-            explanation: `${a} × ${f} × ${h} = ${up2}`
+            explanation: `<span class="math-ltr">${a} × ${f} × ${h} = ${up2}</span>`
         });
         
         steps.push({
             type: 'up-diag-3',
-            prompt: `القطر الصاعد 3: ${b} × ${d} × ${i} = ؟`,
+            prompt: `القطر الثانوي 3: <span class="math-ltr">${b} × ${d} × ${i} = ؟</span>`,
             highlight: [[2, 2], [1, 3], [0, 4]],
             highlightClass: 'highlight-red',
             useExtendedMatrix: true,
             answer: up3,
-            explanation: `${b} × ${d} × ${i} = ${up3}`
+            explanation: `<span class="math-ltr">${b} × ${d} × ${i} = ${up3}</span>`
         });
         
         const downSum = down1 + down2 + down3;
@@ -226,93 +502,158 @@ class DeterminantGame {
         
         steps.push({
             type: 'down-sum',
-            prompt: `مجموع الهابطة: ${down1} + ${down2} + ${down3} = ؟`,
+            prompt: `مجموع الرئيسية: <span class="math-ltr">${down1} + ${down2} + ${down3} = ؟</span>`,
             highlight: [],
             highlightClass: '',
             answer: downSum,
-            explanation: `${down1} + ${down2} + ${down3} = ${downSum}`
+            explanation: `<span class="math-ltr">${down1} + ${down2} + ${down3} = ${downSum}</span>`
         });
         
         steps.push({
             type: 'up-sum',
-            prompt: `مجموع الصاعدة: ${up1} + ${up2} + ${up3} = ؟`,
+            prompt: `مجموع الثانوية: <span class="math-ltr">${up1} + ${up2} + ${up3} = ؟</span>`,
             highlight: [],
             highlightClass: '',
             answer: upSum,
-            explanation: `${up1} + ${up2} + ${up3} = ${upSum}`
+            explanation: `<span class="math-ltr">${up1} + ${up2} + ${up3} = ${upSum}</span>`
         });
         
         steps.push({
             type: 'final',
-            prompt: `المحدد = ${downSum} - ${upSum} = ؟`,
+            prompt: `المحدد = <span class="math-ltr">${downSum} − ${upSum} = ؟</span>`,
             highlight: [],
             highlightClass: '',
             answer: result,
-            explanation: `${downSum} - ${upSum} = ${result}`
+            explanation: `<span class="math-ltr">${downSum} − ${upSum} = ${result}</span>`
         });
         
         return steps;
     }
     
-    generateSteps4x4Plus(matrix) {
-        // For 4x4+, we use cofactor expansion along first row with detailed steps
+    generateSteps4x4Plus(matrix, expansionType = null, expansionIndex = null) {
+        // For 4x4+, we use cofactor expansion with player choice
         const n = matrix.length;
         const steps = [];
         const cofactorResults = [];
         
-        // Step 0: Inform about expansion row
+        // If no expansion choice made yet, add selection steps
+        if (expansionType === null) {
+            // Step 0: Choose expansion type (row or column)
+            steps.push({
+                type: 'expansion-type-choice',
+                prompt: `اختر طريقة التوسيع:`,
+                highlight: [],
+                highlightClass: '',
+                answer: 'choice',
+                answerType: 'expansion-type',
+                explanation: 'تم اختيار طريقة التوسيع'
+            });
+            return steps; // Will regenerate after choice
+        }
+        
+        if (expansionIndex === null) {
+            // Step 1: Choose which row/column
+            const label = expansionType === 'row' ? 'الصف' : 'العمود';
+            steps.push({
+                type: 'expansion-index-choice',
+                prompt: `اختر ${label} للتوسيع:`,
+                highlight: [],
+                highlightClass: '',
+                answer: 'choice',
+                answerType: 'expansion-index',
+                expansionType: expansionType,
+                matrixSize: n,
+                explanation: `تم اختيار ${label}`
+            });
+            return steps; // Will regenerate after choice
+        }
+        
+        // Get the expansion line (row or column)
+        const isRow = expansionType === 'row';
+        const lineLabel = isRow ? `الصف ${expansionIndex + 1}` : `العمود ${expansionIndex + 1}`;
+        const line = isRow ? matrix[expansionIndex] : matrix.map(row => row[expansionIndex]);
+        const nonZeroCount = line.filter(x => x !== 0).length;
+        
+        // Count zeros for auto-skip message
+        const zeroCount = line.filter(x => x === 0).length;
+        
+        // Step: Show chosen expansion line info
+        const lineHighlight = [];
+        for (let i = 0; i < n; i++) {
+            if (isRow) {
+                lineHighlight.push([expansionIndex, i]);
+            } else {
+                lineHighlight.push([i, expansionIndex]);
+            }
+        }
+        
+        // If there are zeros, show a message about auto-skipping
+        let expansionPrompt = `سنوسع على ${lineLabel}. كم عنصر غير صفري؟`;
+        if (zeroCount > 0) {
+            expansionPrompt = `سنوسع على ${lineLabel}. (${zeroCount} عنصر = 0 سيُتخطى تلقائياً) كم عنصر غير صفري؟`;
+        }
+        
         steps.push({
             type: 'expansion-intro',
-            prompt: `سنوسع على الصف الأول. كم عنصر غير صفري في الصف الأول؟`,
-            highlight: [[0, 0], [0, 1], [0, 2], n > 3 ? [0, 3] : null].filter(x => x),
+            prompt: expansionPrompt,
+            highlight: lineHighlight,
             highlightClass: 'highlight-yellow',
-            answer: matrix[0].filter(x => x !== 0).length,
-            explanation: `عدد العناصر غير الصفرية = ${matrix[0].filter(x => x !== 0).length}`
+            answer: nonZeroCount,
+            explanation: `عدد العناصر غير الصفرية = ${nonZeroCount}`
         });
         
-        // For each element in first row (non-zero only need calculation)
+        // For each element in the chosen row/column
         for (let j = 0; j < n; j++) {
-            const sign = (j % 2 === 0) ? '+' : '-';
-            const signValue = (j % 2 === 0) ? 1 : -1;
-            const element = matrix[0][j];
-            const minor = this.getMinor(matrix, 0, j);
+            // Get element and position based on expansion type
+            const row = isRow ? expansionIndex : j;
+            const col = isRow ? j : expansionIndex;
+            const element = matrix[row][col];
+            
+            // Calculate sign based on position ((-1)^(row+col))
+            const signPower = row + col;
+            const sign = (signPower % 2 === 0) ? '+' : '-';
+            const signValue = (signPower % 2 === 0) ? 1 : -1;
+            
+            const minor = this.getMinor(matrix, row, col);
             const minorDet = this.calculateDeterminant(minor);
             const cofactor = signValue * element * minorDet;
             
             // Calculate which cells in main matrix form the minor
             const minorCells = [];
-            for (let r = 1; r < n; r++) {
+            for (let r = 0; r < n; r++) {
+                if (r === row) continue;
                 for (let c = 0; c < n; c++) {
-                    if (c !== j) {
-                        minorCells.push([r, c]);
-                    }
+                    if (c === col) continue;
+                    minorCells.push([r, c]);
                 }
             }
-            cofactorResults.push({ element, sign, signValue, minorDet, cofactor, minor });
+            cofactorResults.push({ element, sign, signValue, minorDet, cofactor, minor, row, col });
+            
+            // If element is zero, skip ALL steps for this element (auto-skip)
+            if (element === 0) {
+                // Just add a notification step that auto-completes
+                steps.push({
+                    type: `zero-skip-${j}`,
+                    prompt: `⏭️ العنصر (${row + 1}, ${col + 1}) = 0 → تخطي تلقائي`,
+                    highlight: [[row, col]],
+                    highlightClass: 'highlight-gray',
+                    answer: 'auto',
+                    answerType: 'auto-skip',
+                    explanation: `0 × أي محدد فرعي = 0 ✓`
+                });
+                continue;
+            }
             
             // Step: What's the sign for this position?
             steps.push({
                 type: `sign-${j}`,
-                prompt: `ما هي إشارة الموقع (1, ${j + 1})؟`,
-                highlight: [[0, j]],
+                prompt: `ما هي إشارة الموقع (${row + 1}, ${col + 1})؟`,
+                highlight: [[row, col]],
                 highlightClass: sign === '+' ? 'highlight-green' : 'highlight-red',
                 answer: sign,
                 answerType: 'sign',
-                explanation: `(-1)^(1+${j + 1}) = ${sign}`
+                explanation: `<span class="math-ltr">(-1)^(${row + 1}+${col + 1}) = ${sign}</span>`
             });
-            
-            // If element is zero, skip minor calculation
-            if (element === 0) {
-                steps.push({
-                    type: `cofactor-result-${j}`,
-                    prompt: `العنصر = 0، إذاً الناتج = ؟`,
-                    highlight: [[0, j]],
-                    highlightClass: 'highlight-gray',
-                    answer: 0,
-                    explanation: `0 × أي شيء = 0 ✓`
-                });
-                continue;
-            }
             
             // For 3x3 minors (from 4x4 matrix), use FULL Sarrus method with extension step
             if (minor.length === 3) {
@@ -343,11 +684,11 @@ class DeterminantGame {
                 
                 steps.push({
                     type: `minor-down1-${j}`,
-                    prompt: `القطر الهابط 1: ${a} × ${e} × ${i} = ؟`,
+                    prompt: `القطر الرئيسي 1: <span class="math-ltr">${a} × ${e} × ${i} = ؟</span>`,
                     highlight: minorCells,
                     highlightClass: 'highlight-minor',
                     answer: down1,
-                    explanation: `${a} × ${e} × ${i} = ${down1}`,
+                    explanation: `<span class="math-ltr">${a} × ${e} × ${i} = ${down1}</span>`,
                     subMatrix: minor,
                     useMinorExtended: true,
                     minorIndex: j,
@@ -358,11 +699,11 @@ class DeterminantGame {
                 
                 steps.push({
                     type: `minor-down2-${j}`,
-                    prompt: `القطر الهابط 2: ${b} × ${f} × ${g} = ؟`,
+                    prompt: `القطر الرئيسي 2: <span class="math-ltr">${b} × ${f} × ${g} = ؟</span>`,
                     highlight: minorCells,
                     highlightClass: 'highlight-minor',
                     answer: down2,
-                    explanation: `${b} × ${f} × ${g} = ${down2}`,
+                    explanation: `<span class="math-ltr">${b} × ${f} × ${g} = ${down2}</span>`,
                     subMatrix: minor,
                     useMinorExtended: true,
                     minorIndex: j,
@@ -373,11 +714,11 @@ class DeterminantGame {
                 
                 steps.push({
                     type: `minor-down3-${j}`,
-                    prompt: `القطر الهابط 3: ${c} × ${d} × ${h} = ؟`,
+                    prompt: `القطر الرئيسي 3: <span class="math-ltr">${c} × ${d} × ${h} = ؟</span>`,
                     highlight: minorCells,
                     highlightClass: 'highlight-minor',
                     answer: down3,
-                    explanation: `${c} × ${d} × ${h} = ${down3}`,
+                    explanation: `<span class="math-ltr">${c} × ${d} × ${h} = ${down3}</span>`,
                     subMatrix: minor,
                     useMinorExtended: true,
                     minorIndex: j,
@@ -394,11 +735,11 @@ class DeterminantGame {
                 
                 steps.push({
                     type: `minor-up1-${j}`,
-                    prompt: `القطر الصاعد 1: ${c} × ${e} × ${g} = ؟`,
+                    prompt: `القطر الثانوي 1: <span class="math-ltr">${c} × ${e} × ${g} = ؟</span>`,
                     highlight: minorCells,
                     highlightClass: 'highlight-minor',
                     answer: up1,
-                    explanation: `${c} × ${e} × ${g} = ${up1}`,
+                    explanation: `<span class="math-ltr">${c} × ${e} × ${g} = ${up1}</span>`,
                     subMatrix: minor,
                     useMinorExtended: true,
                     minorIndex: j,
@@ -409,11 +750,11 @@ class DeterminantGame {
                 
                 steps.push({
                     type: `minor-up2-${j}`,
-                    prompt: `القطر الصاعد 2: ${a} × ${f} × ${h} = ؟`,
+                    prompt: `القطر الثانوي 2: <span class="math-ltr">${a} × ${f} × ${h} = ؟</span>`,
                     highlight: minorCells,
                     highlightClass: 'highlight-minor',
                     answer: up2,
-                    explanation: `${a} × ${f} × ${h} = ${up2}`,
+                    explanation: `<span class="math-ltr">${a} × ${f} × ${h} = ${up2}</span>`,
                     subMatrix: minor,
                     useMinorExtended: true,
                     minorIndex: j,
@@ -424,11 +765,11 @@ class DeterminantGame {
                 
                 steps.push({
                     type: `minor-up3-${j}`,
-                    prompt: `القطر الصاعد 3: ${b} × ${d} × ${i} = ؟`,
+                    prompt: `القطر الثانوي 3: <span class="math-ltr">${b} × ${d} × ${i} = ؟</span>`,
                     highlight: minorCells,
                     highlightClass: 'highlight-minor',
                     answer: up3,
-                    explanation: `${b} × ${d} × ${i} = ${up3}`,
+                    explanation: `<span class="math-ltr">${b} × ${d} × ${i} = ${up3}</span>`,
                     subMatrix: minor,
                     useMinorExtended: true,
                     minorIndex: j,
@@ -440,33 +781,33 @@ class DeterminantGame {
                 // Sum of down diagonals
                 steps.push({
                     type: `minor-down-sum-${j}`,
-                    prompt: `مجموع الأقطار الهابطة: ${down1} + ${down2} + ${down3} = ؟`,
+                    prompt: `مجموع الأقطار الرئيسية: <span class="math-ltr">${down1} + ${down2} + ${down3} = ؟</span>`,
                     highlight: minorCells,
                     highlightClass: 'highlight-minor',
                     answer: downSum,
-                    explanation: `${down1} + ${down2} + ${down3} = ${downSum}`,
+                    explanation: `<span class="math-ltr">${down1} + ${down2} + ${down3} = ${downSum}</span>`,
                     subMatrix: minor
                 });
                 
                 // Sum of up diagonals
                 steps.push({
                     type: `minor-up-sum-${j}`,
-                    prompt: `مجموع الأقطار الصاعدة: ${up1} + ${up2} + ${up3} = ؟`,
+                    prompt: `مجموع الأقطار الثانوية: <span class="math-ltr">${up1} + ${up2} + ${up3} = ؟</span>`,
                     highlight: minorCells,
                     highlightClass: 'highlight-minor',
                     answer: upSum,
-                    explanation: `${up1} + ${up2} + ${up3} = ${upSum}`,
+                    explanation: `<span class="math-ltr">${up1} + ${up2} + ${up3} = ${upSum}</span>`,
                     subMatrix: minor
                 });
                 
                 // Final minor determinant
                 steps.push({
                     type: `minor-det-${j}`,
-                    prompt: `المحدد الفرعي ${j + 1} = ${downSum} − ${upSum} = ؟`,
+                    prompt: `المحدد الفرعي ${j + 1} = <span class="math-ltr">${downSum} − ${upSum} = ؟</span>`,
                     highlight: minorCells,
                     highlightClass: 'highlight-minor',
                     answer: minorDet,
-                    explanation: `= ${minorDet}`,
+                    explanation: `= <span class="math-ltr">${minorDet}</span>`,
                     subMatrix: minor
                 });
             } else if (minor.length === 2) {
@@ -474,11 +815,11 @@ class DeterminantGame {
                 const [[a, b], [c, d]] = minor;
                 steps.push({
                     type: `minor-det-${j}`,
-                    prompt: `المحدد الفرعي ${j + 1}: (${a}×${d}) − (${b}×${c}) = ؟`,
+                    prompt: `المحدد الفرعي ${j + 1}: <span class="math-ltr">(${a}×${d}) − (${b}×${c}) = ؟</span>`,
                     highlight: minorCells,
                     highlightClass: 'highlight-minor',
                     answer: minorDet,
-                    explanation: `${a * d} − ${b * c} = ${minorDet}`,
+                    explanation: `<span class="math-ltr">${a * d} − ${b * c} = ${minorDet}</span>`,
                     subMatrix: minor,
                     subMatrixHighlight: [
                         { cells: [[0,0], [1,1]], class: 'diag-main' },
@@ -493,7 +834,7 @@ class DeterminantGame {
                     highlight: minorCells,
                     highlightClass: 'highlight-minor',
                     answer: minorDet,
-                    explanation: `det = ${minorDet}`,
+                    explanation: `det = <span class="math-ltr">${minorDet}</span>`,
                     subMatrix: minor
                 });
             }
@@ -501,11 +842,11 @@ class DeterminantGame {
             // Calculate the cofactor
             steps.push({
                 type: `cofactor-result-${j}`,
-                prompt: `العامل ${j + 1}: ${sign === '-' ? '−' : ''}${element} × ${minorDet} = ؟`,
-                highlight: [[0, j]],
+                prompt: `العامل ${j + 1}: <span class="math-ltr">${sign === '-' ? '−' : ''}${element} × ${minorDet} = ؟</span>`,
+                highlight: [[row, col]],
                 highlightClass: sign === '+' ? 'highlight-green' : 'highlight-red',
                 answer: cofactor,
-                explanation: `= ${cofactor}`
+                explanation: `= <span class="math-ltr">${cofactor}</span>`
             });
         }
         
@@ -516,11 +857,11 @@ class DeterminantGame {
         
         steps.push({
             type: 'final',
-            prompt: `المحدد = ${sumExpr} = ؟`,
+            prompt: `المحدد = <span class="math-ltr">${sumExpr} = ؟</span>`,
             highlight: [],
             highlightClass: '',
             answer: result,
-            explanation: `= ${result}`
+            explanation: `= <span class="math-ltr">${result}</span>`
         });
         
         return steps;
@@ -538,8 +879,11 @@ class DeterminantGame {
             return false;
         }
         
+        // Note: Properties/simplification tutorial is now part of Tutorial 2 (3x3 Sarrus)
+        
         this.currentLevel = levelNum;
         this.matrix = JSON.parse(JSON.stringify(levelData.matrix));
+        this.originalMatrix = JSON.parse(JSON.stringify(levelData.matrix)); // Store original
         this.correctAnswer = levelData.answer;
         this.currentStep = 0;
         this.stepCount = 0;
@@ -551,6 +895,26 @@ class DeterminantGame {
         this.isExtended = false;
         this.extendedMatrix = null;
         this.extendedMinors = {}; // للمحددات الفرعية الموسعة
+        
+        // Reset simplification state
+        this.determinantMultiplier = 1;
+        this.operationsUsed = { swap: 0, scale: 0, add: 0 };
+        this.simplificationHistory = [];
+        this.requiredOperations = levelData.requiredOperations || [];
+        
+        // Reset expansion choice state
+        this.expansionType = null;
+        this.expansionIndex = null;
+        
+        // Check if this level requires simplification
+        if (levelData.requiresSimplification) {
+            this.isInSimplificationPhase = true;
+            this.renderSimplificationPhase();
+            return true;
+        }
+        
+        // No simplification needed - go directly to solving
+        this.isInSimplificationPhase = false;
         
         // Generate steps based on level and matrix size
         const n = this.matrix.length;
@@ -572,8 +936,67 @@ class DeterminantGame {
         return true;
     }
     
+    // بدء مرحلة مخصصة
+    startCustomLevel(levelData) {
+        this.currentLevel = 'custom';
+        this.matrix = JSON.parse(JSON.stringify(levelData.matrix));
+        this.originalMatrix = JSON.parse(JSON.stringify(levelData.matrix));
+        this.correctAnswer = this.calculateDeterminant(levelData.matrix);
+        this.currentStep = 0;
+        this.stepCount = 0;
+        this.hintsUsed = 0;
+        this.userAnswers = [];
+        this.isPlaying = true;
+        
+        // إعادة تعيين حالة التوسيع
+        this.isExtended = false;
+        this.extendedMatrix = null;
+        this.extendedMinors = {};
+        
+        // Reset simplification state
+        this.determinantMultiplier = 1;
+        this.operationsUsed = { swap: 0, scale: 0, add: 0 };
+        this.simplificationHistory = [];
+        this.requiredOperations = [];
+        
+        // Reset expansion choice state
+        this.expansionType = null;
+        this.expansionIndex = null;
+        
+        // Generate steps based on matrix size
+        const n = this.matrix.length;
+        
+        if (n === 2) {
+            this.isInSimplificationPhase = false;
+            this.steps = this.generateSteps2x2(this.matrix);
+        } else if (n === 3) {
+            this.isInSimplificationPhase = false;
+            this.steps = this.generateSteps3x3(this.matrix);
+        } else {
+            // 4x4+ use simplification phase
+            this.isInSimplificationPhase = true;
+            this.renderSimplificationPhase();
+            return true;
+        }
+        
+        this.totalSteps = this.steps.length;
+        this.renderGame();
+        return true;
+    }
+    
     checkStepAnswer(userAnswer) {
+        // Prevent Enter spam during transition
+        if (this.isProcessingAnswer) {
+            return false;
+        }
+        
         const step = this.steps[this.currentStep];
+        
+        // Reject empty or whitespace-only input
+        if (userAnswer === null || userAnswer === undefined || String(userAnswer).trim() === '') {
+            return false;
+        }
+        
         let isCorrect;
         
         if (step.answerType === 'sign') {
@@ -583,15 +1006,22 @@ class DeterminantGame {
                         (normalizedAnswer === '+' && step.answer === '+') ||
                         (normalizedAnswer === '-' && step.answer === '-'));
         } else {
-            isCorrect = (parseInt(userAnswer) === step.answer);
+            const parsed = parseInt(userAnswer);
+            // Reject NaN (non-numeric input)
+            if (isNaN(parsed)) {
+                return false;
+            }
+            isCorrect = (parsed === step.answer);
         }
         
         if (isCorrect) {
+            this.isProcessingAnswer = true; // Lock to prevent spam
             this.userAnswers.push(userAnswer);
             this.showCorrectFeedback(step);
             
             setTimeout(() => {
                 this.currentStep++;
+                this.isProcessingAnswer = false; // Unlock after transition
                 if (this.currentStep >= this.totalSteps) {
                     this.winLevel();
                 } else {
@@ -634,21 +1064,7 @@ class DeterminantGame {
     }
     
     winLevel() {
-        const levelData = determinantLevels[this.currentLevel];
-        
-        // نظام 5 نجوم يعتمد على التلميحات والأخطاء
-        // 0 نجوم: 5+ تلميحات أو 10+ أخطاء (مبالغ فيه)
-        const hints = this.hintsUsed || 0;
-        const errors = this.stepCount || 0;
-        
-        // خصم من التلميحات
-        let hintPenalty = hints;
-        
-        // خصم من الأخطاء
-        let errorPenalty = Math.floor(errors / 2);
-        
-        const totalPenalty = Math.max(hintPenalty, errorPenalty);
-        const stars = Math.max(0, 5 - totalPenalty);
+        const stars = this.calculateStars();
         
         this.saveStars(this.currentLevel, stars);
         this.markLevelComplete(this.currentLevel);
@@ -656,7 +1072,268 @@ class DeterminantGame {
         this.showWinScreen(stars);
     }
     
+    // ==================== SIMPLIFICATION PHASE UI ====================
+    
+    renderSimplificationPhase() {
+        const container = document.getElementById('determinant-game-container');
+        if (!container) return;
+        
+        const n = this.matrix.length;
+        const levelData = determinantLevels[this.currentLevel] || {};
+        const simplificationHint = levelData.simplificationHint || 'استخدم عمليات الصفوف لتبسيط المصفوفة';
+        const opNames = { swap: 'تبديل ↔️', add: 'جمع ➕' };
+        
+        // Build matrix HTML - proper grid structure
+        let matrixHtml = `<div id="det-simplify-matrix" class="det-simplify-matrix">`;
+        for (let i = 0; i < n; i++) {
+            matrixHtml += `<div class="det-simp-row" data-row="${i}">`;
+            for (let j = 0; j < n; j++) {
+                matrixHtml += `<div class="det-simp-cell">${this.formatCellValue(this.matrix[i][j])}</div>`;
+            }
+            matrixHtml += `</div>`;
+        }
+        matrixHtml += '</div>';
+        
+        // Build required operations checklist (game requirement, not math)
+        let opsChecklistHtml = '';
+        if (this.requiredOperations.length > 0) {
+            opsChecklistHtml = `
+                <div class="required-ops-list">
+                    <div class="required-ops-title">🎮 شرط اللعبة (الحد الأدنى):</div>
+                    <div class="required-ops-subtitle">استخدم كل عملية مرة واحدة على الأقل:</div>
+                    ${this.requiredOperations.map(op => {
+                        const isDone = this.operationsUsed[op] > 0;
+                        return `<div class="required-op-item ${isDone ? 'done' : ''}">
+                            <span class="op-check">${isDone ? '✅' : '☐'}</span>
+                            <span class="op-name">${opNames[op]}</span>
+                        </div>`;
+                    }).join('')}
+                </div>
+            `;
+        }
+        
+        // Multiplier display
+        const multiplierSign = this.determinantMultiplier >= 0 ? '' : '';
+        const multiplierDisplay = this.determinantMultiplier === 1 ? '×1' : 
+                                  this.determinantMultiplier === -1 ? '×(−1)' : 
+                                  `×${this.determinantMultiplier}`;
+        
+        container.innerHTML = `
+            <div class="det-simplify-phase">
+                <div class="det-simplify-header">
+                    <h3>📐 مرحلة التبسيط</h3>
+                    <p class="simplify-hint">${simplificationHint}</p>
+                </div>
+                
+                <div class="det-simplify-content">
+                    <div class="det-simplify-left">
+                        <div class="matrix-wrapper">
+                            <div class="det-bracket left">|</div>
+                            ${matrixHtml}
+                            <div class="det-bracket right">|</div>
+                        </div>
+                        
+                        <div class="multiplier-display">
+                            <span class="mult-label">المعامل:</span>
+                            <span class="mult-value ${this.determinantMultiplier < 0 ? 'negative' : ''}">${multiplierDisplay}</span>
+                        </div>
+                    </div>
+                    
+                    <div class="det-simplify-right">
+                        ${opsChecklistHtml}
+                        
+                        <div class="det-simplify-buttons">
+                            <button class="btn btn-simp btn-swap" onclick="detGame.showSimplifySwapModal()">
+                                🔄 تبديل صفين
+                            </button>
+                            <button class="btn btn-simp btn-add" onclick="detGame.showSimplifyAddModal()">
+                                ➕ جمع صفين
+                            </button>
+                        </div>
+                        
+                        <div class="det-simplify-actions">
+                            <button class="btn btn-secondary btn-undo" onclick="detGame.undoSimplification()" 
+                                    ${this.simplificationHistory.length === 0 ? 'disabled' : ''}>
+                                ↩️ تراجع
+                            </button>
+                            <button class="btn btn-primary btn-proceed" onclick="detGame.proceedToSolving()"
+                                    ${!this.canProceedToSolving() ? 'disabled' : ''}>
+                                ابدأ الحل ← 
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                
+                <button class="btn btn-danger det-exit-btn" onclick="detGame.exitToSelect()">
+                    خروج
+                </button>
+            </div>
+        `;
+        
+        container.style.display = 'block';
+    }
+    
+    // Swap modal
+    showSimplifySwapModal() {
+        const n = this.matrix.length;
+        let rowOptions = '';
+        for (let i = 0; i < n; i++) {
+            rowOptions += `<option value="${i}">R${i + 1}</option>`;
+        }
+        
+        const modalHtml = `
+            <div class="det-modal-overlay" id="det-swap-modal">
+                <div class="det-modal">
+                    <h4>🔄 تبديل صفين</h4>
+                    <p class="modal-effect">⚠️ التأثير: المحدد × (−1)</p>
+                    
+                    <div class="modal-form">
+                        <div class="form-row">
+                            <label>الصف الأول:</label>
+                            <select id="swap-row1">${rowOptions}</select>
+                        </div>
+                        <div class="form-row">
+                            <label>الصف الثاني:</label>
+                            <select id="swap-row2">${rowOptions.replace('value="0"', 'value="0"').replace('option value="1"', 'option value="1" selected')}</select>
+                        </div>
+                    </div>
+                    
+                    <div class="modal-buttons">
+                        <button class="btn btn-secondary" onclick="detGame.closeSimplifyModal()">إلغاء</button>
+                        <button class="btn btn-primary" onclick="detGame.executeSimplifySwap()">تطبيق</button>
+                    </div>
+                </div>
+            </div>
+        `;
+        
+        document.body.insertAdjacentHTML('beforeend', modalHtml);
+    }
+    
+    // Scale modal
+    showSimplifyScaleModal() {
+        const n = this.matrix.length;
+        let rowOptions = '';
+        for (let i = 0; i < n; i++) {
+            rowOptions += `<option value="${i}">R${i + 1}</option>`;
+        }
+        
+        const modalHtml = `
+            <div class="det-modal-overlay" id="det-scale-modal">
+                <div class="det-modal">
+                    <h4>✖️ ضرب صف بعدد</h4>
+                    <p class="modal-effect">⚠️ التأثير: المحدد × k</p>
+                    
+                    <div class="modal-form">
+                        <div class="form-row">
+                            <label>الصف:</label>
+                            <select id="scale-row">${rowOptions}</select>
+                        </div>
+                        <div class="form-row">
+                            <label>المعامل k:</label>
+                            <input type="number" id="scale-k" value="2" min="-10" max="10" step="1">
+                        </div>
+                    </div>
+                    
+                    <div class="modal-buttons">
+                        <button class="btn btn-secondary" onclick="detGame.closeSimplifyModal()">إلغاء</button>
+                        <button class="btn btn-primary" onclick="detGame.executeSimplifyScale()">تطبيق</button>
+                    </div>
+                </div>
+            </div>
+        `;
+        
+        document.body.insertAdjacentHTML('beforeend', modalHtml);
+    }
+    
+    // Add modal
+    showSimplifyAddModal() {
+        const n = this.matrix.length;
+        let rowOptions = '';
+        for (let i = 0; i < n; i++) {
+            rowOptions += `<option value="${i}">R${i + 1}</option>`;
+        }
+        
+        const modalHtml = `
+            <div class="det-modal-overlay" id="det-add-modal">
+                <div class="det-modal">
+                    <h4>➕ جمع صفين</h4>
+                    <p class="modal-effect modal-effect-free">✨ مجاني! لا يغير المحدد</p>
+                    
+                    <div class="modal-form">
+                        <div class="form-row">
+                            <label>الصف الهدف:</label>
+                            <select id="simp-add-target">${rowOptions}</select>
+                        </div>
+                        <div class="form-row form-row-center">
+                            <span class="form-arrow">← أضف إليه</span>
+                        </div>
+                        <div class="form-row">
+                            <label>المعامل k:</label>
+                            <div class="fraction-input-single">
+                                <input type="text" inputmode="text" id="simp-add-k" value="" class="frac-input-single" placeholder="e.g. -3/4">
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <label>× الصف المصدر:</label>
+                            <select id="simp-add-source">${rowOptions.replace('value="1"', 'value="1" selected')}</select>
+                        </div>
+                    </div>
+                    
+                    <p class="modal-formula">R<sub>هدف</sub> ← R<sub>هدف</sub> + k × R<sub>مصدر</sub></p>
+                    
+                    <div class="modal-buttons">
+                        <button class="btn btn-secondary" onclick="detGame.closeSimplifyModal()">إلغاء</button>
+                        <button class="btn btn-primary" onclick="detGame.executeSimplifyAdd()">تطبيق</button>
+                    </div>
+                </div>
+            </div>
+        `;
+        
+        document.body.insertAdjacentHTML('beforeend', modalHtml);
+    }
+    
+    // Close modal
+    closeSimplifyModal() {
+        document.querySelectorAll('.det-modal-overlay').forEach(m => m.remove());
+    }
+    
+    // Execute swap
+    executeSimplifySwap() {
+        const row1 = parseInt(document.getElementById('swap-row1').value);
+        const row2 = parseInt(document.getElementById('swap-row2').value);
+        this.closeSimplifyModal();
+        
+        if (row1 !== row2) {
+            this.simplifySwapRows(row1, row2);
+        }
+    }
+    
+    // Execute scale
+    executeSimplifyScale() {
+        const row = parseInt(document.getElementById('scale-row').value);
+        const k = parseInt(document.getElementById('scale-k').value);
+        this.closeSimplifyModal();
+        
+        if (k !== 0) {
+            this.simplifyScaleRow(row, k);
+        }
+    }
+    
+    // Execute add
+    executeSimplifyAdd() {
+        const target = parseInt(document.getElementById('simp-add-target').value);
+        const source = parseInt(document.getElementById('simp-add-source').value);
+        const kValue = document.getElementById('simp-add-k').value;
+        const { num, den } = this.parseFractionInput(kValue);
+        this.closeSimplifyModal();
+        
+        if (target !== source && num !== 0 && den !== 0) {
+            this.simplifyAddRows(target, source, num, den);
+        }
+    }
+    
     // ==================== UI RENDERING ====================
+    
     
     renderGame() {
         const container = document.getElementById('determinant-game-container');
@@ -760,6 +1437,75 @@ class DeterminantGame {
                     <button class="btn btn-primary" onclick="detGame.checkMinorExtendAnswer(${step.minorIndex})">تحقق ✓</button>
                 </div>
             `;
+        } else if (step.answerType === 'expansion-type') {
+            // Expansion type choice (row or column)
+            inputSection = `
+                <div class="expansion-choice-container">
+                    <div class="expansion-choice-title">اختر طريقة التوسيع:</div>
+                    <div class="expansion-choice-buttons">
+                        <button class="expansion-choice-btn row-choice" onclick="detGame.selectExpansionType('row')">
+                            <span class="choice-icon">↔️</span>
+                            <span class="choice-label">صف</span>
+                        </button>
+                        <button class="expansion-choice-btn col-choice" onclick="detGame.selectExpansionType('col')">
+                            <span class="choice-icon">↕️</span>
+                            <span class="choice-label">عمود</span>
+                        </button>
+                    </div>
+                    <div class="expansion-tip">💡 نصيحة: اختر الصف أو العمود الذي يحتوي أكثر أصفار لتقليل العمليات</div>
+                </div>
+            `;
+        } else if (step.answerType === 'expansion-index') {
+            // Expansion index choice (which row/column)
+            const n = step.matrixSize;
+            const isRow = step.expansionType === 'row';
+            const label = isRow ? 'الصف' : 'العمود';
+            
+            // Calculate zero counts for each row/column to show as hints
+            let buttons = '';
+            for (let i = 0; i < n; i++) {
+                const line = isRow ? this.matrix[i] : this.matrix.map(row => row[i]);
+                const zeroCount = line.filter(x => x === 0).length;
+                const hint = zeroCount > 0 ? `(${zeroCount} صفر)` : '';
+                const highlightClass = zeroCount > 0 ? 'has-zeros' : '';
+                buttons += `
+                    <button class="expansion-index-btn ${highlightClass}" onclick="detGame.selectExpansionIndex(${i})">
+                        ${label} ${i + 1} ${hint}
+                    </button>
+                `;
+            }
+            
+            inputSection = `
+                <div class="expansion-choice-container">
+                    <div class="expansion-choice-title">اختر ${label} للتوسيع:</div>
+                    <div class="expansion-index-buttons">
+                        ${buttons}
+                    </div>
+                </div>
+            `;
+        } else if (step.answerType === 'auto-skip') {
+            // Auto-skip for zero elements - shows briefly then auto-advances
+            inputSection = `
+                <div class="auto-skip-container">
+                    <div class="auto-skip-message">
+                        <span class="skip-icon">⏭️</span>
+                        <span class="skip-text">العنصر = 0 → تخطي تلقائي</span>
+                    </div>
+                    <div class="skip-explanation">${step.explanation}</div>
+                </div>
+            `;
+            // Auto-advance after brief display
+            setTimeout(() => {
+                if (this.steps[this.currentStep]?.answerType === 'auto-skip') {
+                    this.userAnswers.push('0');
+                    this.currentStep++;
+                    if (this.currentStep >= this.totalSteps) {
+                        this.winLevel();
+                    } else {
+                        this.renderGame();
+                    }
+                }
+            }, 800);
         } else if (step.answerType === 'sign') {
             inputSection = `
                 <div class="step-input-row sign-input-row">
@@ -798,6 +1544,10 @@ class DeterminantGame {
                     <span>→</span> رجوع
                 </button>
                 <h3>المستوى ${this.currentLevel}</h3>
+                <div class="det-live-stats">
+                    <span class="det-live-stars" id="det-live-stars">${this.getLiveStarsDisplay()}</span>
+                    <span class="det-stats-info">💡${this.hintsUsed} ✖${this.stepCount}</span>
+                </div>
                 <div class="det-step-counter">
                     الخطوة ${this.currentStep + 1} / ${this.totalSteps}
                 </div>
@@ -868,7 +1618,10 @@ class DeterminantGame {
             </div>
             
             <div class="det-completed-steps">
-                ${this.userAnswers.map((ans, i) => {
+                ${this.userAnswers.slice(0, this.currentStep).map((ans, i) => {
+                    // تجاوز إذا كانت الخطوة غير موجودة
+                    if (!this.steps[i]) return '';
+                    
                     const stepType = this.steps[i].type;
                     let extraClass = '';
                     if (stepType === 'final') {
@@ -877,6 +1630,8 @@ class DeterminantGame {
                         extraClass = 'important-step';
                     } else if (stepType === 'extend-matrix' || stepType.includes('minor-extend')) {
                         extraClass = 'extend-step';
+                    } else if (stepType.includes('zero-skip')) {
+                        extraClass = 'skip-step';
                     }
                     return `
                         <div class="completed-step ${extraClass}">
@@ -955,6 +1710,11 @@ class DeterminantGame {
     }
     
     checkExtendAnswer() {
+        // Prevent Enter spam during transition
+        if (this.isProcessingAnswer) {
+            return;
+        }
+        
         const inputs = document.querySelectorAll('.extend-game-input');
         const feedback = document.getElementById('step-feedback');
         let allCorrect = true;
@@ -976,6 +1736,7 @@ class DeterminantGame {
         });
         
         if (allCorrect) {
+            this.isProcessingAnswer = true; // Lock to prevent spam
             this.userAnswers.push('✓');
             feedback.className = 'step-feedback correct';
             feedback.innerHTML = '✅ ممتاز! تم توسيع المصفوفة بشكل صحيح!';
@@ -992,6 +1753,7 @@ class DeterminantGame {
             
             setTimeout(() => {
                 this.currentStep++;
+                this.isProcessingAnswer = false; // Unlock after transition
                 if (this.currentStep >= this.totalSteps) {
                     this.winLevel();
                 } else {
@@ -1007,6 +1769,11 @@ class DeterminantGame {
     }
     
     checkMinorExtendAnswer(minorIndex) {
+        // Prevent Enter spam during transition
+        if (this.isProcessingAnswer) {
+            return;
+        }
+        
         const inputs = document.querySelectorAll('.minor-extend-input');
         const feedback = document.getElementById('step-feedback');
         let allCorrect = true;
@@ -1028,6 +1795,7 @@ class DeterminantGame {
         });
         
         if (allCorrect) {
+            this.isProcessingAnswer = true; // Lock to prevent spam
             this.userAnswers.push('✓');
             feedback.className = 'step-feedback correct';
             feedback.innerHTML = '✅ ممتاز! تم توسيع المصفوفة الفرعية بشكل صحيح!';
@@ -1045,6 +1813,7 @@ class DeterminantGame {
             
             setTimeout(() => {
                 this.currentStep++;
+                this.isProcessingAnswer = false; // Unlock after transition
                 if (this.currentStep >= this.totalSteps) {
                     this.winLevel();
                 } else {
@@ -1074,6 +1843,32 @@ class DeterminantGame {
     
     submitSignAnswer(sign) {
         this.checkStepAnswer(sign);
+    }
+    
+    // === NEW: Expansion Choice Methods ===
+    selectExpansionType(type) {
+        this.expansionType = type;
+        this.userAnswers.push(`اختيار: ${type === 'row' ? 'صف' : 'عمود'}`);
+        
+        // Regenerate steps with the chosen type (will show index selection)
+        this.steps = this.generateSteps4x4Plus(this.matrix, this.expansionType, null);
+        this.totalSteps = this.steps.length;
+        this.currentStep = 0;
+        
+        this.renderGame();
+    }
+    
+    selectExpansionIndex(index) {
+        this.expansionIndex = index;
+        const label = this.expansionType === 'row' ? 'الصف' : 'العمود';
+        this.userAnswers.push(`اختيار: ${label} ${index + 1}`);
+        
+        // Regenerate steps with both type and index (full expansion steps)
+        this.steps = this.generateSteps4x4Plus(this.matrix, this.expansionType, this.expansionIndex);
+        this.totalSteps = this.steps.length;
+        this.currentStep = 0;
+        
+        this.renderGame();
     }
     
     // ==================== HINT SYSTEM ====================
@@ -1195,7 +1990,7 @@ class DeterminantGame {
         const container = document.getElementById('determinant-game-container');
         if (!container) return;
         
-        const starsDisplay = '⭐'.repeat(stars) + '☆'.repeat(3 - stars);
+        const starsDisplay = '⭐'.repeat(stars) + '☆'.repeat(5 - stars);
         
         container.innerHTML = `
             <div class="det-win-screen">

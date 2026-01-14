@@ -27,6 +27,19 @@ class CramerGame {
         // Extended matrix state for Sarrus method
         this.extendedMatrices = {}; // Store extended versions of matrices
         
+        // === Expansion Choice State (like determinant game) ===
+        this.expansionType = null; // 'row' or 'col'
+        this.expansionIndex = null; // Which row/column to expand on
+        this.currentMatrixForExpansion = null; // Which matrix (A, A1, A2, etc.)
+        
+        // === Simplification State (like determinant game) ===
+        this.isInSimplificationPhase = false;
+        this.simplifyingMatrix = null; // Which matrix is being simplified (A, A1, A2, etc.)
+        this.simplifyingMatrixData = null; // The actual matrix data
+        this.determinantMultiplier = 1; // Multiplier for determinant due to simplification
+        this.operationsUsed = { swap: 0, scale: 0, add: 0 };
+        this.simplificationHistory = [];
+        
         // Tutorial tracking
         this.tutorialCompleted = {
             1: false, // 2x2
@@ -38,6 +51,24 @@ class CramerGame {
         this.levelStars = {};
         
         this.loadProgress();
+    }
+    
+    // حساب النجوم الحالية بناءً على التلميحات والأخطاء
+    calculateStars() {
+        const hints = this.hintsUsed || 0;
+        const errors = this.stepCount || 0;
+        
+        let hintPenalty = hints;
+        let errorPenalty = Math.floor(errors / 2);
+        
+        const totalPenalty = Math.max(hintPenalty, errorPenalty);
+        return Math.max(0, 5 - totalPenalty);
+    }
+    
+    // عرض النجوم الحي
+    getLiveStarsDisplay() {
+        const stars = this.calculateStars();
+        return '⭐'.repeat(stars) + '☆'.repeat(5 - stars);
     }
     
     // ==================== DETERMINANT CALCULATIONS ====================
@@ -119,10 +150,10 @@ class CramerGame {
         
         steps.push({
             type: 'det-main',
-            prompt: `احسب المحدد الأصلي |A|: (${a} × ${d}) - (${b} × ${c}) = ؟`,
+            prompt: `احسب المحدد الأصلي |A|: <span class="math-ltr">(${a} × ${d}) - (${b} × ${c}) = ؟</span>`,
             matrix: coefficients,
             answer: detA,
-            explanation: `(${a} × ${d}) - (${b} × ${c}) = ${a*d} - ${b*c} = ${detA}`
+            explanation: `<span class="math-ltr">(${a} × ${d}) - (${b} × ${c}) = ${a*d} - ${b*c} = ${detA}</span>`
         });
         
         // For each variable, calculate its determinant and value
@@ -136,20 +167,20 @@ class CramerGame {
             steps.push({
                 type: `show-matrix-${varIdx}`,
                 prompt: `لإيجاد ${varName}، نستبدل العمود ${varIdx + 1} بالثوابت. ما هو المحدد |A${varIdx + 1}|؟`,
-                subPrompt: `|A${varIdx + 1}| = (${e} × ${h}) - (${f} × ${g}) = ؟`,
+                subPrompt: `|A${varIdx + 1}| = <span class="math-ltr">(${e} × ${h}) - (${f} × ${g}) = ؟</span>`,
                 matrix: cramerMatrix,
                 highlightCol: varIdx,
                 answer: detVar,
-                explanation: `(${e} × ${h}) - (${f} × ${g}) = ${e*h} - ${f*g} = ${detVar}`
+                explanation: `<span class="math-ltr">(${e} × ${h}) - (${f} × ${g}) = ${e*h} - ${f*g} = ${detVar}</span>`
             });
             
             // Step: Calculate variable value
             const varValue = detVar / detA;
             steps.push({
                 type: `calc-var-${varIdx}`,
-                prompt: `${varName} = |A${varIdx + 1}| ÷ |A| = ${detVar} ÷ ${detA} = ؟`,
+                prompt: `${varName} = <span class="math-ltr">|A${varIdx + 1}| ÷ |A| = ${detVar} ÷ ${detA} = ؟</span>`,
                 answer: varValue,
-                explanation: `${varName} = ${detVar} ÷ ${detA} = ${varValue}`
+                explanation: `${varName} = <span class="math-ltr">${detVar} ÷ ${detA} = ${varValue}</span>`
             });
         }
         
@@ -160,9 +191,6 @@ class CramerGame {
         const steps = [];
         const n = 3;
         
-        // Step 0: Method choice (if coming from UI)
-        // This is handled separately in showMethodChoice
-        
         // Step 1: Calculate det(A) using chosen method
         const detA = this.det3x3(coefficients);
         
@@ -170,8 +198,19 @@ class CramerGame {
             // Sarrus method steps for main determinant
             steps.push(...this.generateSarrusSteps(coefficients, 'A', detA));
         } else {
-            // Cofactor method steps for main determinant
-            steps.push(...this.generateCofactorSteps(coefficients, 'A', detA));
+            // Cofactor method - use detGame's generateSteps4x4Plus for consistent UI
+            // First add expansion choice step
+            steps.push({
+                type: 'det-expansion-A',
+                prompt: '|A|: اختر طريقة التوسيع',
+                matrix: coefficients,
+                matrixName: 'A',
+                answer: 'choice',
+                answerType: 'use-det-game',
+                targetMatrix: coefficients,
+                targetDet: detA,
+                explanation: 'سيتم استخدام نظام المحددات'
+            });
         }
         
         // For each variable
@@ -195,16 +234,27 @@ class CramerGame {
             if (method === 'sarrus') {
                 steps.push(...this.generateSarrusSteps(cramerMatrix, `A${varIdx + 1}`, detVar));
             } else {
-                steps.push(...this.generateCofactorSteps(cramerMatrix, `A${varIdx + 1}`, detVar));
+                // Cofactor method - use detGame's system
+                steps.push({
+                    type: `det-expansion-A${varIdx + 1}`,
+                    prompt: `|A${varIdx + 1}|: اختر طريقة التوسيع`,
+                    matrix: cramerMatrix,
+                    matrixName: `A${varIdx + 1}`,
+                    answer: 'choice',
+                    answerType: 'use-det-game',
+                    targetMatrix: cramerMatrix,
+                    targetDet: detVar,
+                    explanation: 'سيتم استخدام نظام المحددات'
+                });
             }
             
             // Calculate variable value
-            const varValue = Math.round((detVar / detA) * 1000) / 1000; // Round to 3 decimals
+            const varValue = Math.round((detVar / detA) * 1000) / 1000;
             steps.push({
                 type: `calc-var-${varIdx}`,
-                prompt: `${varName} = |A${varIdx + 1}| ÷ |A| = ${detVar} ÷ ${detA} = ؟`,
+                prompt: `${varName} = <span class="math-ltr">|A${varIdx + 1}| ÷ |A| = ${detVar} ÷ ${detA} = ؟</span>`,
                 answer: varValue,
-                explanation: `${varName} = ${detVar} ÷ ${detA} = ${varValue}`
+                explanation: `${varName} = <span class="math-ltr">${detVar} ÷ ${detA} = ${varValue}</span>`
             });
         }
         
@@ -236,38 +286,38 @@ class CramerGame {
         
         steps.push({
             type: `down1-${matrixName}`,
-            prompt: `|${matrixName}| القطر الهابط 1: ${a} × ${e} × ${i} = ؟`,
+            prompt: `|${matrixName}| القطر الرئيسي 1: <span class="math-ltr">${a} × ${e} × ${i} = ؟</span>`,
             matrix: matrix,
             useExtended: true,
             matrixName: matrixName,
             highlight: [[0, 0], [1, 1], [2, 2]],
             highlightClass: 'highlight-green',
             answer: down1,
-            explanation: `${a} × ${e} × ${i} = ${down1}`
+            explanation: `<span class="math-ltr">${a} × ${e} × ${i} = ${down1}</span>`
         });
         
         steps.push({
             type: `down2-${matrixName}`,
-            prompt: `|${matrixName}| القطر الهابط 2: ${b} × ${f} × ${g} = ؟`,
+            prompt: `|${matrixName}| القطر الرئيسي 2: <span class="math-ltr">${b} × ${f} × ${g} = ؟</span>`,
             matrix: matrix,
             useExtended: true,
             matrixName: matrixName,
             highlight: [[0, 1], [1, 2], [2, 3]],
             highlightClass: 'highlight-green',
             answer: down2,
-            explanation: `${b} × ${f} × ${g} = ${down2}`
+            explanation: `<span class="math-ltr">${b} × ${f} × ${g} = ${down2}</span>`
         });
         
         steps.push({
             type: `down3-${matrixName}`,
-            prompt: `|${matrixName}| القطر الهابط 3: ${c} × ${d} × ${h} = ؟`,
+            prompt: `|${matrixName}| القطر الرئيسي 3: <span class="math-ltr">${c} × ${d} × ${h} = ؟</span>`,
             matrix: matrix,
             useExtended: true,
             matrixName: matrixName,
             highlight: [[0, 2], [1, 3], [2, 4]],
             highlightClass: 'highlight-green',
             answer: down3,
-            explanation: `${c} × ${d} × ${h} = ${down3}`
+            explanation: `<span class="math-ltr">${c} × ${d} × ${h} = ${down3}</span>`
         });
         
         // Up diagonals
@@ -277,38 +327,38 @@ class CramerGame {
         
         steps.push({
             type: `up1-${matrixName}`,
-            prompt: `|${matrixName}| القطر الصاعد 1: ${c} × ${e} × ${g} = ؟`,
+            prompt: `|${matrixName}| القطر الثانوي 1: <span class="math-ltr">${c} × ${e} × ${g} = ؟</span>`,
             matrix: matrix,
             useExtended: true,
             matrixName: matrixName,
             highlight: [[2, 0], [1, 1], [0, 2]],
             highlightClass: 'highlight-red',
             answer: up1,
-            explanation: `${c} × ${e} × ${g} = ${up1}`
+            explanation: `<span class="math-ltr">${c} × ${e} × ${g} = ${up1}</span>`
         });
         
         steps.push({
             type: `up2-${matrixName}`,
-            prompt: `|${matrixName}| القطر الصاعد 2: ${a} × ${f} × ${h} = ؟`,
+            prompt: `|${matrixName}| القطر الثانوي 2: <span class="math-ltr">${a} × ${f} × ${h} = ؟</span>`,
             matrix: matrix,
             useExtended: true,
             matrixName: matrixName,
             highlight: [[2, 1], [1, 2], [0, 3]],
             highlightClass: 'highlight-red',
             answer: up2,
-            explanation: `${a} × ${f} × ${h} = ${up2}`
+            explanation: `<span class="math-ltr">${a} × ${f} × ${h} = ${up2}</span>`
         });
         
         steps.push({
             type: `up3-${matrixName}`,
-            prompt: `|${matrixName}| القطر الصاعد 3: ${b} × ${d} × ${i} = ؟`,
+            prompt: `|${matrixName}| القطر الثانوي 3: <span class="math-ltr">${b} × ${d} × ${i} = ؟</span>`,
             matrix: matrix,
             useExtended: true,
             matrixName: matrixName,
             highlight: [[2, 2], [1, 3], [0, 4]],
             highlightClass: 'highlight-red',
             answer: up3,
-            explanation: `${b} × ${d} × ${i} = ${up3}`
+            explanation: `<span class="math-ltr">${b} × ${d} × ${i} = ${up3}</span>`
         });
         
         // Sum and final
@@ -317,95 +367,164 @@ class CramerGame {
         
         steps.push({
             type: `down-sum-${matrixName}`,
-            prompt: `مجموع الأقطار الهابطة: ${down1} + ${down2} + ${down3} = ؟`,
+            prompt: `مجموع الأقطار الرئيسية: <span class="math-ltr">${down1} + ${down2} + ${down3} = ؟</span>`,
             highlight: [],
             highlightClass: '',
             answer: downSum,
-            explanation: `${down1} + ${down2} + ${down3} = ${downSum}`
+            explanation: `<span class="math-ltr">${down1} + ${down2} + ${down3} = ${downSum}</span>`
         });
         
         steps.push({
             type: `up-sum-${matrixName}`,
-            prompt: `مجموع الأقطار الصاعدة: ${up1} + ${up2} + ${up3} = ؟`,
+            prompt: `مجموع الأقطار الثانوية: <span class="math-ltr">${up1} + ${up2} + ${up3} = ؟</span>`,
             highlight: [],
             highlightClass: '',
             answer: upSum,
-            explanation: `${up1} + ${up2} + ${up3} = ${upSum}`
+            explanation: `<span class="math-ltr">${up1} + ${up2} + ${up3} = ${upSum}</span>`
         });
         
         steps.push({
             type: `det-result-${matrixName}`,
-            prompt: `|${matrixName}| = ${downSum} - ${upSum} = ؟`,
+            prompt: `|${matrixName}| = <span class="math-ltr">${downSum} - ${upSum} = ؟</span>`,
             highlight: [],
             highlightClass: '',
             answer: expectedDet,
-            explanation: `|${matrixName}| = ${downSum} - ${upSum} = ${expectedDet}`
+            explanation: `|${matrixName}| = <span class="math-ltr">${downSum} - ${upSum} = ${expectedDet}</span>`
         });
         
         return steps;
     }
     
-    generateCofactorSteps(matrix, matrixName, expectedDet) {
+    generateCofactorSteps(matrix, matrixName, expectedDet, expansionType = null, expansionIndex = null) {
         const steps = [];
         const n = matrix.length;
         
-        // Expand along first row
+        // If no expansion choice made, add selection steps
+        if (expansionType === null) {
+            steps.push({
+                type: `expansion-type-choice-${matrixName}`,
+                prompt: `|${matrixName}|: اختر طريقة التوسيع`,
+                matrixName: matrixName,
+                matrix: matrix,
+                answer: 'choice',
+                answerType: 'expansion-type',
+                explanation: 'تم اختيار طريقة التوسيع'
+            });
+            return steps;
+        }
+        
+        if (expansionIndex === null) {
+            const label = expansionType === 'row' ? 'الصف' : 'العمود';
+            steps.push({
+                type: `expansion-index-choice-${matrixName}`,
+                prompt: `|${matrixName}|: اختر ${label} للتوسيع`,
+                matrixName: matrixName,
+                matrix: matrix,
+                answer: 'choice',
+                answerType: 'expansion-index',
+                expansionType: expansionType,
+                matrixSize: n,
+                explanation: `تم اختيار ${label}`
+            });
+            return steps;
+        }
+        
+        // Get the expansion line
+        const isRow = expansionType === 'row';
+        const lineLabel = isRow ? `الصف ${expansionIndex + 1}` : `العمود ${expansionIndex + 1}`;
+        const line = isRow ? matrix[expansionIndex] : matrix.map(row => row[expansionIndex]);
+        const nonZeroCount = line.filter(x => x !== 0).length;
+        const zeroCount = line.filter(x => x === 0).length;
+        
+        // Highlight the chosen line
+        const lineHighlight = [];
+        for (let i = 0; i < n; i++) {
+            if (isRow) {
+                lineHighlight.push([expansionIndex, i]);
+            } else {
+                lineHighlight.push([i, expansionIndex]);
+            }
+        }
+        
+        let expansionPrompt = `|${matrixName}|: نوسع على ${lineLabel}. كم عنصر غير صفري؟`;
+        if (zeroCount > 0) {
+            expansionPrompt = `|${matrixName}|: نوسع على ${lineLabel}. (${zeroCount} صفر → تخطي تلقائي) كم عنصر غير صفري؟`;
+        }
+        
         steps.push({
             type: `cofactor-intro-${matrixName}`,
-            prompt: `سنوسع |${matrixName}| على الصف الأول. كم عنصر غير صفري؟`,
+            prompt: expansionPrompt,
             matrix: matrix,
-            answer: matrix[0].filter(x => x !== 0).length,
-            explanation: `عدد العناصر غير الصفرية = ${matrix[0].filter(x => x !== 0).length}`
+            highlight: lineHighlight,
+            highlightClass: 'highlight-yellow',
+            answer: nonZeroCount,
+            explanation: `عدد العناصر غير الصفرية = ${nonZeroCount}`
         });
         
         const cofactorResults = [];
         
         for (let j = 0; j < n; j++) {
-            const sign = (j % 2 === 0) ? '+' : '-';
-            const signValue = (j % 2 === 0) ? 1 : -1;
-            const element = matrix[0][j];
-            const minor = this.getMinor(matrix, 0, j);
+            const row = isRow ? expansionIndex : j;
+            const col = isRow ? j : expansionIndex;
+            const element = matrix[row][col];
+            
+            const signPower = row + col;
+            const sign = (signPower % 2 === 0) ? '+' : '-';
+            const signValue = (signPower % 2 === 0) ? 1 : -1;
+            
+            const minor = this.getMinor(matrix, row, col);
             const minorDet = this.calculateDeterminant(minor);
             const cofactor = signValue * element * minorDet;
             
-            // Sign step
-            steps.push({
-                type: `sign-${matrixName}-${j}`,
-                prompt: `|${matrixName}|: إشارة الموقع (1, ${j + 1})؟`,
-                answer: sign,
-                answerType: 'sign',
-                explanation: `(-1)^(1+${j + 1}) = ${sign}`
-            });
-            
+            // If element is zero, auto-skip
             if (element === 0) {
                 steps.push({
-                    type: `skip-${matrixName}-${j}`,
-                    prompt: `العنصر = 0، إذاً الناتج = ؟`,
-                    answer: 0,
-                    explanation: `0 × أي شيء = 0 ✓`
+                    type: `zero-skip-${matrixName}-${j}`,
+                    prompt: `⏭️ |${matrixName}|: العنصر (${row + 1}, ${col + 1}) = 0 → تخطي`,
+                    matrix: matrix,
+                    highlight: [[row, col]],
+                    highlightClass: 'highlight-gray',
+                    answer: 'auto',
+                    answerType: 'auto-skip',
+                    explanation: `0 × أي محدد فرعي = 0 ✓`
                 });
                 cofactorResults.push({ cofactor: 0, element: 0 });
                 continue;
             }
+            
+            // Sign step
+            steps.push({
+                type: `sign-${matrixName}-${j}`,
+                prompt: `|${matrixName}|: إشارة الموقع (${row + 1}, ${col + 1})؟`,
+                matrix: matrix,
+                highlight: [[row, col]],
+                highlightClass: sign === '+' ? 'highlight-green' : 'highlight-red',
+                answer: sign,
+                answerType: 'sign',
+                explanation: `<span class="math-ltr">(-1)^(${row + 1}+${col + 1}) = ${sign}</span>`
+            });
             
             // Minor determinant (for 2x2 minors)
             if (minor.length === 2) {
                 const [[a, b], [c, d]] = minor;
                 steps.push({
                     type: `minor-${matrixName}-${j}`,
-                    prompt: `المحدد الفرعي ${j + 1}: (${a}×${d}) − (${b}×${c}) = ؟`,
+                    prompt: `|${matrixName}| المحدد الفرعي: <span class="math-ltr">(${a}×${d}) − (${b}×${c}) = ؟</span>`,
                     subMatrix: minor,
                     answer: minorDet,
-                    explanation: `${a * d} − ${b * c} = ${minorDet}`
+                    explanation: `<span class="math-ltr">${a * d} − ${b * c} = ${minorDet}</span>`
                 });
             }
             
             // Cofactor value
             steps.push({
                 type: `cofactor-${matrixName}-${j}`,
-                prompt: `العامل ${j + 1}: ${sign === '-' ? '−' : ''}${element} × ${minorDet} = ؟`,
+                prompt: `|${matrixName}| العامل: <span class="math-ltr">${sign === '-' ? '−' : ''}${element} × ${minorDet} = ؟</span>`,
+                matrix: matrix,
+                highlight: [[row, col]],
+                highlightClass: sign === '+' ? 'highlight-green' : 'highlight-red',
                 answer: cofactor,
-                explanation: `= ${cofactor}`
+                explanation: `= <span class="math-ltr">${cofactor}</span>`
             });
             
             cofactorResults.push({ cofactor, element });
@@ -417,7 +536,7 @@ class CramerGame {
         
         steps.push({
             type: `det-final-${matrixName}`,
-            prompt: `|${matrixName}| = ${sumExpr} = ؟`,
+            prompt: `|${matrixName}| = <span class="math-ltr">${sumExpr} = ؟</span>`,
             answer: expectedDet,
             explanation: `|${matrixName}| = ${expectedDet}`
         });
@@ -444,7 +563,53 @@ class CramerGame {
         this.isPlaying = true;
         this.extendedMatrices = {};
         
+        // Reset expansion choice state
+        this.expansionType = null;
+        this.expansionIndex = null;
+        this.currentMatrixForExpansion = null;
+        
+        // حفظ علامة det(A) = 0 للكشف لاحقاً
+        this.isDetZeroLevel = levelData.detIsZero || false;
+        
         const n = this.coefficients.length;
+        
+        // For 2x2, go straight to steps
+        if (n === 2) {
+            this.selectedMethod = null;
+            this.steps = this.generateSteps2x2(this.coefficients, this.constants, this.variables);
+            this.totalSteps = this.steps.length;
+            this.renderGame();
+        } else {
+            // For 3x3+, show method choice
+            this.showMethodChoice();
+        }
+        
+        return true;
+    }
+    
+    // بدء مرحلة مخصصة
+    startCustomLevel(levelData) {
+        this.currentLevel = 'custom';
+        this.coefficients = JSON.parse(JSON.stringify(levelData.coefficients));
+        this.constants = [...levelData.constants];
+        this.variables = [...levelData.variables];
+        this.currentStep = 0;
+        this.stepCount = 0;
+        this.hintsUsed = 0;
+        this.userAnswers = [];
+        this.isPlaying = true;
+        this.extendedMatrices = {};
+        
+        // Reset expansion choice state
+        this.expansionType = null;
+        this.expansionIndex = null;
+        this.currentMatrixForExpansion = null;
+        
+        const n = this.coefficients.length;
+        
+        // تحقق من det(A) = 0 (سيكتشفه اللاعب أثناء الحساب)
+        const detA = this.calculateDeterminant(this.coefficients);
+        this.isDetZeroLevel = (detA === 0);
         
         // For 2x2, go straight to steps
         if (n === 2) {
@@ -465,8 +630,11 @@ class CramerGame {
         if (!container) return;
         
         const levelData = cramerLevels[this.currentLevel];
+        const isCustom = this.currentLevel === 'custom';
         const n = this.coefficients.length;
         const is4x4 = n >= 4;
+        
+        const levelTitle = isCustom ? 'مرحلة مخصصة' : `المستوى ${this.currentLevel}: ${levelData?.description || ''}`;
         
         // For 4x4, only cofactor is available
         const sarrusButtonHTML = is4x4 ? `
@@ -489,7 +657,7 @@ class CramerGame {
                     <button class="btn btn-back" onclick="cramerGame.exitToSelect()">
                         <span>→</span> رجوع
                     </button>
-                    <h3>المستوى ${this.currentLevel}: ${levelData.description}</h3>
+                    <h3>${levelTitle}</h3>
                 </div>
                 
                 <div class="system-preview">
@@ -502,6 +670,17 @@ class CramerGame {
                 <div class="method-prompt">
                     <h4>${is4x4 ? '⚠️ للمصفوفات 4×4، نستخدم طريقة التوسيع فقط:' : '🎯 اختر طريقة حساب المحددات:'}</h4>
                 </div>
+                
+                <!-- خيار التبسيط أولاً -->
+                <div class="simplify-first-option">
+                    <button class="method-btn simplify-btn" onclick="cramerGame.startSimplificationPhase()">
+                        <div class="method-icon">🔧</div>
+                        <div class="method-name">تبسيط المصفوفة أولاً</div>
+                        <div class="method-desc">صفّر عناصر لتسهيل الحساب</div>
+                    </button>
+                </div>
+                
+                <div class="method-divider">أو ابدأ مباشرة:</div>
                 
                 <div class="method-options">
                     ${sarrusButtonHTML}
@@ -563,14 +742,103 @@ class CramerGame {
         this.renderGame();
     }
     
+    // === Simplification Phase (uses detGame's system) ===
+    startSimplificationPhase() {
+        // Use detGame's simplification system for the coefficient matrix
+        this.isInSimplificationPhase = true;
+        this.simplifyingMatrix = 'A';
+        
+        // Set up detGame to simplify our matrix
+        if (typeof detGame !== 'undefined') {
+            // Save cramer state
+            this.savedCramerState = {
+                coefficients: JSON.parse(JSON.stringify(this.coefficients)),
+                constants: [...this.constants]
+            };
+            
+            // Configure detGame for simplification
+            detGame.matrix = JSON.parse(JSON.stringify(this.coefficients));
+            detGame.originalMatrix = JSON.parse(JSON.stringify(this.coefficients));
+            detGame.currentLevel = 'cramer-simplify';
+            detGame.isInSimplificationPhase = true;
+            detGame.determinantMultiplier = 1;
+            detGame.operationsUsed = { swap: 0, scale: 0, add: 0 };
+            detGame.simplificationHistory = [];
+            detGame.requiredOperations = [];
+            
+            // Set callback for when simplification is done
+            detGame.onSimplificationComplete = () => {
+                this.onSimplificationComplete();
+            };
+            
+            // Render detGame's simplification phase
+            detGame.renderSimplificationPhase();
+            
+            // Show in cramer container
+            const container = document.getElementById('cramer-game-container');
+            if (container) {
+                container.innerHTML = '';
+                container.style.display = 'none';
+            }
+            const detContainer = document.getElementById('determinant-game-container');
+            if (detContainer) {
+                detContainer.style.display = 'block';
+            }
+        } else {
+            console.error('detGame not found - cannot use simplification');
+            this.selectMethod('cofactor');
+        }
+    }
+    
+    onSimplificationComplete() {
+        // Get the simplified matrix from detGame
+        if (typeof detGame !== 'undefined') {
+            this.coefficients = JSON.parse(JSON.stringify(detGame.matrix));
+            this.determinantMultiplier = detGame.determinantMultiplier;
+            
+            // Apply same operations to all Cramer matrices
+            // (The constants column gets modified too)
+            // This is tracked via the determinant multiplier
+            
+            // Hide detGame, show cramer
+            const detContainer = document.getElementById('determinant-game-container');
+            if (detContainer) {
+                detContainer.innerHTML = '';
+                detContainer.style.display = 'none';
+            }
+            const container = document.getElementById('cramer-game-container');
+            if (container) {
+                container.style.display = 'block';
+            }
+            
+            // Reset simplification state
+            this.isInSimplificationPhase = false;
+            detGame.onSimplificationComplete = null;
+        }
+        
+        // Now show method choice again with simplified matrix
+        this.showMethodChoice();
+    }
+    
     generateSteps4x4Plus(coefficients, constants, variables) {
         // Similar to 3x3 cofactor but for larger matrices
+        // Uses the same expansion choice system as the determinant game
         const steps = [];
         const n = coefficients.length;
         const detA = this.detNxN(coefficients);
         
-        // Main determinant with cofactor expansion
-        steps.push(...this.generateCofactorSteps4x4(coefficients, 'A', detA));
+        // Main determinant with expansion choice
+        steps.push({
+            type: 'det-expansion-A',
+            prompt: '|A|: اختر طريقة التوسيع',
+            matrix: coefficients,
+            matrixName: 'A',
+            answer: 'choice',
+            answerType: 'use-det-game',
+            targetMatrix: coefficients,
+            targetDet: detA,
+            explanation: 'سيتم استخدام نظام المحددات'
+        });
         
         // For each variable
         for (let varIdx = 0; varIdx < n; varIdx++) {
@@ -588,7 +856,18 @@ class CramerGame {
                 explanation: `المصفوفة A${varIdx + 1} جاهزة`
             });
             
-            steps.push(...this.generateCofactorSteps4x4(cramerMatrix, `A${varIdx + 1}`, detVar));
+            // Expansion choice for each Cramer matrix
+            steps.push({
+                type: `det-expansion-A${varIdx + 1}`,
+                prompt: `|A${varIdx + 1}|: اختر طريقة التوسيع`,
+                matrix: cramerMatrix,
+                matrixName: `A${varIdx + 1}`,
+                answer: 'choice',
+                answerType: 'use-det-game',
+                targetMatrix: cramerMatrix,
+                targetDet: detVar,
+                explanation: 'سيتم استخدام نظام المحددات'
+            });
             
             const varValue = Math.round((detVar / detA) * 1000) / 1000;
             steps.push({
@@ -686,6 +965,15 @@ class CramerGame {
             this.userAnswers.push(userAnswer);
             this.showCorrectFeedback(step);
             
+            // فحص: هل اكتشف اللاعب أن det(A) = 0؟
+            if (this.isDetZeroLevel && step.type === 'det-main' && step.answer === 0) {
+                // اللاعب اكتشف أن المحدد = 0
+                setTimeout(() => {
+                    this.showDetZeroScreen(0);
+                }, 1000);
+                return isCorrect;
+            }
+            
             setTimeout(() => {
                 this.currentStep++;
                 if (this.currentStep >= this.totalSteps) {
@@ -729,16 +1017,7 @@ class CramerGame {
     }
     
     winLevel() {
-        // نظام 5 نجوم يعتمد على التلميحات والأخطاء
-        // 0 نجوم: 5+ تلميحات أو 10+ أخطاء (مبالغ فيه)
-        const hints = this.hintsUsed || 0;
-        const errors = this.stepCount || 0;
-        
-        let hintPenalty = hints;
-        let errorPenalty = Math.floor(errors / 2);
-        
-        const totalPenalty = Math.max(hintPenalty, errorPenalty);
-        const stars = Math.max(0, 5 - totalPenalty);
+        const stars = this.calculateStars();
         
         this.saveStars(this.currentLevel, stars);
         this.markLevelComplete(this.currentLevel);
@@ -758,6 +1037,79 @@ class CramerGame {
             feedback.innerHTML = `💡 التلميح: الإجابة = <strong>${step.answer}</strong>`;
             feedback.style.display = 'block';
         }
+    }
+    
+    // شاشة det(A) = 0 (قاعدة كرامر لا تعمل)
+    showDetZeroScreen(detA) {
+        const container = document.getElementById('cramer-game-container');
+        if (!container) return;
+        
+        const levelData = cramerLevels[this.currentLevel];
+        const n = this.coefficients.length;
+        
+        // عرض المصفوفة
+        let matrixHtml = '<div class="det-zero-matrix">';
+        for (let i = 0; i < n; i++) {
+            matrixHtml += '<div class="matrix-row">';
+            for (let j = 0; j < n; j++) {
+                matrixHtml += `<span class="matrix-cell">${this.coefficients[i][j]}</span>`;
+            }
+            matrixHtml += '</div>';
+        }
+        matrixHtml += '</div>';
+        
+        container.innerHTML = `
+            <div class="cramer-det-zero-screen">
+                <div class="special-case-icon">❌</div>
+                <h2 class="special-case-title">قاعدة كرامر لا تعمل!</h2>
+                
+                <div class="det-zero-explanation">
+                    <div class="matrix-section">
+                        <div class="matrix-label">مصفوفة المعاملات A:</div>
+                        ${matrixHtml}
+                    </div>
+                    
+                    <div class="explanation-box error">
+                        <div class="explanation-icon">⚠️</div>
+                        <div class="explanation-content">
+                            <p><strong>المحدد |A| = ${detA}</strong></p>
+                            <p>لا يمكن القسمة على صفر!</p>
+                        </div>
+                    </div>
+                    
+                    <div class="explanation-details">
+                        <p>📚 <strong>معنى ذلك:</strong></p>
+                        <p>قاعدة كرامر تتطلب أن يكون <strong>det(A) ≠ 0</strong></p>
+                        <p>عندما det(A) = 0، النظام إما:</p>
+                        <ul>
+                            <li>ليس له حل (متناقض)</li>
+                            <li>له عدد لا نهائي من الحلول</li>
+                        </ul>
+                        <p>يجب استخدام طريقة أخرى مثل <strong>جاوس</strong> لتحديد الحالة!</p>
+                    </div>
+                </div>
+                
+                <div class="special-case-result">
+                    <div class="result-stars">⭐⭐⭐⭐⭐</div>
+                    <p>اكتشفت أن قاعدة كرامر لا تعمل!</p>
+                </div>
+                
+                <div class="special-case-buttons">
+                    <button class="btn btn-secondary" onclick="cramerGame.exitToSelect()">
+                        قائمة المستويات
+                    </button>
+                    ${this.currentLevel < 11 ? `
+                        <button class="btn btn-primary" onclick="cramerGame.startLevel(${this.currentLevel + 1})">
+                            المستوى التالي ▶
+                        </button>
+                    ` : ''}
+                </div>
+            </div>
+        `;
+        
+        // حفظ التقدم
+        this.markLevelComplete(this.currentLevel);
+        this.saveStars(this.currentLevel, 5);
     }
     
     exitToSelect() {
@@ -817,6 +1169,93 @@ class CramerGame {
                     متابعة ←
                 </button>
             `;
+        } else if (step.answerType === 'use-det-game') {
+            // Launch determinant game's expansion UI
+            inputSection = `
+                <div class="expansion-choice-container">
+                    <div class="expansion-choice-title">${step.matrixName}: اختر طريقة التوسيع</div>
+                    <div class="expansion-choice-buttons">
+                        <button class="expansion-choice-btn row-choice" onclick="cramerGame.startDetExpansion('${step.matrixName}', 'row')">
+                            <span class="choice-icon">↔️</span>
+                            <span class="choice-label">صف</span>
+                        </button>
+                        <button class="expansion-choice-btn col-choice" onclick="cramerGame.startDetExpansion('${step.matrixName}', 'col')">
+                            <span class="choice-icon">↕️</span>
+                            <span class="choice-label">عمود</span>
+                        </button>
+                    </div>
+                    <div class="expansion-tip">💡 اختر الصف أو العمود الذي يحتوي أكثر أصفار</div>
+                </div>
+            `;
+        } else if (step.answerType === 'expansion-type') {
+            // Expansion type choice
+            inputSection = `
+                <div class="expansion-choice-container">
+                    <div class="expansion-choice-title">${step.matrixName || ''}: اختر طريقة التوسيع</div>
+                    <div class="expansion-choice-buttons">
+                        <button class="expansion-choice-btn row-choice" onclick="cramerGame.selectExpansionType('row')">
+                            <span class="choice-icon">↔️</span>
+                            <span class="choice-label">صف</span>
+                        </button>
+                        <button class="expansion-choice-btn col-choice" onclick="cramerGame.selectExpansionType('col')">
+                            <span class="choice-icon">↕️</span>
+                            <span class="choice-label">عمود</span>
+                        </button>
+                    </div>
+                    <div class="expansion-tip">💡 اختر الصف أو العمود الذي يحتوي أكثر أصفار</div>
+                </div>
+            `;
+        } else if (step.answerType === 'expansion-index') {
+            // Expansion index choice
+            const n = step.matrixSize;
+            const isRow = step.expansionType === 'row';
+            const label = isRow ? 'الصف' : 'العمود';
+            const matrix = step.matrix;
+            
+            let buttons = '';
+            for (let i = 0; i < n; i++) {
+                const line = isRow ? matrix[i] : matrix.map(row => row[i]);
+                const zeroCount = line.filter(x => x === 0).length;
+                const hint = zeroCount > 0 ? `(${zeroCount} صفر)` : '';
+                const highlightClass = zeroCount > 0 ? 'has-zeros' : '';
+                buttons += `
+                    <button class="expansion-index-btn ${highlightClass}" onclick="cramerGame.selectExpansionIndex(${i})">
+                        ${label} ${i + 1} ${hint}
+                    </button>
+                `;
+            }
+            
+            inputSection = `
+                <div class="expansion-choice-container">
+                    <div class="expansion-choice-title">${step.matrixName || ''}: اختر ${label} للتوسيع</div>
+                    <div class="expansion-index-buttons">
+                        ${buttons}
+                    </div>
+                </div>
+            `;
+        } else if (step.answerType === 'auto-skip') {
+            // Auto-skip for zero elements
+            inputSection = `
+                <div class="auto-skip-container">
+                    <div class="auto-skip-message">
+                        <span class="skip-icon">⏭️</span>
+                        <span class="skip-text">العنصر = 0 → تخطي تلقائي</span>
+                    </div>
+                    <div class="skip-explanation">${step.explanation}</div>
+                </div>
+            `;
+            // Auto-advance after brief display
+            setTimeout(() => {
+                if (this.steps[this.currentStep]?.answerType === 'auto-skip') {
+                    this.userAnswers.push('0');
+                    this.currentStep++;
+                    if (this.currentStep >= this.totalSteps) {
+                        this.winLevel();
+                    } else {
+                        this.renderGame();
+                    }
+                }
+            }, 800);
         } else {
             inputSection = `
                 <div class="step-input-row">
@@ -835,6 +1274,10 @@ class CramerGame {
                     <span>→</span> رجوع
                 </button>
                 <h3>المستوى ${this.currentLevel} ${this.selectedMethod ? `(${this.selectedMethod === 'sarrus' ? 'ساروس' : 'التوسيع'})` : ''}</h3>
+                <div class="cramer-live-stats">
+                    <span class="cramer-live-stars">${this.getLiveStarsDisplay()}</span>
+                    <span class="cramer-stats-info">💡${this.hintsUsed} ✖${this.stepCount}</span>
+                </div>
                 <div class="cramer-step-counter">
                     الخطوة ${this.currentStep + 1} / ${this.totalSteps}
                 </div>
@@ -1047,6 +1490,68 @@ class CramerGame {
     
     submitSignAnswer(sign) {
         this.checkStepAnswer(sign);
+    }
+    
+    // === Expansion Choice Methods (like determinant game) ===
+    startDetExpansion(matrixName, type) {
+        // Store the matrix info for expansion
+        const step = this.steps[this.currentStep];
+        this.currentMatrixForExpansion = matrixName;
+        this.expansionType = type;
+        
+        // Get the target matrix from current step
+        const matrix = step.targetMatrix || step.matrix;
+        const targetDet = step.targetDet;
+        
+        // Move to next step and regenerate with expansion steps
+        this.userAnswers.push(`اختيار: ${type === 'row' ? 'صف' : 'عمود'}`);
+        
+        // Insert expansion steps for this matrix
+        const expansionSteps = this.generateCofactorSteps(matrix, matrixName, targetDet, type, null);
+        
+        // Replace current step with expansion index choice
+        this.steps.splice(this.currentStep, 1, ...expansionSteps);
+        this.totalSteps = this.steps.length;
+        
+        this.renderGame();
+    }
+    
+    selectExpansionType(type) {
+        const step = this.steps[this.currentStep];
+        this.expansionType = type;
+        
+        const matrix = step.matrix;
+        const matrixName = step.matrixName || '';
+        const expectedDet = step.targetDet || this.calculateDeterminant(matrix);
+        
+        // Regenerate steps with chosen type
+        const newSteps = this.generateCofactorSteps(matrix, matrixName, expectedDet, type, null);
+        
+        this.steps.splice(this.currentStep, 1, ...newSteps);
+        this.totalSteps = this.steps.length;
+        this.userAnswers.push(`اختيار: ${type === 'row' ? 'صف' : 'عمود'}`);
+        
+        this.renderGame();
+    }
+    
+    selectExpansionIndex(index) {
+        const step = this.steps[this.currentStep];
+        this.expansionIndex = index;
+        
+        const matrix = step.matrix;
+        const matrixName = step.matrixName || '';
+        const expectedDet = step.targetDet || this.calculateDeterminant(matrix);
+        
+        // Regenerate steps with chosen type and index
+        const newSteps = this.generateCofactorSteps(matrix, matrixName, expectedDet, this.expansionType, index);
+        
+        this.steps.splice(this.currentStep, 1, ...newSteps);
+        this.totalSteps = this.steps.length;
+        
+        const label = this.expansionType === 'row' ? 'الصف' : 'العمود';
+        this.userAnswers.push(`اختيار: ${label} ${index + 1}`);
+        
+        this.renderGame();
     }
     
     showWinScreen(stars) {

@@ -85,6 +85,29 @@ class InverseGame {
         this.render();
     }
     
+    // بدء مرحلة مخصصة
+    startCustomLevel(levelData) {
+        this.currentLevel = 'custom';
+        this.steps = 0;
+        this.score = 1000;
+        this.phase = 1;
+        this.history = [];
+        
+        // Store original data
+        this.size = levelData.coefficients.length;
+        this.coefficientMatrix = levelData.coefficients.map(row => [...row]);
+        this.constants = [...levelData.constants];
+        this.variables = levelData.variables;
+        this.solution = null;
+        this.minSteps = levelData.minSteps || this.size * 4;
+        
+        // Create augmented matrix [A | I]
+        this.createAugmentedMatrix();
+        
+        // Render the game UI
+        this.render();
+    }
+    
     createAugmentedMatrix() {
         const n = this.size;
         this.augmentedMatrix = [];
@@ -135,6 +158,22 @@ class InverseGame {
         const num = a.num * b.num;
         const den = a.den * b.den;
         return this.simplify(num, den);
+    }
+    
+    // تحليل قيمة الكسر من نص واحد (مثل: "-3/4" أو "2")
+    parseFractionInput(value) {
+        const str = String(value).trim();
+        if (!str) return { num: 0, den: 1 };
+        
+        if (str.includes('/')) {
+            const parts = str.split('/');
+            const num = parseInt(parts[0]) || 0;
+            const den = parseInt(parts[1]) || 1;
+            return { num, den: den === 0 ? 1 : den };
+        } else {
+            const num = parseInt(str) || 0;
+            return { num, den: 1 };
+        }
     }
     
     // Row operations
@@ -192,6 +231,17 @@ class InverseGame {
     
     afterOperation() {
         this.render();
+        
+        // فحص المصفوفة الشاذة (صف صفري في الجزء الأيسر)
+        const singularResult = this.isSingularMatrix();
+        if (singularResult.singular) {
+            // عرض شاشة لا يوجد معكوس مباشرة
+            setTimeout(() => {
+                this.showNoInverseScreen(singularResult.zeroRowIndex);
+            }, 500);
+            return;
+        }
+        
         this.checkPhase1Complete();
     }
     
@@ -288,6 +338,12 @@ class InverseGame {
         return Math.max(0, 5 - totalPenalty);
     }
     
+    // عرض النجوم الحي
+    getLiveStarsDisplay() {
+        const stars = this.calculateStars();
+        return '⭐'.repeat(stars) + '☆'.repeat(5 - stars);
+    }
+    
     // ==================== RENDERING ====================
     
     render() {
@@ -309,7 +365,10 @@ class InverseGame {
                 <div class="inv-game-header">
                     <button class="btn btn-back" onclick="inverseGame.exitToLevelSelect()">← رجوع</button>
                     <h3>المستوى ${this.currentLevel} - إيجاد المعكوس</h3>
-                    <div class="inv-step-counter">الخطوات: ${this.steps}</div>
+                    <div class="inv-live-stats">
+                        <span class="inv-live-stars">${this.getLiveStarsDisplay()}</span>
+                        <span class="inv-stats-info">💡${this.hintsUsed} | خطوات: ${this.steps}</span>
+                    </div>
                 </div>
                 
                 <div class="inv-goal-hint">
@@ -403,10 +462,8 @@ class InverseGame {
                     </div>
                     <div class="modal-field">
                         <label>المعامل k:</label>
-                        <div class="fraction-input">
-                            <input type="number" id="inv-scale-num" value="1">
-                            <span>/</span>
-                            <input type="number" id="inv-scale-den" value="1">
+                        <div class="fraction-input-single">
+                            <input type="text" inputmode="text" id="inv-scale-k" class="frac-input-single" value="" placeholder="e.g. -3/4">
                         </div>
                     </div>
                     <div class="modal-buttons">
@@ -437,10 +494,8 @@ class InverseGame {
                     </div>
                     <div class="modal-field">
                         <label>المعامل k:</label>
-                        <div class="fraction-input">
-                            <input type="number" id="inv-add-num" value="-1">
-                            <span>/</span>
-                            <input type="number" id="inv-add-den" value="1">
+                        <div class="fraction-input-single">
+                            <input type="text" inputmode="text" id="inv-add-k" class="frac-input-single" value="" placeholder="e.g. -3/4">
                         </div>
                     </div>
                     <div class="modal-buttons">
@@ -549,7 +604,7 @@ class InverseGame {
                         <button class="btn btn-secondary" onclick="inverseGame.exitToLevelSelect()">
                             قائمة المستويات
                         </button>
-                        ${this.currentLevel < 10 ? `
+                        ${this.currentLevel < 11 ? `
                             <button class="btn btn-primary" onclick="inverseGame.startLevel(${this.currentLevel + 1})">
                                 المستوى التالي ▶
                             </button>
@@ -586,8 +641,8 @@ class InverseGame {
     
     executeScale() {
         const row = parseInt(document.getElementById('inv-scale-row').value);
-        const num = parseInt(document.getElementById('inv-scale-num').value) || 1;
-        const den = parseInt(document.getElementById('inv-scale-den').value) || 1;
+        const kValue = document.getElementById('inv-scale-k').value;
+        const { num, den } = this.parseFractionInput(kValue);
         
         if (num === 0 || den === 0) {
             alert('المعامل لا يمكن أن يكون صفراً');
@@ -601,8 +656,8 @@ class InverseGame {
     executeAdd() {
         const target = parseInt(document.getElementById('inv-add-target').value);
         const source = parseInt(document.getElementById('inv-add-source').value);
-        const num = parseInt(document.getElementById('inv-add-num').value) || 0;
-        const den = parseInt(document.getElementById('inv-add-den').value) || 1;
+        const kValue = document.getElementById('inv-add-k').value;
+        const { num, den } = this.parseFractionInput(kValue);
         
         if (target === source) {
             alert('لا يمكن جمع صف بنفسه');
@@ -623,6 +678,133 @@ class InverseGame {
             game.endInverseGame();
             game.showInverseLevelSelect();
         }
+    }
+    
+    // ==================== معالجة المصفوفة الشاذة ====================
+    
+    // التحقق مما إذا كان الجزء الأيسر من المصفوفة يحتوي على صف صفري (مصفوفة شاذة)
+    isSingularMatrix() {
+        const n = this.size;
+        for (let i = 0; i < n; i++) {
+            let allZeros = true;
+            for (let j = 0; j < n; j++) {
+                if (this.augmentedMatrix[i][j].num !== 0) {
+                    allZeros = false;
+                    break;
+                }
+            }
+            if (allZeros) {
+                return { singular: true, zeroRowIndex: i };
+            }
+        }
+        return { singular: false, zeroRowIndex: -1 };
+    }
+    
+    // عندما يضغط اللاعب على زر "لا يوجد معكوس"
+    declareNoInverse() {
+        const result = this.isSingularMatrix();
+        
+        if (result.singular) {
+            // صحيح! المصفوفة شاذة
+            this.showNoInverseScreen(result.zeroRowIndex);
+        } else {
+            // خطأ! المصفوفة ليست شاذة (حالياً)
+            alert('⚠️ المصفوفة ليست شاذة بعد!\n\nيجب أولاً تحويل المصفوفة حتى يظهر صف صفري في الجزء الأيسر.');
+            this.hintsUsed++; // عقوبة بسيطة للإجابة الخاطئة
+            this.render();
+        }
+    }
+    
+    // شاشة لا يوجد معكوس
+    showNoInverseScreen(zeroRowIndex) {
+        const container = document.getElementById('inverse-game-container');
+        if (!container) return;
+        
+        const stars = this.calculateStars();
+        const starsDisplay = '⭐'.repeat(stars) + '☆'.repeat(5 - stars);
+        
+        // عرض المصفوفة مع تحديد الصف الصفري
+        let matrixHtml = '<div class="inv-augmented-matrix special-case">';
+        const n = this.size;
+        
+        for (let i = 0; i < n; i++) {
+            const isZeroRow = i === zeroRowIndex;
+            matrixHtml += `<div class="inv-aug-row ${isZeroRow ? 'zero-row-highlight' : ''}">`;
+            matrixHtml += `<span class="inv-row-label">R${i + 1}</span>`;
+            
+            // Left side
+            for (let j = 0; j < n; j++) {
+                const cell = this.augmentedMatrix[i][j];
+                const className = `inv-cell ${isZeroRow ? 'zero' : ''}`;
+                matrixHtml += `<span class="${className}">${this.formatFraction(cell)}</span>`;
+            }
+            
+            matrixHtml += '<span class="inv-divider">|</span>';
+            
+            // Right side
+            for (let j = n; j < 2 * n; j++) {
+                const cell = this.augmentedMatrix[i][j];
+                matrixHtml += `<span class="inv-cell identity">${this.formatFraction(cell)}</span>`;
+            }
+            
+            matrixHtml += '</div>';
+        }
+        matrixHtml += '</div>';
+        
+        container.innerHTML = `
+            <div class="inverse-game">
+                <div class="special-case-screen no-inverse-screen">
+                    <div class="special-case-icon">❌</div>
+                    <h2 class="special-case-title">لا يوجد معكوس!</h2>
+                    
+                    <div class="special-case-matrix-container">
+                        ${matrixHtml}
+                    </div>
+                    
+                    <div class="special-case-explanation">
+                        <div class="explanation-box error">
+                            <div class="explanation-icon">⚠️</div>
+                            <div class="explanation-content">
+                                <p><strong>الصف المحدد صفري بالكامل!</strong></p>
+                                <div class="math-expression">0 0 ... 0 | ...</div>
+                                <p>هذا يعني أن المصفوفة <strong>شاذة</strong></p>
+                            </div>
+                        </div>
+                        
+                        <div class="explanation-details">
+                            <p>📚 <strong>معنى ذلك:</strong></p>
+                            <p>المصفوفة الشاذة (Singular Matrix) <strong>ليس لها معكوس</strong> لأن محددها = 0.</p>
+                            <p>لذلك لا يمكن حل المعادلات بطريقة المعكوس!</p>
+                        </div>
+                    </div>
+                    
+                    <div class="special-case-result">
+                        <div class="result-stars">${starsDisplay}</div>
+                        <p>اكتشفت أن المصفوفة شاذة في ${this.steps} خطوة</p>
+                    </div>
+                    
+                    <div class="special-case-buttons">
+                        <button class="btn btn-secondary" onclick="inverseGame.exitToLevelSelect()">
+                            قائمة المستويات
+                        </button>
+                        ${this.currentLevel < 11 ? `
+                            <button class="btn btn-primary" onclick="inverseGame.startLevel(${this.currentLevel + 1})">
+                                المستوى التالي ▶
+                            </button>
+                        ` : ''}
+                    </div>
+                </div>
+            </div>
+        `;
+        
+        // حفظ التقدم
+        if (!this.completedLevels.includes(this.currentLevel)) {
+            this.completedLevels.push(this.currentLevel);
+        }
+        if (!this.levelStars[this.currentLevel] || stars > this.levelStars[this.currentLevel]) {
+            this.levelStars[this.currentLevel] = stars;
+        }
+        this.saveProgress();
     }
 }
 

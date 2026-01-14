@@ -64,9 +64,24 @@ const inverseLevels = {
         minSteps: 8
     },
 
-    // ==================== 3×3 SYSTEMS (Levels 5-9) ====================
+    // ==================== حالة خاصة: مصفوفة شاذة ====================
     5: {
         id: 5,
+        size: 2,
+        description: "❌ لا يوجد معكوس",
+        coefficients: [
+            [1, 2],
+            [2, 4]
+        ],
+        constants: [3, 6],
+        variables: ['x', 'y'],
+        solution: null, // مصفوفة شاذة - المحدد = 0
+        minSteps: 2
+    },
+
+    // ==================== 3×3 SYSTEMS (Levels 6-10) ====================
+    6: {
+        id: 6,
         size: 3,
         description: "ثلاث معادلات",
         coefficients: [
@@ -80,8 +95,8 @@ const inverseLevels = {
         minSteps: 12
     },
     
-    6: {
-        id: 6,
+    7: {
+        id: 7,
         size: 3,
         description: "خطوات أكثر",
         coefficients: [
@@ -95,8 +110,8 @@ const inverseLevels = {
         minSteps: 10
     },
     
-    7: {
-        id: 7,
+    8: {
+        id: 8,
         size: 3,
         description: "التعقيد يزداد",
         coefficients: [
@@ -110,8 +125,8 @@ const inverseLevels = {
         minSteps: 14
     },
     
-    8: {
-        id: 8,
+    9: {
+        id: 9,
         size: 3,
         description: "أرقام سالبة",
         coefficients: [
@@ -125,8 +140,8 @@ const inverseLevels = {
         minSteps: 15
     },
     
-    9: {
-        id: 9,
+    10: {
+        id: 10,
         size: 3,
         description: "تحدي الثلاثي",
         coefficients: [
@@ -140,9 +155,9 @@ const inverseLevels = {
         minSteps: 16
     },
 
-    // ==================== 4×4 SYSTEM (Level 10) ====================
-    10: {
-        id: 10,
+    // ==================== 4×4 SYSTEM (Level 11) ====================
+    11: {
+        id: 11,
         size: 4,
         description: "التحدي الكبير",
         coefficients: [
