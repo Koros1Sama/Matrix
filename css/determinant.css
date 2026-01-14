@@ -11137,3 +11137,1087 @@
     font-size: 1rem;
     font-family: 'Fira Code', monospace;
 }
+
+/* ============================================
+   CRAMER TUTORIAL MOBILE RESPONSIVE FIXES
+   ============================================ */
+
+@media (max-width: 600px) {
+
+    /* Formula cards - stack vertically on mobile */
+    .cramer-tutorial .formula-cards {
+        flex-direction: column;
+        gap: 15px;
+        align-items: center;
+    }
+
+    .cramer-tutorial .formula-card {
+        padding: 15px 20px;
+        width: 100%;
+        max-width: 200px;
+        justify-content: center;
+    }
+
+    .cramer-tutorial .formula-label {
+        font-size: 1.2rem;
+    }
+
+    .cramer-tutorial .formula-fraction .num,
+    .cramer-tutorial .formula-fraction .denom {
+        font-size: 1.1rem;
+    }
+
+    /* 3-variable formulas - stack vertically */
+    .cramer-tutorial .tut-formulas-3var {
+        flex-direction: column;
+        gap: 10px;
+        align-items: center;
+    }
+
+    .cramer-tutorial .tut-formulas-3var .formula-item {
+        padding: 10px 15px;
+        font-size: 0.95rem;
+    }
+
+    /* Formula reminder - stack vertically */
+    .cramer-tutorial .formula-reminder {
+        flex-direction: column;
+        gap: 10px;
+        align-items: center;
+    }
+
+    .cramer-tutorial .formula-reminder span {
+        padding: 10px 20px;
+        font-size: 0.95rem;
+    }
+
+    /* Diagonals demo - stack vertically */
+    .cramer-tutorial .diagonals-demo {
+        flex-direction: column;
+        gap: 15px;
+        align-items: center;
+    }
+
+    .cramer-tutorial .diag-group {
+        min-width: unset;
+        width: 100%;
+        max-width: 280px;
+        padding: 15px;
+    }
+
+    .cramer-tutorial .diag-calc {
+        font-size: 0.85rem;
+    }
+
+    /* Matrices row - stack vertically */
+    .cramer-tutorial .matrices-row {
+        flex-direction: column;
+        gap: 15px;
+        align-items: center;
+    }
+
+    .cramer-tutorial .matrix-box {
+        width: 100%;
+        max-width: 200px;
+    }
+
+    /* Visual equation mapping */
+    .cramer-tutorial .visual-equation-mapping {
+        overflow-x: visible;
+    }
+
+    /* Matrix extended demo */
+    .cramer-tutorial .extended-matrix-demo {
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+        padding: 10px 0;
+    }
+
+    .cramer-tutorial .matrix-wrapper {
+        padding: 12px;
+    }
+
+    .cramer-tutorial .matrix-wrapper .cell {
+        width: 35px;
+        height: 35px;
+        font-size: 0.9rem;
+    }
+
+    .cramer-tutorial .matrix-wrapper .m-row {
+        gap: 4px;
+    }
+
+    /* Matrices comparison */
+    .cramer-tutorial .matrices-comparison {
+        flex-direction: column;
+        gap: 15px;
+        align-items: center;
+    }
+
+    .cramer-tutorial .matrix-card {
+        min-width: unset;
+        width: 100%;
+        max-width: 200px;
+        padding: 15px;
+    }
+
+    .cramer-tutorial .matrix-visual .cell {
+        width: 32px;
+        height: 32px;
+        font-size: 0.95rem;
+    }
+
+    /* Method cards */
+    .cramer-tutorial .method-cards {
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .cramer-tutorial .method-card {
+        min-width: unset;
+        width: 100%;
+        max-width: 280px;
+    }
+
+    /* Cofactor terms */
+    .cramer-tutorial .cofactor-terms {
+        flex-direction: column;
+        gap: 10px;
+        align-items: center;
+    }
+
+    .cramer-tutorial .cofactor-terms .term {
+        padding: 12px 15px;
+        font-size: 0.95rem;
+    }
+
+    /* Cofactor demo */
+    .cramer-tutorial .cofactor-demo {
+        flex-direction: column;
+        gap: 10px;
+        align-items: center;
+    }
+
+    .cramer-tutorial .cofactor-term {
+        padding: 10px 14px;
+        font-size: 0.95rem;
+    }
+
+    /* Tutorial content padding */
+    .cramer-tutorial .tut-content {
+        padding: 20px 15px;
+        min-height: 300px;
+    }
+
+    /* Phase title */
+    .cramer-tutorial .phase-title {
+        font-size: 1.2rem;
+        margin-bottom: 15px;
+    }
+
+    /* Ready phase */
+    .cramer-tutorial .tut-ready {
+        padding: 20px 15px;
+    }
+
+    .cramer-tutorial .tut-ready .ready-icon {
+        font-size: 3rem;
+    }
+
+    /* Solution steps */
+    .cramer-tutorial .sol-step {
+        padding: 12px 15px;
+        flex-direction: column;
+        text-align: center;
+    }
+
+    .cramer-tutorial .sol-step .step-num {
+        width: 30px;
+        height: 30px;
+        font-size: 0.9rem;
+    }
+
+    /* Final result */
+    .cramer-tutorial .final-result {
+        font-size: 1.1rem;
+    }
+
+    /* Navigation */
+    .cramer-tutorial .tut-navigation {
+        padding: 15px;
+        flex-wrap: wrap;
+        gap: 10px;
+    }
+
+    .cramer-tutorial .tut-dots .dot {
+        width: 10px;
+        height: 10px;
+    }
+
+    /* Use items */
+    .cramer-tutorial .use-item {
+        padding: 12px 18px;
+        font-size: 0.95rem;
+    }
+
+    /* Method preview */
+    .cramer-tutorial .method-preview {
+        flex-direction: column;
+        gap: 10px;
+    }
+
+    .cramer-tutorial .preview-item {
+        padding: 10px 15px;
+    }
+
+    /* Ready box */
+    .cramer-tutorial .tutorial-ready-box {
+        flex-direction: column;
+        text-align: center;
+        padding: 20px 15px;
+    }
+}
+
+/* Extra small devices */
+@media (max-width: 400px) {
+    .cramer-tutorial .formula-card {
+        max-width: 160px;
+        padding: 12px 15px;
+    }
+
+    .cramer-tutorial .formula-label {
+        font-size: 1rem;
+    }
+
+    .cramer-tutorial .formula-fraction .num,
+    .cramer-tutorial .formula-fraction .denom {
+        font-size: 0.95rem;
+    }
+
+    .cramer-tutorial .matrix-wrapper .cell {
+        width: 30px;
+        height: 30px;
+        font-size: 0.8rem;
+    }
+
+    .cramer-tutorial .diag-group {
+        max-width: 240px;
+    }
+
+    .cramer-tutorial .diag-calc {
+        font-size: 0.75rem;
+    }
+
+    .cramer-tutorial .tut-formulas-3var .formula-item {
+        font-size: 0.85rem;
+        padding: 8px 12px;
+    }
+
+    .cramer-tutorial .phase-title {
+        font-size: 1.1rem;
+    }
+
+    .cramer-tutorial .tut-content {
+        padding: 15px 10px;
+    }
+}
+
+/* ============================================
+   INVERSE TUTORIAL MOBILE RESPONSIVE FIXES
+   ============================================ */
+
+@media (max-width: 600px) {
+
+    /* Inverse tutorial container */
+    .inverse-tutorial {
+        padding: 20px 15px;
+        max-width: 100%;
+    }
+
+    /* Augmented demo - prevent overflow */
+    .augmented-demo {
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+        padding: 10px 0;
+    }
+
+    /* Matrix pair - stack vertically on small screens */
+    .matrix-pair {
+        flex-direction: column;
+        gap: 15px;
+    }
+
+    /* Divider line - rotate for vertical layout */
+    .divider-line {
+        transform: rotate(90deg);
+        font-size: 2rem;
+        margin: 0;
+    }
+
+    /* Visual matrix - smaller on mobile */
+    .visual-matrix .bracket {
+        font-size: 2rem;
+    }
+
+    .visual-matrix .matrix-inner {
+        padding: 8px 10px;
+    }
+
+    .visual-matrix .m-row {
+        gap: 8px;
+    }
+
+    .visual-matrix .m-row span {
+        font-size: 0.9rem;
+    }
+
+    /* Augmented matrix */
+    .augmented-matrix,
+    .augmented-matrix-3x3 {
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+    }
+
+    /* Steps */
+    .inv-step {
+        padding: 15px;
+    }
+
+    .inv-step .step-header {
+        flex-wrap: wrap;
+        gap: 10px;
+    }
+
+    /* Formula highlight */
+    .formula-highlight {
+        font-size: 1.1rem;
+        padding: 15px;
+    }
+
+    /* Concept steps */
+    .concept-step {
+        padding: 12px 15px;
+        flex-wrap: wrap;
+        gap: 10px;
+    }
+
+    .concept-step .step-num {
+        width: 28px;
+        height: 28px;
+        font-size: 0.85rem;
+    }
+
+    /* Inverse navigation */
+    .inverse-tutorial .tut-navigation {
+        padding: 15px;
+        flex-wrap: wrap;
+        gap: 10px;
+    }
+
+    /* Phase title */
+    .inverse-tutorial .phase-title {
+        font-size: 1.2rem;
+    }
+
+    /* Inverse tutorial content */
+    .inverse-tutorial .tut-content {
+        padding: 20px 15px;
+        min-height: 300px;
+    }
+}
+
+/* Extra small devices for inverse tutorial */
+@media (max-width: 400px) {
+    .inverse-tutorial {
+        padding: 15px 10px;
+    }
+
+    .visual-matrix .bracket {
+        font-size: 1.5rem;
+    }
+
+    .visual-matrix .m-row span {
+        font-size: 0.8rem;
+    }
+
+    .visual-matrix .m-row {
+        gap: 5px;
+    }
+
+    .formula-highlight {
+        font-size: 0.95rem;
+        padding: 12px;
+    }
+
+    .inv-step {
+        padding: 12px;
+    }
+
+    .inverse-tutorial .phase-title {
+        font-size: 1.1rem;
+    }
+}
+
+/* ============================================
+   DETERMINANT TUTORIAL MOBILE RESPONSIVE FIXES
+   ============================================ */
+
+@media (max-width: 600px) {
+
+    /* Determinant tutorial wrapper */
+    .det-tutorial-wrapper {
+        padding: 15px;
+    }
+
+    .det-tut-content {
+        padding: 20px 15px;
+    }
+
+    /* Phase title */
+    .det-tutorial-wrapper .phase-title,
+    .det-tut-content .phase-title {
+        font-size: 1.2rem;
+        margin-bottom: 15px;
+    }
+
+    /* Formula reminder in summary */
+    .det-tutorial-wrapper .formula-reminder,
+    .tut-ready .formula-reminder {
+        padding: 15px;
+        font-size: 0.95rem;
+        line-height: 1.8;
+    }
+
+    /* Sign grids row - stack vertically */
+    .sign-grids-row {
+        flex-direction: column;
+        gap: 20px;
+        align-items: center;
+    }
+
+    .sign-grid-labeled {
+        width: 100%;
+        max-width: 180px;
+    }
+
+    .sign-grid .sign-row {
+        gap: 5px;
+    }
+
+    .sign-grid .sign {
+        width: 30px;
+        height: 30px;
+        font-size: 1rem;
+    }
+
+    /* Expansion steps - stack vertically */
+    .full-expansion .expansion-steps,
+    .full-expansion-4x4 .expansion-4x4-breakdown {
+        gap: 15px;
+    }
+
+    .exp-step {
+        flex-direction: column;
+        gap: 10px;
+    }
+
+    .step-matrices {
+        flex-direction: column;
+        gap: 10px;
+        align-items: center;
+    }
+
+    .source-matrix,
+    .minor-matrix {
+        margin: 0;
+    }
+
+    .step-arrow {
+        transform: rotate(90deg);
+    }
+
+    /* 4x4 expansion breakdown */
+    .expansion-4x4-breakdown {
+        flex-direction: column;
+        gap: 15px;
+        align-items: center;
+    }
+
+    .term-4x4 {
+        width: 100%;
+        max-width: 200px;
+    }
+
+    .term-minor .m-row {
+        gap: 3px;
+    }
+
+    .term-minor .m-row span {
+        width: 25px;
+        height: 25px;
+        font-size: 0.85rem;
+    }
+
+    /* Smart choice comparison */
+    .smart-choice-demo .choice-comparison {
+        flex-direction: column;
+        gap: 15px;
+    }
+
+    .choice-bad,
+    .choice-good {
+        width: 100%;
+        max-width: 250px;
+        margin: 0 auto;
+    }
+
+    /* Dual choice (row/column) */
+    .row-col-choice-visual .dual-choice {
+        flex-direction: column;
+        gap: 20px;
+    }
+
+    .choice-option {
+        width: 100%;
+    }
+
+    .choice-vs {
+        display: none;
+    }
+
+    .choice-matrix-demo .m-row {
+        gap: 5px;
+    }
+
+    .choice-matrix-demo span {
+        width: 28px;
+        height: 28px;
+        font-size: 0.9rem;
+    }
+
+    /* Minor calculation demo */
+    .minor-calc-demo .minor-calc-example {
+        flex-direction: column;
+        gap: 15px;
+        align-items: center;
+    }
+
+    .sarrus-calc {
+        font-size: 0.85rem;
+    }
+
+    .sarrus-values {
+        word-break: break-all;
+    }
+
+    /* Matrix 4x4 main */
+    .matrix-4x4-main .m-row {
+        gap: 3px;
+    }
+
+    .matrix-4x4-main .m-row span {
+        width: 30px;
+        height: 30px;
+        font-size: 0.9rem;
+    }
+
+    /* Navigation */
+    .det-tut-nav {
+        padding: 15px;
+        flex-wrap: wrap;
+        gap: 10px;
+        justify-content: center;
+    }
+
+    .phase-number {
+        width: 100%;
+        text-align: center;
+        order: 3;
+    }
+
+    /* Property demonstrations */
+    .when-to-use {
+        padding: 15px;
+    }
+
+    .property-example {
+        flex-direction: column;
+        gap: 10px;
+        align-items: center;
+    }
+
+    .example-arrow {
+        transform: rotate(90deg);
+        font-size: 0.9rem;
+    }
+
+    /* Tutorial header */
+    .det-tut-header h2 {
+        font-size: 1.3rem;
+    }
+
+    .det-phase-indicator {
+        gap: 6px;
+    }
+
+    .det-phase-dot {
+        width: 8px;
+        height: 8px;
+    }
+}
+
+/* Extra small devices for determinant tutorial */
+@media (max-width: 400px) {
+    .det-tutorial-wrapper {
+        padding: 10px;
+    }
+
+    .det-tut-content {
+        padding: 15px 10px;
+    }
+
+    .det-tutorial-wrapper .phase-title {
+        font-size: 1.1rem;
+    }
+
+    .sign-grid .sign {
+        width: 25px;
+        height: 25px;
+        font-size: 0.9rem;
+    }
+
+    .term-minor .m-row span {
+        width: 22px;
+        height: 22px;
+        font-size: 0.75rem;
+    }
+
+    .matrix-4x4-main .m-row span {
+        width: 25px;
+        height: 25px;
+        font-size: 0.8rem;
+    }
+
+    .choice-matrix-demo span {
+        width: 24px;
+        height: 24px;
+        font-size: 0.8rem;
+    }
+
+    .sarrus-calc {
+        font-size: 0.75rem;
+    }
+
+    .tut-ready .formula-reminder {
+        font-size: 0.85rem;
+        padding: 12px;
+    }
+}
+
+/* ============================================
+   CRAMER TUTORIAL CALCULATION STEPS MOBILE FIX
+   ============================================ */
+
+@media (max-width: 600px) {
+
+    /* Step body - stack vertically */
+    .cramer-tutorial .step-body {
+        flex-direction: column;
+        gap: 10px;
+        align-items: center;
+    }
+
+    /* Cramer step container */
+    .cramer-tutorial .cramer-step {
+        padding: 12px 15px;
+    }
+
+    /* Step header - wrap */
+    .cramer-tutorial .step-header {
+        flex-wrap: wrap;
+        gap: 8px;
+    }
+
+    .cramer-tutorial .step-header .step-number {
+        width: 26px;
+        height: 26px;
+        font-size: 0.85rem;
+    }
+
+    .cramer-tutorial .step-header .step-reason {
+        font-size: 0.9rem;
+    }
+
+    /* Mini matrix - smaller */
+    .cramer-tutorial .mini-matrix {
+        padding: 8px 10px;
+        gap: 5px;
+    }
+
+    .cramer-tutorial .mini-matrix .br {
+        font-size: 1.8rem;
+    }
+
+    .cramer-tutorial .m-inner .r {
+        gap: 10px;
+    }
+
+    .cramer-tutorial .m-inner .r span {
+        font-size: 1rem;
+        min-width: 20px;
+    }
+
+    /* Calculation text */
+    .cramer-tutorial .step-body .calc {
+        font-size: 0.85rem;
+        text-align: center;
+    }
+
+    /* Apply formula box - compact */
+    .cramer-tutorial .apply-formula-box {
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 5px;
+        padding: 10px;
+        font-size: 0.9rem;
+    }
+
+    .cramer-tutorial .apply-formula-box .frac {
+        font-size: 0.9rem;
+    }
+
+    .cramer-tutorial .apply-formula-box .final-val {
+        font-size: 1rem;
+    }
+
+    /* Final answer */
+    .cramer-tutorial .final-answer {
+        font-size: 1.1rem;
+        padding: 12px 20px;
+    }
+
+    /* Main formula box */
+    .cramer-tutorial .main-formula-box {
+        padding: 15px;
+    }
+
+    .cramer-tutorial .formula-row {
+        flex-direction: column;
+        gap: 15px;
+        align-items: center;
+    }
+
+    .cramer-tutorial .formula-item {
+        width: 100%;
+        max-width: 150px;
+        justify-content: center;
+    }
+
+    /* Example system box */
+    .cramer-tutorial .example-system-box {
+        padding: 15px;
+    }
+
+    .cramer-tutorial .sys-eq {
+        font-size: 1rem;
+    }
+
+    /* Solving steps */
+    .cramer-tutorial .solving-steps {
+        gap: 12px;
+    }
+}
+
+/* Extra small devices for cramer calculation steps */
+@media (max-width: 400px) {
+    .cramer-tutorial .cramer-step {
+        padding: 10px 12px;
+    }
+
+    .cramer-tutorial .step-header .step-number {
+        width: 22px;
+        height: 22px;
+        font-size: 0.75rem;
+    }
+
+    .cramer-tutorial .step-header .step-reason {
+        font-size: 0.8rem;
+    }
+
+    .cramer-tutorial .mini-matrix .br {
+        font-size: 1.5rem;
+    }
+
+    .cramer-tutorial .m-inner .r span {
+        font-size: 0.85rem;
+        min-width: 18px;
+    }
+
+    .cramer-tutorial .m-inner .r {
+        gap: 6px;
+    }
+
+    .cramer-tutorial .step-body .calc {
+        font-size: 0.75rem;
+    }
+
+    .cramer-tutorial .apply-formula-box {
+        font-size: 0.8rem;
+        padding: 8px;
+    }
+
+    .cramer-tutorial .final-answer {
+        font-size: 1rem;
+        padding: 10px 15px;
+    }
+}
+
+/* ============================================
+   CRITICAL FIX: Matrix Wrapper Row Display
+   ============================================ */
+
+/* Ensure matrix-wrapper displays rows vertically on all screen sizes */
+@media (max-width: 600px) {
+    .cramer-tutorial .matrix-wrapper {
+        display: block !important;
+    }
+
+    .cramer-tutorial .matrix-wrapper .m-row {
+        display: flex !important;
+        flex-direction: row !important;
+        justify-content: center;
+    }
+
+    /* Also fix any other matrix displays that might have this issue */
+    .matrix-wrapper,
+    .visual-matrix-demo,
+    .diagonal-matrix {
+        display: block !important;
+    }
+
+    .matrix-wrapper .m-row,
+    .visual-matrix-demo .m-row,
+    .diagonal-matrix .m-row {
+        display: flex !important;
+        flex-direction: row !important;
+    }
+}
+
+/* ============================================
+   INVERSE TUTORIAL ALGEBRA STEPS MOBILE FIX
+   ============================================ */
+
+@media (max-width: 600px) {
+
+    /* Algebra steps container - more compact */
+    .algebra-steps {
+        gap: 10px !important;
+    }
+
+    .algebra-steps .cramer-step {
+        padding: 10px 12px !important;
+    }
+
+    /* Step header - compact */
+    .algebra-steps .step-header {
+        margin-bottom: 8px;
+    }
+
+    .algebra-steps .step-header .step-number {
+        width: 24px;
+        height: 24px;
+        font-size: 0.8rem;
+    }
+
+    .algebra-steps .step-header .step-reason {
+        font-size: 0.85rem;
+    }
+
+    /* Algebra step body - keep horizontal, smaller sizes */
+    .algebra-steps .step-body.algebra {
+        flex-direction: row !important;
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 6px;
+        font-size: 1rem;
+        padding: 10px 0;
+    }
+
+    .algebra-steps .step-body.algebra .matrix-name {
+        font-size: 0.95rem;
+        padding: 6px 10px;
+        min-width: 32px;
+    }
+
+    .algebra-steps .step-body.algebra .times,
+    .algebra-steps .step-body.algebra .equals {
+        font-size: 0.9rem;
+        padding: 0 2px;
+    }
+
+    /* Inverse matrix name */
+    .algebra-steps .step-body.algebra .matrix-name.inverse {
+        font-size: 0.9rem;
+        padding: 5px 8px;
+    }
+
+    .algebra-steps .step-body.algebra .matrix-name.inverse sup {
+        font-size: 0.65rem;
+    }
+
+    /* Result step */
+    .algebra-steps .step-body.algebra.result {
+        padding: 8px;
+    }
+}
+
+/* Extra small devices for inverse algebra steps */
+@media (max-width: 400px) {
+    .algebra-steps .step-body.algebra {
+        font-size: 0.85rem;
+        gap: 4px;
+        padding: 8px 0;
+    }
+
+    .algebra-steps .step-body.algebra .matrix-name {
+        font-size: 0.8rem;
+        padding: 4px 8px;
+        min-width: 28px;
+    }
+
+    .algebra-steps .step-body.algebra .times,
+    .algebra-steps .step-body.algebra .equals {
+        font-size: 0.75rem;
+    }
+
+    .algebra-steps .step-header .step-reason {
+        font-size: 0.75rem;
+    }
+
+    .algebra-steps .step-header .step-number {
+        width: 20px;
+        height: 20px;
+        font-size: 0.7rem;
+    }
+}
+
+/* ============================================
+   3x3 AUGMENTED MATRIX MOBILE FIX
+   ============================================ */
+
+@media (max-width: 600px) {
+
+    /* Augmented matrix display - smaller cells for 3x3 */
+    .aug-matrix-display {
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+    }
+
+    .aug-matrix-display.large .aug-left,
+    .aug-matrix-display.large .aug-right {
+        gap: 3px;
+    }
+
+    .aug-matrix-display.large .aug-left .m-row span,
+    .aug-matrix-display.large .aug-right .m-row span {
+        min-width: 22px;
+        padding: 3px 4px;
+        font-size: 0.8rem;
+    }
+
+    .aug-matrix-display.large .m-row {
+        gap: 3px;
+    }
+
+    .aug-matrix-display.large .aug-divider {
+        margin: 0 6px;
+        font-size: 1.8rem;
+    }
+
+    .aug-matrix-display.large .bracket {
+        font-size: 2rem;
+    }
+
+    /* Extra large augmented matrix */
+    .aug-matrix-display.extra-large .aug-left .m-row span,
+    .aug-matrix-display.extra-large .aug-right .m-row span {
+        min-width: 25px;
+        padding: 4px 5px;
+        font-size: 0.75rem;
+    }
+
+    /* Tutorial navigation - keep buttons inline */
+    .inverse-tutorial .tut-navigation,
+    .cramer-tutorial .tut-navigation {
+        display: flex !important;
+        flex-direction: row !important;
+        flex-wrap: nowrap !important;
+        justify-content: space-between;
+        align-items: center;
+        gap: 8px;
+        padding: 12px;
+    }
+
+    .inverse-tutorial .tut-navigation .btn-nav,
+    .cramer-tutorial .tut-navigation .btn-nav {
+        flex-shrink: 0;
+        padding: 8px 12px;
+        font-size: 0.85rem;
+    }
+
+    .inverse-tutorial .tut-navigation .tut-dots,
+    .cramer-tutorial .tut-navigation .tut-dots {
+        flex: 1;
+        display: flex;
+        justify-content: center;
+        gap: 4px;
+    }
+
+    .inverse-tutorial .tut-navigation .dot,
+    .cramer-tutorial .tut-navigation .dot {
+        width: 8px;
+        height: 8px;
+    }
+
+    /* Formula key - more compact */
+    .formula-key {
+        padding: 10px;
+    }
+
+    .formula-key .key-item {
+        font-size: 0.85rem;
+        padding: 6px 10px;
+    }
+}
+
+/* Extra small devices for augmented matrix */
+@media (max-width: 400px) {
+
+    .aug-matrix-display.large .aug-left .m-row span,
+    .aug-matrix-display.large .aug-right .m-row span {
+        min-width: 18px;
+        padding: 2px 3px;
+        font-size: 0.7rem;
+    }
+
+    .aug-matrix-display.large .aug-divider {
+        margin: 0 4px;
+        font-size: 1.5rem;
+    }
+
+    .aug-matrix-display.large .bracket {
+        font-size: 1.6rem;
+    }
+
+    .aug-matrix-display.extra-large .aug-left .m-row span,
+    .aug-matrix-display.extra-large .aug-right .m-row span {
+        min-width: 20px;
+        font-size: 0.65rem;
+    }
+
+    .inverse-tutorial .tut-navigation .btn-nav,
+    .cramer-tutorial .tut-navigation .btn-nav {
+        padding: 6px 10px;
+        font-size: 0.8rem;
+    }
+}

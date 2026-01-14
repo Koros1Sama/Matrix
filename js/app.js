@@ -1129,6 +1129,9 @@ class GaussianGame {
     }
     
     renderMatrix() {
+        // التحقق من وجود المصفوفة قبل الرسم
+        if (!this.matrix) return;
+        
         const container = this.elements.matrixContainer;
         container.innerHTML = '';
         
@@ -1522,6 +1525,9 @@ class GaussianGame {
     
     // إخفاء المعاينة واستعادة القيم الأصلية
     hideLivePreview() {
+        // التحقق من وجود المصفوفة
+        if (!this.matrix) return;
+        
         const container = this.elements.matrixContainer;
         const rows = container.querySelectorAll('.matrix-row');
         
@@ -2390,9 +2396,14 @@ class GaussianGame {
     saveLevelCompletion(stars) {
         const levelId = this.currentLevel.id;
         
+        // التأكد من وجود المصفوفة للجزء الحالي
+        if (!this.completedLevels[this.currentPart]) {
+            this.completedLevels[this.currentPart] = [];
+        }
+        
         // إضافة للمستويات المكتملة
-        if (!this.completedLevels.includes(levelId)) {
-            this.completedLevels.push(levelId);
+        if (!this.completedLevels[this.currentPart].includes(levelId)) {
+            this.completedLevels[this.currentPart].push(levelId);
         }
         
         // تحديث النجوم

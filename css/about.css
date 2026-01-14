@@ -1,0 +1,325 @@
+/* About Screen - Legendary Design for Koros Matrix */
+
+:root {
+    --neon-cyan: #00f3ff;
+    --neon-blue: #0066ff;
+    --glass-bg: rgba(16, 20, 30, 0.7);
+    --glass-border: rgba(255, 255, 255, 0.1);
+    --card-bg: rgba(255, 255, 255, 0.03);
+}
+
+/* Container Layout */
+#about-screen {
+    background-image: url('../Assets/legendary_bg.png');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    position: relative;
+}
+
+#about-screen::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.6);
+    /* Dark overlay to ensure text readability */
+    z-index: 0;
+}
+
+#about-screen .container {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100vh;
+    padding: 2rem;
+    overflow-y: auto;
+}
+
+/* Glassmorphism Card */
+.about-card {
+    position: relative;
+    width: 100%;
+    max-width: 900px;
+    background: var(--glass-bg);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border: 1px solid var(--glass-border);
+    border-radius: 24px;
+    padding: 3rem;
+    box-shadow: 0 0 40px rgba(0, 0, 0, 0.5),
+        0 0 100px rgba(0, 243, 255, 0.05);
+    /* Subtle neon glow */
+    overflow: hidden;
+    animation: cardFloat 1s ease-out;
+}
+
+/* Animated Border Gradient */
+.about-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 2px;
+    background: linear-gradient(90deg, transparent, var(--neon-cyan), transparent);
+    animation: shine 3s infinite linear;
+}
+
+.about-header {
+    text-align: center;
+    margin-bottom: 3rem;
+    position: relative;
+}
+
+.about-title {
+    font-family: 'Tajawal', sans-serif;
+    font-size: 2.5rem;
+    font-weight: 800;
+    color: #fff;
+    text-shadow: 0 0 10px rgba(0, 243, 255, 0.5);
+    margin-bottom: 0.5rem;
+}
+
+.about-subtitle {
+    color: #a0a0a0;
+    font-size: 1.1rem;
+}
+
+/* Grid Layout for Content */
+.about-content {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 3rem;
+    align-items: center;
+}
+
+/* Left Column: Info */
+.about-info {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+
+.info-item {
+    background: var(--card-bg);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    padding: 1.5rem;
+    border-radius: 16px;
+    transition: all 0.3s ease;
+}
+
+.info-item:hover {
+    transform: translateX(10px);
+    background: rgba(255, 255, 255, 0.08);
+    border-color: var(--neon-cyan);
+    box-shadow: 0 0 15px rgba(0, 243, 255, 0.1);
+}
+
+.info-label {
+    font-size: 0.9rem;
+    color: var(--neon-cyan);
+    margin-bottom: 0.5rem;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.info-value {
+    font-size: 1.2rem;
+    color: #fff;
+    font-weight: 500;
+}
+
+/* Right Column: Identity (QR & Socials) */
+.about-identity {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 2rem;
+}
+
+.qr-container {
+    position: relative;
+    width: 200px;
+    height: 200px;
+    padding: 10px;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 20px;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    transition: transform 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.qr-container:hover {
+    transform: scale(1.05) rotate(2deg);
+}
+
+.qr-image {
+    width: 100%;
+    height: 100%;
+    border-radius: 12px;
+    object-fit: cover;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.3);
+}
+
+/* Corner Accents for QR */
+.qr-container::after {
+    content: '';
+    position: absolute;
+    inset: -2px;
+    border-radius: 22px;
+    padding: 2px;
+    background: linear-gradient(45deg, var(--neon-cyan), transparent, var(--neon-blue));
+    -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+    -webkit-mask-composite: xor;
+    mask-composite: exclude;
+    opacity: 0.5;
+    pointer-events: none;
+}
+
+/* QR Overlay */
+.qr-overlay {
+    position: absolute;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.8);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    border-radius: 12px;
+}
+
+.qr-container:hover .qr-overlay {
+    opacity: 1;
+}
+
+.qr-overlay span {
+    color: var(--neon-cyan);
+    font-family: 'Tajawal', sans-serif;
+    font-weight: bold;
+    font-size: 1.2rem;
+    text-align: center;
+    transform: translateY(10px);
+    transition: transform 0.3s ease;
+}
+
+.qr-container:hover .qr-overlay span {
+    transform: translateY(0);
+}
+
+.social-links {
+    display: flex;
+    gap: 1rem;
+    width: 100%;
+    justify-content: center;
+}
+
+.social-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    padding: 12px 24px;
+    border-radius: 12px;
+    font-family: 'Fira Code', monospace;
+    font-weight: bold;
+    font-size: 1rem;
+    cursor: pointer;
+    text-decoration: none;
+    transition: all 0.3s ease;
+    flex: 1;
+    max-width: 160px;
+}
+
+.btn-telegram {
+    background: rgba(0, 136, 204, 0.2);
+    color: #0088cc;
+    border: 1px solid rgba(0, 136, 204, 0.3);
+}
+
+.btn-telegram:hover {
+    background: #0088cc;
+    color: white;
+    box-shadow: 0 0 20px rgba(0, 136, 204, 0.4);
+    transform: translateY(-3px);
+}
+
+.btn-github {
+    background: rgba(255, 255, 255, 0.1);
+    color: #fff;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.btn-github:hover {
+    background: #fff;
+    color: #000;
+    box-shadow: 0 0 20px rgba(255, 255, 255, 0.2);
+    transform: translateY(-3px);
+}
+
+.social-icon {
+    width: 20px;
+    height: 20px;
+    fill: currentColor;
+}
+
+/* Animations */
+@keyframes cardFloat {
+    from {
+        opacity: 0;
+        transform: translateY(30px) scale(0.95);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}
+
+@keyframes shine {
+    0% {
+        transform: translateX(-100%);
+    }
+
+    100% {
+        transform: translateX(100%);
+    }
+}
+
+/* Back Button Override */
+#about-screen .btn-back {
+    position: absolute;
+    top: 3rem;
+    left: 3rem;
+    z-index: 10;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .about-content {
+        grid-template-columns: 1fr;
+        gap: 2rem;
+    }
+
+    .about-card {
+        padding: 2rem;
+        margin-top: 3rem;
+        /* Space for back button */
+    }
+
+    #about-screen .btn-back {
+        top: 1rem;
+        left: 1rem;
+    }
+
+    .about-identity {
+        flex-direction: column-reverse;
+        /* Put socials below QR or verify flow */
+    }
+
+    .qr-container {
+        width: 150px;
+        height: 150px;
+    }
+}
