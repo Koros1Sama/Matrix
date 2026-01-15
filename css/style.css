@@ -4547,10 +4547,8 @@ body::before {
 
 .modal-header {
     padding: 12px 15px;
-    position: sticky;
-    top: 0;
+    /* Removed sticky positioning - modal should scroll as one unit */
     background: var(--bg-card);
-    z-index: 10;
 }
 
 .modal-header h3 {
@@ -4569,8 +4567,7 @@ body::before {
 
 .modal-footer {
     padding: 12px 15px;
-    position: sticky;
-    bottom: 0;
+    /* Removed sticky positioning - modal should scroll as one unit */
     background: var(--bg-card);
 }
 

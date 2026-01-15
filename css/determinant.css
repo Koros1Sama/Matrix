@@ -11989,10 +11989,20 @@
     }
 
     /* Also fix any other matrix displays that might have this issue */
-    .matrix-wrapper,
+    /* Note: Exclude .det-simplify-left .matrix-wrapper which needs flex for det-brackets */
+    .cramer-tutorial .matrix-wrapper,
+    .inverse-tutorial .matrix-wrapper,
+    .extended-matrix-demo .matrix-wrapper,
     .visual-matrix-demo,
     .diagonal-matrix {
         display: block !important;
+    }
+
+    /* Ensure det-simplify matrix-wrapper keeps flex for brackets */
+    .det-simplify-left .matrix-wrapper {
+        display: flex !important;
+        align-items: center;
+        justify-content: center;
     }
 
     .matrix-wrapper .m-row,
