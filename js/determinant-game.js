@@ -13,6 +13,7 @@ class DeterminantGame {
         this.totalSteps = 0;
         this.stepCount = 0; // Wrong attempts (errors)
         this.hintsUsed = 0; // Hints used (separate from errors)
+        this.hintShownForCurrentStep = false; // Track if hint shown for current step
         this.isPlaying = false;
         this.isProcessingAnswer = false; // Prevent Enter spam during transition
         
@@ -888,6 +889,7 @@ class DeterminantGame {
         this.currentStep = 0;
         this.stepCount = 0;
         this.hintsUsed = 0;
+        this.hintShownForCurrentStep = false;
         this.userAnswers = [];
         this.isPlaying = true;
         
@@ -945,6 +947,7 @@ class DeterminantGame {
         this.currentStep = 0;
         this.stepCount = 0;
         this.hintsUsed = 0;
+        this.hintShownForCurrentStep = false;
         this.userAnswers = [];
         this.isPlaying = true;
         
@@ -1021,6 +1024,7 @@ class DeterminantGame {
             
             setTimeout(() => {
                 this.currentStep++;
+                this.hintShownForCurrentStep = false; // Reset hint flag for new step
                 this.isProcessingAnswer = false; // Unlock after transition
                 if (this.currentStep >= this.totalSteps) {
                     this.winLevel();
@@ -1499,6 +1503,7 @@ class DeterminantGame {
                 if (this.steps[this.currentStep]?.answerType === 'auto-skip') {
                     this.userAnswers.push('0');
                     this.currentStep++;
+                    this.hintShownForCurrentStep = false; // Reset hint flag for new step
                     if (this.currentStep >= this.totalSteps) {
                         this.winLevel();
                     } else {
@@ -1512,12 +1517,12 @@ class DeterminantGame {
                     <button class="sign-btn positive" onclick="detGame.submitSignAnswer('+')">+</button>
                     <button class="sign-btn negative" onclick="detGame.submitSignAnswer('-')">−</button>
                     <button class="btn btn-hint" onclick="detGame.showHint()" title="تلميح">
-                        💡 <span>تلميح</span>
+                        💡 <span>تلميح</span> <small>(-1⭐)</small>
                     </button>
                 </div>
                 <div id="hint-panel" class="hint-panel" style="display: none;">
                     <div class="hint-content" id="hint-content"></div>
-                    <button class="btn btn-apply-hint" onclick="detGame.applyHint()">تطبيق التلميح</button>
+                    <button class="btn btn-apply-hint" onclick="detGame.applyHint()">تطبيق التلميح <small>(-1⭐)</small></button>
                 </div>
             `;
         } else {
@@ -1528,12 +1533,12 @@ class DeterminantGame {
                            onkeypress="if(event.key==='Enter') detGame.submitStep()">
                     <button class="btn btn-primary" onclick="detGame.submitStep()">تحقق</button>
                     <button class="btn btn-hint" onclick="detGame.showHint()" title="تلميح">
-                        💡 <span>تلميح</span>
+                        💡 <span>تلميح</span> <small>(-1⭐)</small>
                     </button>
                 </div>
                 <div id="hint-panel" class="hint-panel" style="display: none;">
                     <div class="hint-content" id="hint-content"></div>
-                    <button class="btn btn-apply-hint" onclick="detGame.applyHint()">تطبيق التلميح</button>
+                    <button class="btn btn-apply-hint" onclick="detGame.applyHint()">تطبيق التلميح <small>(-1⭐)</small></button>
                 </div>
             `;
         }
@@ -1886,7 +1891,10 @@ class DeterminantGame {
         hintPanel.style.display = 'block';
         
         // تتبع استخدام التلميح (منفصل عن الأخطاء)
-        this.hintsUsed++;
+        if (!this.hintShownForCurrentStep) {
+            this.hintsUsed++;
+            this.hintShownForCurrentStep = true;
+        }
     }
     
     getStepHint() {
@@ -1958,6 +1966,9 @@ class DeterminantGame {
     
     applyHint() {
         if (!this.currentHint) return;
+        
+        // تطبيق التلميح يستهلك نقطة إضافية
+        this.hintsUsed++;
         
         const step = this.steps[this.currentStep];
         

@@ -15,7 +15,9 @@ class CramerGame {
         this.totalSteps = 0;
         this.stepCount = 0; // Wrong attempts (errors)
         this.hintsUsed = 0; // Hints used
+        this.hintShownForCurrentStep = false; // Track if hint shown for current step
         this.isPlaying = false;
+        this.isProcessingAnswer = false; // Prevent Enter spam during transition
         
         // Method selection
         this.selectedMethod = null; // 'sarrus' or 'cofactor'
@@ -559,6 +561,7 @@ class CramerGame {
         this.currentStep = 0;
         this.stepCount = 0;
         this.hintsUsed = 0;
+        this.hintShownForCurrentStep = false;
         this.userAnswers = [];
         this.isPlaying = true;
         this.extendedMatrices = {};
@@ -596,6 +599,7 @@ class CramerGame {
         this.currentStep = 0;
         this.stepCount = 0;
         this.hintsUsed = 0;
+        this.hintShownForCurrentStep = false;
         this.userAnswers = [];
         this.isPlaying = true;
         this.extendedMatrices = {};
@@ -948,6 +952,11 @@ class CramerGame {
     }
     
     checkStepAnswer(userAnswer) {
+        // Prevent Enter spam during transition
+        if (this.isProcessingAnswer) {
+            return false;
+        }
+        
         const step = this.steps[this.currentStep];
         let isCorrect = false;
         
@@ -962,6 +971,7 @@ class CramerGame {
         }
         
         if (isCorrect) {
+            this.isProcessingAnswer = true; // Lock to prevent spam
             this.userAnswers.push(userAnswer);
             this.showCorrectFeedback(step);
             
@@ -969,6 +979,7 @@ class CramerGame {
             if (this.isDetZeroLevel && step.type === 'det-main' && step.answer === 0) {
                 // اللاعب اكتشف أن المحدد = 0
                 setTimeout(() => {
+                    this.isProcessingAnswer = false;
                     this.showDetZeroScreen(0);
                 }, 1000);
                 return isCorrect;
@@ -976,6 +987,8 @@ class CramerGame {
             
             setTimeout(() => {
                 this.currentStep++;
+                this.isProcessingAnswer = false; // Unlock after transition
+                this.hintShownForCurrentStep = false; // Reset hint flag for new step
                 if (this.currentStep >= this.totalSteps) {
                     this.winLevel();
                 } else {
@@ -1029,14 +1042,37 @@ class CramerGame {
         const step = this.steps[this.currentStep];
         if (!step) return;
         
-        this.hintsUsed++;
+        // تأكد من عدم احتساب التلميح مرتين لنفس الخطوة
+        if (!this.hintShownForCurrentStep) {
+            this.hintsUsed++;
+            this.hintShownForCurrentStep = true;
+        }
+        this.currentHint = step.answer;
         
         const feedback = document.getElementById('cramer-step-feedback');
         if (feedback) {
             feedback.className = 'step-feedback hint';
-            feedback.innerHTML = `💡 التلميح: الإجابة = <strong>${step.answer}</strong>`;
+            feedback.innerHTML = `
+                💡 التلميح: الإجابة = <strong>${step.answer}</strong>
+                <button class="btn btn-apply-hint" onclick="cramerGame.applyHint()">تطبيق</button>
+            `;
             feedback.style.display = 'block';
         }
+    }
+    
+    // تطبيق التلميح
+    applyHint() {
+        if (this.currentHint === undefined) return;
+        
+        const input = document.getElementById('cramer-answer-input');
+        if (input) {
+            input.value = this.currentHint;
+            input.focus();
+        }
+        
+        // إخفاء التلميح
+        const feedback = document.getElementById('cramer-step-feedback');
+        if (feedback) feedback.style.display = 'none';
     }
     
     // شاشة det(A) = 0 (قاعدة كرامر لا تعمل)
@@ -1263,7 +1299,9 @@ class CramerGame {
                            placeholder="الإجابة" step="any" autofocus
                            onkeypress="if(event.key==='Enter') cramerGame.submitStep()">
                     <button class="btn btn-primary" onclick="cramerGame.submitStep()">تحقق</button>
-                    <button class="btn btn-hint" onclick="cramerGame.showHint()" title="تلميح">💡</button>
+                    <button class="btn btn-hint" onclick="cramerGame.showHint()" title="تلميح">
+                        💡 <small>(-1⭐)</small>
+                    </button>
                 </div>
             `;
         }

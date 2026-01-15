@@ -742,7 +742,7 @@ class GaussianGame {
         this.inverseConstants = levelData.constants;
         
         // إعادة تعيين المعلم المساعد
-        this.tutorVisible = false;
+        this.hideTutor();
         this.currentHint = null;
         
         this.updateUI();
@@ -757,10 +757,7 @@ class GaussianGame {
         
         // إظهار زر التلميح للمعكوس - نفس جاوس-جوردن
         this.elements.btnShowHint.style.display = 'inline-flex';
-        // إظهار التلميح تلقائياً في المستوى الأول
-        if (levelNum === 1) {
-            setTimeout(() => this.showTutor(), 500);
-        }
+        // المستخدم يضغط زر التلميح يدوياً
     }
     
     // بدء مرحلة مخصصة للمعكوس
@@ -812,7 +809,7 @@ class GaussianGame {
         this.inverseConstants = levelData.constants;
         
         // إعادة تعيين المعلم المساعد
-        this.tutorVisible = false;
+        this.hideTutor();
         this.currentHint = null;
         
         this.updateUI();
@@ -1036,13 +1033,14 @@ class GaussianGame {
         this.errorsCount = 0;
         
         // إعادة تعيين المعلم المساعد
-        this.tutorVisible = false;
+        this.hideTutor();
         this.currentHint = null;
         
         this.updateUI();
         this.renderMatrix();
         this.renderEquations();
         this.showScreen('game');
+        this.renderGoalHint(); // عرض تلميح الهدف فقط عند بداية المرحلة
         
         this.elements.phase1.classList.add('active');
         this.elements.phase2.classList.remove('active');
@@ -1053,10 +1051,7 @@ class GaussianGame {
         // إظهار زر التلميح لجميع المستويات (نظام جديد)
         if (this.tutorEnabledLevels === null || this.tutorEnabledLevels.includes(levelId)) {
             this.elements.btnShowHint.style.display = 'inline-flex';
-            // إظهار التلميح تلقائياً في المستوى الأول
-            if (levelId === 1) {
-                setTimeout(() => this.showTutor(), 500);
-            }
+            // المستخدم يضغط زر التلميح يدوياً
         } else {
             this.elements.btnShowHint.style.display = 'none';
             this.hideTutor();
@@ -1229,9 +1224,7 @@ class GaussianGame {
         if (this.tutorVisible) {
             this.updateTutorHint();
         }
-
-        // تحديث تلميح الهدف
-        this.renderGoalHint();
+        // التلميح يُعرض فقط عند بداية المرحلة وليس بعد كل تغيير
     }
 
     renderGoalHint() {
@@ -2407,6 +2400,9 @@ class GaussianGame {
         }
         
         // تحديث النجوم
+        if (!this.levelStars) {
+            this.levelStars = {};
+        }
         if (!this.levelStars[levelId] || stars > this.levelStars[levelId]) {
             this.levelStars[levelId] = stars;
         }
@@ -3014,6 +3010,8 @@ class GaussianGame {
     
     animateOperation(callback) {
         // تأثير بسيط
+        // إخفاء نافذة التلميح بعد كل عملية
+        this.hideTutor();
         setTimeout(callback, 100);
     }
     
@@ -3021,6 +3019,14 @@ class GaussianGame {
     
     showTutor() {
         if (!this.elements.tutorSection) return;
+        
+        // تتبع استخدام التلميح (عرض التلميح يستهلك نقطة مرة واحدة فقط حتى الإخفاء)
+        if (!this.tutorCounted) {
+            this.hintsUsed++;
+            this.tutorCounted = true;
+            this.updateLiveStars();
+        }
+        
         this.tutorVisible = true;
         this.elements.tutorSection.style.display = 'block';
         this.elements.btnShowHint.classList.add('active');
@@ -3030,6 +3036,7 @@ class GaussianGame {
     hideTutor() {
         if (!this.elements.tutorSection) return;
         this.tutorVisible = false;
+        this.tutorCounted = false; // Reset so next show counts as new usage
         this.elements.tutorSection.style.display = 'none';
         this.elements.btnShowHint.classList.remove('active');
     }
