@@ -5352,3 +5352,129 @@ body::before {
     background: rgba(239, 68, 68, 0.15) !important;
     border-radius: var(--radius-sm);
 }
+/* ============================================
+   Drag-Drop Hint Banner
+   ============================================ */
+
+.drag-hint-banner {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    background: linear-gradient(135deg, rgba(99, 102, 241, 0.2), rgba(16, 185, 129, 0.2));
+    border: 1px solid rgba(99, 102, 241, 0.4);
+    border-radius: var(--radius-md);
+    padding: 10px 15px;
+    margin-bottom: 15px;
+    direction: rtl;
+    animation: dragHintPulse 2s ease-in-out infinite;
+}
+
+.drag-hint-icon {
+    font-size: 1.3rem;
+}
+
+.drag-hint-text {
+    font-size: 0.9rem;
+    color: var(--text-primary);
+}
+
+.drag-hint-close {
+    background: rgba(255, 255, 255, 0.1);
+    border: none;
+    color: var(--text-secondary);
+    font-size: 1.2rem;
+    cursor: pointer;
+    padding: 2px 8px;
+    border-radius: 50%;
+    margin-right: auto;
+    transition: all 0.2s;
+}
+
+.drag-hint-close:hover {
+    background: rgba(255, 255, 255, 0.2);
+    color: var(--text-primary);
+}
+
+@keyframes dragHintPulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.7; }
+}
+
+.drag-tip {
+    background: linear-gradient(135deg, rgba(99, 102, 241, 0.15), rgba(16, 185, 129, 0.15));
+    border-left: 3px solid var(--primary);
+}
+
+.drag-tip ul {
+    list-style: disc;
+}
+
+.drag-tip li {
+    margin: 5px 0;
+    font-size: 0.95rem;
+}
+
+/* Mobile-specific drag hint styles */
+@media (max-width: 768px) {
+    .drag-hint-banner {
+        padding: 8px 12px;
+        margin-bottom: 10px;
+        font-size: 0.85rem;
+    }
+    
+    .drag-hint-icon {
+        font-size: 1.1rem;
+    }
+    
+    .drag-hint-text {
+        font-size: 0.8rem;
+    }
+    
+    .drag-hint-close {
+        padding: 4px 10px;
+        font-size: 1rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .drag-hint-banner {
+        flex-wrap: wrap;
+        gap: 5px;
+        padding: 8px 10px;
+    }
+    
+    .drag-hint-text {
+        font-size: 0.75rem;
+        flex: 1 1 100%;
+        text-align: center;
+        order: 2;
+    }
+    
+    .drag-hint-icon {
+        order: 1;
+    }
+    
+    .drag-hint-close {
+        order: 1;
+        margin-right: 0;
+    }
+}
+
+/* Exit lesson button at bottom */
+.btn-exit-lesson {
+    margin-top: 15px;
+    opacity: 0.7;
+    transition: opacity 0.3s;
+}
+
+.btn-exit-lesson:hover {
+    opacity: 1;
+}
+
+@media (max-width: 768px) {
+    .btn-exit-lesson {
+        width: 100%;
+        margin-top: 20px;
+    }
+}

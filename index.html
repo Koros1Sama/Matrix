@@ -6,6 +6,8 @@
     <title>Koros Matrix - لعبة تعليمية</title>
     <link rel="icon" type="image/png" href="icon.png" />
     <link rel="apple-touch-icon" href="icon.png" />
+    <link rel="manifest" href="manifest.json" />
+    <meta name="theme-color" content="#6366F1" />
     <meta
       name="description"
       content="لعبة تعليمية تفاعلية لتعلم حل أنظمة المعادلات الخطية بطريقة جاوس"
@@ -319,9 +321,6 @@
     <div id="lesson-screen" class="screen">
       <div class="container">
         <div class="screen-header">
-          <button class="btn btn-back" onclick="game.showLevelSelect()">
-            <span>→</span> رجوع
-          </button>
           <h2>📚 تعلم طريقة جاوس</h2>
         </div>
 
@@ -438,6 +437,23 @@
             <div class="lesson-tip">
               💡 <strong>نصيحة:</strong> ابدأ دائماً بجعل القائد الأول = 1، ثم
               اجعل ما تحته = 0
+            </div>
+
+            <div class="lesson-tip drag-tip">
+              🖱️ <strong>طريقة الاستخدام:</strong>
+              <ul
+                style="
+                  margin: 8px 0 0 0;
+                  padding-right: 20px;
+                  text-align: right;
+                "
+              >
+                <li>
+                  <strong>تبديل صفين:</strong> اسحب أي صف وأفلته على صف آخر
+                </li>
+                <li><strong>جمع صفين:</strong> اسحب زر ➕ من صف لصف آخر</li>
+                <li>أو استخدم الأزرار في الأسفل</li>
+              </ul>
             </div>
           </div>
 
@@ -790,6 +806,14 @@
           >
             🎮 ابدأ اللعب الآن!
           </button>
+
+          <!-- زر الخروج في الأسفل -->
+          <button
+            class="btn btn-secondary btn-exit-lesson"
+            onclick="game.showLevelSelect()"
+          >
+            ← رجوع للمستويات
+          </button>
         </div>
       </div>
     </div>
@@ -883,6 +907,21 @@
 
           <div class="matrix-section">
             <h3>🔢 المصفوفة الموسعة:</h3>
+
+            <!-- تلميح السحب والإفلات -->
+            <div class="drag-hint-banner" id="drag-hint-banner">
+              <span class="drag-hint-icon">👆</span>
+              <span class="drag-hint-text"
+                >اسحب/المس صف لتبديله • اسحب ➕ لجمع صفين</span
+              >
+              <button
+                class="drag-hint-close"
+                onclick="this.parentElement.style.display='none'"
+              >
+                ×
+              </button>
+            </div>
+
             <div class="matrix-container" id="matrix-container">
               <!-- سيتم ملؤها بواسطة JavaScript -->
             </div>
@@ -1193,5 +1232,20 @@
     <script src="js/inverse-tutorial.js"></script>
     <script src="js/custom-level.js"></script>
     <script src="js/app.js"></script>
+    <!-- تسجيل Service Worker لـ PWA -->
+    <script>
+      if ("serviceWorker" in navigator) {
+        window.addEventListener("load", () => {
+          navigator.serviceWorker
+            .register("./sw.js")
+            .then((registration) => {
+              console.log("ServiceWorker registration successful");
+            })
+            .catch((err) => {
+              console.log("ServiceWorker registration failed: ", err);
+            });
+        });
+      }
+    </script>
   </body>
 </html>
