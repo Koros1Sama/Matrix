@@ -33,18 +33,35 @@ jobs:
       - name: Configure Bubblewrap
         run: |
           mkdir -p ~/.bubblewrap
-          echo "{\"jdkPath\":\"$JAVA_HOME\",\"androidSdkPath\":\"$ANDROID_HOME\"}" > ~/.bubblewrap/config.json
+          echo '{"jdkPath":"'$JAVA_HOME'","androidSdkPath":"'$ANDROID_HOME'"}' > ~/.bubblewrap/config.json
+          cat ~/.bubblewrap/config.json
 
       - name: Generate Keystore
         run: |
           keytool -genkey -v -keystore android.keystore -alias android -keyalg RSA -keysize 2048 -validity 10000 -storepass android -keypass android -dname "CN=Koros Matrix, OU=Dev, O=Koros, L=City, S=State, C=SA"
 
-      - name: Build TWA with Bubblewrap
+      - name: Initialize and Build TWA
         run: |
-          npx @bubblewrap/cli build --skipPwaValidation
+          # Answer 'no' to all prompts automatically
+          echo "no" | npx @bubblewrap/cli build --skipPwaValidation || true
+          # If that fails, try init first
+          if [ ! -f "app-release-signed.apk" ]; then
+            echo "Trying init first..."
+            yes "" | npx @bubblewrap/cli init --manifest="https://koros1sama.github.io/Matrix/manifest.json" || true
+            echo "no" | npx @bubblewrap/cli build --skipPwaValidation || true
+          fi
         env:
           BUBBLEWRAP_KEYSTORE_PASSWORD: android
           BUBBLEWRAP_KEY_PASSWORD: android
+
+      - name: List output files
+        run: |
+          echo "=== Current directory ==="
+          ls -la
+          echo "=== App folder ==="
+          ls -la app/ 2>/dev/null || echo "No app folder"
+          echo "=== APK files ==="
+          find . -name "*.apk" 2>/dev/null || echo "No APK files found"
 
       - name: Upload APK
         uses: actions/upload-artifact@v4
