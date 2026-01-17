@@ -1,3 +1,4 @@
+// لتحديث التطبيق عند المستخدمين، قم بتغيير رقم الإصدار هنا (مثلاً v1 -> v2)
 const CACHE_NAME = 'koros-matrix-v1';
 const ASSETS_TO_CACHE = [
   './',

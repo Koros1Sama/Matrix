@@ -1,0 +1,39 @@
+{
+    "packageId": "com.koros.matrix",
+    "host": "koros1sama.github.io",
+    "name": "Koros Matrix",
+    "launcherName": "Matrix Game",
+    "display": "fullscreen",
+    "themeColor": "#6366F1",
+    "navigationColor": "#0F172A",
+    "navigationColorDark": "#0F172A",
+    "navigationDividerColor": "#0F172A",
+    "navigationDividerColorDark": "#0F172A",
+    "backgroundColor": "#0F172A",
+    "enableNotifications": false,
+    "startUrl": "/Matrix/",
+    "iconUrl": "https://koros1sama.github.io/Matrix/icon.png",
+    "maskableIconUrl": "https://koros1sama.github.io/Matrix/icon.png",
+    "splashScreenFadeOutDuration": 300,
+    "signingKey": {
+        "path": "./android.keystore",
+        "alias": "android"
+    },
+    "appVersionCode": 1,
+    "appVersionName": "1.0.0",
+    "shortcuts": [],
+    "generatorApp": "bubblewrap-cli",
+    "webManifestUrl": "https://koros1sama.github.io/Matrix/manifest.json",
+    "fallbackType": "customtabs",
+    "features": {},
+    "alphaDependencies": {
+        "enabled": false
+    },
+    "enableSiteSettingsShortcut": true,
+    "isChromeOSOnly": false,
+    "isMetaQuest": false,
+    "fullScopeUrl": "https://koros1sama.github.io/Matrix/",
+    "minSdkVersion": 19,
+    "orientation": "portrait",
+    "fingerprints": []
+}
