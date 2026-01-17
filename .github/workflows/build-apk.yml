@@ -24,11 +24,16 @@ jobs:
           distribution: "temurin"
           java-version: "17"
 
+      - name: Setup Android SDK
+        uses: android-actions/setup-android@v3
+
       - name: Install Bubblewrap CLI
         run: npm install -g @bubblewrap/cli
 
-      - name: Setup Android SDK
-        uses: android-actions/setup-android@v3
+      - name: Configure Bubblewrap
+        run: |
+          mkdir -p ~/.bubblewrap
+          echo "{\"jdkPath\":\"$JAVA_HOME\",\"androidSdkPath\":\"$ANDROID_HOME\"}" > ~/.bubblewrap/config.json
 
       - name: Generate Keystore
         run: |
@@ -46,6 +51,6 @@ jobs:
         with:
           name: koros-matrix-apk
           path: |
-            app-release-signed.apk
-            app-release-unsigned.apk
+            *.apk
+            app/build/outputs/apk/**/*.apk
           if-no-files-found: warn
