@@ -2,12 +2,22 @@
 <html lang="ar" dir="ltr">
   <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
+    />
     <title>Koros Matrix - لعبة تعليمية</title>
     <link rel="icon" type="image/png" href="icon.png" />
     <link rel="apple-touch-icon" href="icon.png" />
     <link rel="manifest" href="manifest.json" />
     <meta name="theme-color" content="#6366F1" />
+    <!-- Mobile App Meta Tags -->
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta
+      name="apple-mobile-web-app-status-bar-style"
+      content="black-translucent"
+    />
     <meta
       name="description"
       content="لعبة تعليمية تفاعلية لتعلم حل أنظمة المعادلات الخطية بطريقة جاوس"
@@ -1246,6 +1256,67 @@
             });
         });
       }
+
+      // === تأكيد الخروج من التطبيق ===
+      let lastBackPress = 0;
+
+      // Handle back button on Android
+      window.addEventListener("popstate", function (e) {
+        const homeScreen = document.getElementById("home-screen");
+        if (homeScreen && homeScreen.classList.contains("active")) {
+          // On home screen - show exit confirmation
+          const now = Date.now();
+          if (now - lastBackPress < 2000) {
+            // Double back press - exit (or go back)
+            window.history.back();
+          } else {
+            lastBackPress = now;
+            // Show toast message
+            showExitToast();
+            window.history.pushState(null, "", window.location.href);
+          }
+        }
+      });
+
+      // Push initial state
+      window.history.pushState(null, "", window.location.href);
+
+      function showExitToast() {
+        let toast = document.getElementById("exit-toast");
+        if (!toast) {
+          toast = document.createElement("div");
+          toast.id = "exit-toast";
+          toast.style.cssText = `
+            position: fixed;
+            bottom: 80px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(0,0,0,0.8);
+            color: white;
+            padding: 12px 24px;
+            border-radius: 25px;
+            font-size: 14px;
+            z-index: 99999;
+            transition: opacity 0.3s;
+          `;
+          document.body.appendChild(toast);
+        }
+        toast.textContent = "اضغط مرة أخرى للخروج";
+        toast.style.opacity = "1";
+        setTimeout(() => {
+          toast.style.opacity = "0";
+        }, 2000);
+      }
+
+      // Prevent accidental page refresh on mobile
+      window.addEventListener("beforeunload", function (e) {
+        if (typeof game !== "undefined" && game.isPlaying) {
+          e.preventDefault();
+          e.returnValue =
+            "هل أنت متأكد من الخروج؟ سيتم فقد تقدمك في المستوى الحالي.";
+          return e.returnValue;
+        }
+      });
     </script>
   </body>
 </html>
