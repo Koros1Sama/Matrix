@@ -41,7 +41,8 @@ class DetSimplifyTutorial {
                 type: "idea",
                 matrix: [[2, 4, 6], [1, 2, 5], [3, 1, 2]],
                 explanation: "تذكّر: جمع صف مع مضاعف صف آخر لا يغير المحدد! سنستخدم هذا لإنشاء أصفار.",
-                target: "سنجعل العمود الأول يحتوي على صفرين"
+                target: "سنجعل العمود الأول يحتوي على صفرين",
+                warning: "⚠️ تحذير: ضرب صف في عدد k يضرب المحدد في k! لذلك لا نستخدم هذه العملية في التبسيط."
             },
             {
                 id: 2,
@@ -88,21 +89,33 @@ class DetSimplifyTutorial {
                 type: "simplified",
                 original: [[2, 4, 6], [1, 2, 5], [3, 1, 2]],
                 simplified: [[2, 4, 6], [0, 0, 2], [0, -5, -7]],
-                explanation: "الآن لدينا صفران في العمود الأول! التوسيع على العمود الأول سيكون سهلاً جداً."
+                explanation: "الآن لدينا صفران في العمود الأول! حساب المحدد بساروس أصبح أسهل."
             },
             {
                 id: 5,
-                title: "🧮 حساب المحدد",
-                subtitle: "التوسيع على العمود الأول",
-                type: "calculate",
+                title: "🧮 حساب المحدد بساروس",
+                subtitle: "الأقطار الرئيسية - الأقطار الثانوية",
+                type: "calculate-sarrus",
                 matrix: [[2, 4, 6], [0, 0, 2], [0, -5, -7]],
-                expansion: [
-                    { element: 2, sign: "+", row: 0, minor: [[0, 2], [-5, -7]], minorDet: "0×(-7) - 2×(-5) = 10", result: "2 × 10 = 20" },
-                    { element: 0, sign: "-", row: 1, minor: null, result: "0 × (...) = 0", skip: true },
-                    { element: 0, sign: "+", row: 2, minor: null, result: "0 × (...) = 0", skip: true }
-                ],
+                sarrus: {
+                    // الأقطار الرئيسية (من اليسار لليمين)
+                    mainDiags: [
+                        { values: [2, 0, -7], product: "2 × 0 × (-7) = 0" },
+                        { values: [4, 2, 0], product: "4 × 2 × 0 = 0" },
+                        { values: [6, 0, -5], product: "6 × 0 × (-5) = 0" }
+                    ],
+                    mainSum: "0 + 0 + 0 = 0",
+                    // الأقطار الثانوية (من اليمين لليسار)
+                    antiDiags: [
+                        { values: [6, 0, 0], product: "6 × 0 × 0 = 0" },
+                        { values: [4, 0, -7], product: "4 × 0 × (-7) = 0" },
+                        { values: [2, 2, -5], product: "2 × 2 × (-5) = -20" }
+                    ],
+                    antiSum: "0 + 0 + (-20) = -20"
+                },
+                finalCalc: "المحدد = 0 - (-20) = 20",
                 finalResult: 20,
-                explanation: "بفضل الأصفار، حسبنا محدداً فرعياً واحداً فقط بدلاً من ثلاثة!"
+                explanation: "بفضل الأصفار، معظم الحسابات صارت صفر! سهل جداً."
             },
             {
                 id: 6,
@@ -312,6 +325,9 @@ class DetSimplifyTutorial {
             case 'calculate':
                 html += this.renderCalculatePhase(phase);
                 break;
+            case 'calculate-sarrus':
+                html += this.renderSarrusPhase(phase);
+                break;
             case 'result':
                 html += this.renderResultPhase(phase);
                 break;
@@ -367,6 +383,11 @@ class DetSimplifyTutorial {
                     <span class="reminder-icon">✨</span>
                     <span>تذكّر: <span dir="ltr" class="math-formula">Rᵢ + k×Rⱼ</span> ← المحدد لا يتغير!</span>
                 </div>
+                ${phase.warning ? `
+                <div class="property-warning" id="warning-box">
+                    <span>${phase.warning}</span>
+                </div>
+                ` : ''}
             </div>
         `;
     }
@@ -479,6 +500,72 @@ class DetSimplifyTutorial {
         `;
     }
 
+    renderSarrusPhase(phase) {
+        const s = phase.sarrus;
+        return `
+            <div class="sarrus-phase">
+                <div class="sarrus-matrix-section">
+                    <div class="sarrus-matrix-extended" id="sarrus-matrix">
+                        ${this.renderSarrusMatrix(phase.matrix)}
+                    </div>
+                </div>
+                
+                <div class="sarrus-diags-section">
+                    <div class="diags-group main-diags" id="main-diags">
+                        <div class="diags-title">🔵 الأقطار الرئيسية (+)</div>
+                        <div class="diags-list">
+                            ${s.mainDiags.map((d, i) => `
+                                <div class="diag-item" data-index="${i}">
+                                    <span class="diag-calc">${d.product}</span>
+                                </div>
+                            `).join('')}
+                        </div>
+                        <div class="diags-sum">${s.mainSum}</div>
+                    </div>
+                    
+                    <div class="diags-group anti-diags" id="anti-diags">
+                        <div class="diags-title">🔴 الأقطار الثانوية (−)</div>
+                        <div class="diags-list">
+                            ${s.antiDiags.map((d, i) => `
+                                <div class="diag-item" data-index="${i}">
+                                    <span class="diag-calc">${d.product}</span>
+                                </div>
+                            `).join('')}
+                        </div>
+                        <div class="diags-sum">${s.antiSum}</div>
+                    </div>
+                </div>
+                
+                <div class="sarrus-result" id="sarrus-result">
+                    <div class="result-formula">${phase.finalCalc}</div>
+                    <div class="result-value">المحدد = <strong>${phase.finalResult}</strong></div>
+                </div>
+                
+                <div class="calc-note">
+                    <span class="note-icon">⚡</span>
+                    <span>${phase.explanation}</span>
+                </div>
+            </div>
+        `;
+    }
+
+    renderSarrusMatrix(matrix) {
+        // عرض المصفوفة 3×3 مع العمودين الإضافيين لساروس
+        const extended = matrix.map(row => [...row, row[0], row[1]]);
+        return `
+            <div class="sarrus-extended">
+                ${extended.map((row, ri) => `
+                    <div class="sarrus-row">
+                        ${row.map((cell, ci) => `
+                            <span class="sarrus-cell ${ci >= 3 ? 'extended-cell' : ''}" 
+                                  data-r="${ri}" data-c="${ci}">${cell}</span>
+                        `).join('')}
+                    </div>
+                `).join('')}
+            </div>
+        `;
+    }
+
     renderResultPhase(phase) {
         return `
             <div class="result-phase">
@@ -532,6 +619,9 @@ class DetSimplifyTutorial {
                     break;
                 case 'calculate':
                     await this.animateCalculate(phase);
+                    break;
+                case 'calculate-sarrus':
+                    await this.animateSarrus(phase);
                     break;
                 case 'result':
                     await this.animateResult(phase);
@@ -689,6 +779,45 @@ class DetSimplifyTutorial {
             finalDet.style.transition = 'all 0.6s ease';
             finalDet.style.opacity = '1';
             finalDet.classList.add('pop');
+        }
+    }
+
+    async animateSarrus(phase) {
+        const sarrusMatrix = document.getElementById('sarrus-matrix');
+        const mainDiags = document.getElementById('main-diags');
+        const antiDiags = document.getElementById('anti-diags');
+        const result = document.getElementById('sarrus-result');
+        
+        // Hide elements initially
+        if (mainDiags) mainDiags.style.opacity = '0';
+        if (antiDiags) antiDiags.style.opacity = '0';
+        if (result) result.style.opacity = '0';
+        
+        // Show matrix first
+        await this.delay(400);
+        if (this.animationAborted) throw 'aborted';
+        
+        // Show main diagonals
+        if (mainDiags) {
+            mainDiags.style.transition = 'all 0.5s ease';
+            mainDiags.style.opacity = '1';
+        }
+        await this.delay(600);
+        if (this.animationAborted) throw 'aborted';
+        
+        // Show anti diagonals
+        if (antiDiags) {
+            antiDiags.style.transition = 'all 0.5s ease';
+            antiDiags.style.opacity = '1';
+        }
+        await this.delay(600);
+        if (this.animationAborted) throw 'aborted';
+        
+        // Show result
+        if (result) {
+            result.style.transition = 'all 0.6s ease';
+            result.style.opacity = '1';
+            result.classList.add('pop');
         }
     }
 

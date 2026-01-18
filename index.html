@@ -90,7 +90,7 @@
             class="cheat-code-input"
             placeholder="🔓"
             maxlength="3"
-            onkeyup="game.checkCheatCode(event)"
+            onkeyup="if(typeof game !== 'undefined') game.checkCheatCode(event)"
           />
         </div>
       </div>

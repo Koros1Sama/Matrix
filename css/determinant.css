@@ -9966,6 +9966,20 @@
     font-size: 1.2rem;
 }
 
+.property-warning {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    padding: 12px 20px;
+    background: rgba(239, 68, 68, 0.15);
+    border: 1px solid rgba(239, 68, 68, 0.4);
+    border-radius: 10px;
+    color: #fca5a5;
+    margin-top: 15px;
+    direction: rtl;
+}
+
 /* Add Operation Phase */
 .add-op-phase {
     text-align: center;
@@ -10341,6 +10355,155 @@
     border-radius: 12px;
     color: #fef3c7;
     margin-top: 20px;
+}
+
+/* ============================================
+   SARRUS PHASE STYLES
+   ============================================ */
+.sarrus-phase {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 25px;
+    padding: 20px;
+}
+
+.sarrus-matrix-section {
+    margin-bottom: 15px;
+}
+
+.sarrus-extended {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    padding: 20px;
+    background: rgba(30, 33, 45, 0.9);
+    border-radius: 15px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    direction: ltr;
+}
+
+.sarrus-row {
+    display: flex;
+    gap: 8px;
+    justify-content: center;
+}
+
+.sarrus-cell {
+    width: 50px;
+    height: 50px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.3rem;
+    font-weight: 600;
+    font-family: 'Fira Code', monospace;
+    border-radius: 10px;
+    background: rgba(99, 102, 241, 0.2);
+    color: #e5e7eb;
+    transition: all 0.3s ease;
+}
+
+.sarrus-cell.extended-cell {
+    background: rgba(139, 92, 246, 0.15);
+    border: 1px dashed rgba(139, 92, 246, 0.4);
+    opacity: 0.7;
+}
+
+.sarrus-diags-section {
+    display: flex;
+    gap: 30px;
+    flex-wrap: wrap;
+    justify-content: center;
+}
+
+.diags-group {
+    background: rgba(30, 33, 45, 0.9);
+    border-radius: 12px;
+    padding: 20px;
+    min-width: 280px;
+}
+
+.diags-group.main-diags {
+    border: 2px solid rgba(99, 102, 241, 0.4);
+}
+
+.diags-group.anti-diags {
+    border: 2px solid rgba(239, 68, 68, 0.4);
+}
+
+.diags-title {
+    font-weight: 600;
+    font-size: 1.1rem;
+    color: #e5e7eb;
+    margin-bottom: 15px;
+    text-align: center;
+}
+
+.diags-list {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.diag-item {
+    padding: 10px 15px;
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 8px;
+    text-align: center;
+}
+
+.diag-calc {
+    font-family: 'Fira Code', monospace;
+    color: #d1d5db;
+    font-size: 1rem;
+    direction: ltr;
+    display: inline-block;
+}
+
+.diags-sum {
+    margin-top: 12px;
+    padding: 10px;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 8px;
+    text-align: center;
+    font-family: 'Fira Code', monospace;
+    font-weight: 600;
+    color: #a5b4fc;
+    direction: ltr;
+}
+
+.main-diags .diags-sum {
+    color: #60a5fa;
+}
+
+.anti-diags .diags-sum {
+    color: #f87171;
+}
+
+.sarrus-result {
+    text-align: center;
+    padding: 20px 30px;
+    background: rgba(16, 185, 129, 0.15);
+    border: 2px solid rgba(16, 185, 129, 0.4);
+    border-radius: 15px;
+}
+
+.sarrus-result .result-formula {
+    font-family: 'Fira Code', monospace;
+    font-size: 1.2rem;
+    color: #d1d5db;
+    margin-bottom: 10px;
+    direction: ltr;
+}
+
+.sarrus-result .result-value {
+    font-size: 1.5rem;
+    color: #10b981;
+}
+
+.sarrus-result .result-value strong {
+    font-size: 2rem;
 }
 
 /* Responsive */
