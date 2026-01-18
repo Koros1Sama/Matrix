@@ -1295,7 +1295,7 @@ class CramerGame {
         } else {
             inputSection = `
                 <div class="step-input-row">
-                    <input type="number" id="cramer-answer-input" class="step-answer-input" 
+                    <input type="text" inputmode="text" id="cramer-answer-input" class="step-answer-input" 
                            placeholder="الإجابة" step="any" autofocus
                            onkeypress="if(event.key==='Enter') cramerGame.submitStep()">
                     <button class="btn btn-primary" onclick="cramerGame.submitStep()">تحقق</button>
@@ -1443,22 +1443,22 @@ class CramerGame {
                         <span class="extend-fixed-cell">${a}</span>
                         <span class="extend-fixed-cell">${b}</span>
                         <span class="extend-fixed-cell">${c}</span>
-                        <input type="number" class="extend-game-input" data-row="0" data-col="3" data-expected="${a}" placeholder="?">
-                        <input type="number" class="extend-game-input" data-row="0" data-col="4" data-expected="${b}" placeholder="?">
+                        <input type="text" inputmode="text" class="extend-game-input" data-row="0" data-col="3" data-expected="${a}" placeholder="?">
+                        <input type="text" inputmode="text" class="extend-game-input" data-row="0" data-col="4" data-expected="${b}" placeholder="?">
                     </div>
                     <div class="extend-row">
                         <span class="extend-fixed-cell">${d}</span>
                         <span class="extend-fixed-cell">${e}</span>
                         <span class="extend-fixed-cell">${f}</span>
-                        <input type="number" class="extend-game-input" data-row="1" data-col="3" data-expected="${d}" placeholder="?">
-                        <input type="number" class="extend-game-input" data-row="1" data-col="4" data-expected="${e}" placeholder="?">
+                        <input type="text" inputmode="text" class="extend-game-input" data-row="1" data-col="3" data-expected="${d}" placeholder="?">
+                        <input type="text" inputmode="text" class="extend-game-input" data-row="1" data-col="4" data-expected="${e}" placeholder="?">
                     </div>
                     <div class="extend-row">
                         <span class="extend-fixed-cell">${g}</span>
                         <span class="extend-fixed-cell">${h}</span>
                         <span class="extend-fixed-cell">${i}</span>
-                        <input type="number" class="extend-game-input" data-row="2" data-col="3" data-expected="${g}" placeholder="?">
-                        <input type="number" class="extend-game-input" data-row="2" data-col="4" data-expected="${h}" placeholder="?">
+                        <input type="text" inputmode="text" class="extend-game-input" data-row="2" data-col="3" data-expected="${g}" placeholder="?">
+                        <input type="text" inputmode="text" class="extend-game-input" data-row="2" data-col="4" data-expected="${h}" placeholder="?">
                     </div>
                 </div>
                 <div class="extend-hints">

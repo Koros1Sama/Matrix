@@ -207,22 +207,22 @@ class DeterminantTutorial {
                                         <span class="cell fixed">1</span>
                                         <span class="cell fixed">2</span>
                                         <span class="cell fixed">3</span>
-                                        <input type="number" class="extend-input" data-row="0" data-col="3" data-expected="1" placeholder="?">
-                                        <input type="number" class="extend-input" data-row="0" data-col="4" data-expected="2" placeholder="?">
+                                        <input type="text" inputmode="text" class="extend-input" data-row="0" data-col="3" data-expected="1" placeholder="?">
+                                        <input type="text" inputmode="text" class="extend-input" data-row="0" data-col="4" data-expected="2" placeholder="?">
                                     </div>
                                     <div class="m-row">
                                         <span class="cell fixed">4</span>
                                         <span class="cell fixed">5</span>
                                         <span class="cell fixed">6</span>
-                                        <input type="number" class="extend-input" data-row="1" data-col="3" data-expected="4" placeholder="?">
-                                        <input type="number" class="extend-input" data-row="1" data-col="4" data-expected="5" placeholder="?">
+                                        <input type="text" inputmode="text" class="extend-input" data-row="1" data-col="3" data-expected="4" placeholder="?">
+                                        <input type="text" inputmode="text" class="extend-input" data-row="1" data-col="4" data-expected="5" placeholder="?">
                                     </div>
                                     <div class="m-row">
                                         <span class="cell fixed">7</span>
                                         <span class="cell fixed">8</span>
                                         <span class="cell fixed">9</span>
-                                        <input type="number" class="extend-input" data-row="2" data-col="3" data-expected="7" placeholder="?">
-                                        <input type="number" class="extend-input" data-row="2" data-col="4" data-expected="8" placeholder="?">
+                                        <input type="text" inputmode="text" class="extend-input" data-row="2" data-col="3" data-expected="7" placeholder="?">
+                                        <input type="text" inputmode="text" class="extend-input" data-row="2" data-col="4" data-expected="8" placeholder="?">
                                     </div>
                                 </div>
                                 <div class="practice-hints">

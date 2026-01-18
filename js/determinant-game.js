@@ -1234,7 +1234,7 @@ class DeterminantGame {
                         </div>
                         <div class="form-row">
                             <label>المعامل k:</label>
-                            <input type="number" id="scale-k" value="2" min="-10" max="10" step="1">
+                            <input type="text" inputmode="text" id="scale-k" value="2">
                         </div>
                     </div>
                     
@@ -1380,22 +1380,22 @@ class DeterminantGame {
                             <span class="extend-fixed-cell">${a}</span>
                             <span class="extend-fixed-cell">${b}</span>
                             <span class="extend-fixed-cell">${c}</span>
-                            <input type="number" class="extend-game-input" data-row="0" data-col="3" data-expected="${a}" placeholder="?">
-                            <input type="number" class="extend-game-input" data-row="0" data-col="4" data-expected="${b}" placeholder="?">
+                            <input type="text" inputmode="text" class="extend-game-input" data-row="0" data-col="3" data-expected="${a}" placeholder="?">
+                            <input type="text" inputmode="text" class="extend-game-input" data-row="0" data-col="4" data-expected="${b}" placeholder="?">
                         </div>
                         <div class="extend-row">
                             <span class="extend-fixed-cell">${d}</span>
                             <span class="extend-fixed-cell">${e}</span>
                             <span class="extend-fixed-cell">${f}</span>
-                            <input type="number" class="extend-game-input" data-row="1" data-col="3" data-expected="${d}" placeholder="?">
-                            <input type="number" class="extend-game-input" data-row="1" data-col="4" data-expected="${e}" placeholder="?">
+                            <input type="text" inputmode="text" class="extend-game-input" data-row="1" data-col="3" data-expected="${d}" placeholder="?">
+                            <input type="text" inputmode="text" class="extend-game-input" data-row="1" data-col="4" data-expected="${e}" placeholder="?">
                         </div>
                         <div class="extend-row">
                             <span class="extend-fixed-cell">${g}</span>
                             <span class="extend-fixed-cell">${h}</span>
                             <span class="extend-fixed-cell">${i}</span>
-                            <input type="number" class="extend-game-input" data-row="2" data-col="3" data-expected="${g}" placeholder="?">
-                            <input type="number" class="extend-game-input" data-row="2" data-col="4" data-expected="${h}" placeholder="?">
+                            <input type="text" inputmode="text" class="extend-game-input" data-row="2" data-col="3" data-expected="${g}" placeholder="?">
+                            <input type="text" inputmode="text" class="extend-game-input" data-row="2" data-col="4" data-expected="${h}" placeholder="?">
                         </div>
                     </div>
                     <div class="extend-hints">
@@ -1416,22 +1416,22 @@ class DeterminantGame {
                             <span class="extend-fixed-cell">${a}</span>
                             <span class="extend-fixed-cell">${b}</span>
                             <span class="extend-fixed-cell">${c}</span>
-                            <input type="number" class="minor-extend-input" data-row="0" data-col="3" data-expected="${a}" placeholder="?">
-                            <input type="number" class="minor-extend-input" data-row="0" data-col="4" data-expected="${b}" placeholder="?">
+                            <input type="text" inputmode="text" class="minor-extend-input" data-row="0" data-col="3" data-expected="${a}" placeholder="?">
+                            <input type="text" inputmode="text" class="minor-extend-input" data-row="0" data-col="4" data-expected="${b}" placeholder="?">
                         </div>
                         <div class="extend-row">
                             <span class="extend-fixed-cell">${d}</span>
                             <span class="extend-fixed-cell">${e}</span>
                             <span class="extend-fixed-cell">${f}</span>
-                            <input type="number" class="minor-extend-input" data-row="1" data-col="3" data-expected="${d}" placeholder="?">
-                            <input type="number" class="minor-extend-input" data-row="1" data-col="4" data-expected="${e}" placeholder="?">
+                            <input type="text" inputmode="text" class="minor-extend-input" data-row="1" data-col="3" data-expected="${d}" placeholder="?">
+                            <input type="text" inputmode="text" class="minor-extend-input" data-row="1" data-col="4" data-expected="${e}" placeholder="?">
                         </div>
                         <div class="extend-row">
                             <span class="extend-fixed-cell">${g}</span>
                             <span class="extend-fixed-cell">${h}</span>
                             <span class="extend-fixed-cell">${i}</span>
-                            <input type="number" class="minor-extend-input" data-row="2" data-col="3" data-expected="${g}" placeholder="?">
-                            <input type="number" class="minor-extend-input" data-row="2" data-col="4" data-expected="${h}" placeholder="?">
+                            <input type="text" inputmode="text" class="minor-extend-input" data-row="2" data-col="3" data-expected="${g}" placeholder="?">
+                            <input type="text" inputmode="text" class="minor-extend-input" data-row="2" data-col="4" data-expected="${h}" placeholder="?">
                         </div>
                     </div>
                     <div class="extend-hints">
@@ -1528,7 +1528,7 @@ class DeterminantGame {
         } else {
             inputSection = `
                 <div class="step-input-row">
-                    <input type="number" id="step-answer-input" class="step-answer-input" 
+                    <input type="text" inputmode="text" id="step-answer-input" class="step-answer-input" 
                            placeholder="الإجابة" autofocus
                            onkeypress="if(event.key==='Enter') detGame.submitStep()">
                     <button class="btn btn-primary" onclick="detGame.submitStep()">تحقق</button>
