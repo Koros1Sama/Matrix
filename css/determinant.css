@@ -7630,6 +7630,19 @@
     padding: 15px 20px;
     margin-bottom: 20px;
     text-align: center;
+    cursor: pointer;
+    transition: all 0.5s ease;
+}
+
+.inv-goal-hint:hover {
+    background: rgba(99, 102, 241, 0.25);
+    transform: scale(1.02);
+}
+
+.inv-goal-hint.fade-out {
+    opacity: 0;
+    transform: translateY(-10px);
+    pointer-events: none;
 }
 
 .inv-goal-hint .goal-title {

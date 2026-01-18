@@ -758,6 +758,9 @@ class GaussianGame {
         // إظهار زر التلميح للمعكوس - نفس جاوس-جوردن
         this.elements.btnShowHint.style.display = 'inline-flex';
         // المستخدم يضغط زر التلميح يدوياً
+        
+        // عرض تلميح الهدف للمعكوس
+        this.renderGoalHint();
     }
     
     // بدء مرحلة مخصصة للمعكوس
@@ -842,6 +845,9 @@ class GaussianGame {
         this.elements.phase2Indicator.classList.remove('active');
         
         this.elements.btnShowHint.style.display = 'inline-flex';
+        
+        // عرض تلميح الهدف للمعكوس
+        this.renderGoalHint();
     }
     
     renderInverseEquations(levelData) {

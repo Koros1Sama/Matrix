@@ -350,6 +350,12 @@ class InverseGame {
         const container = document.getElementById('inverse-game-container');
         if (!container) return;
         
+        // إخفاء goal-hint-container العالمي (حق جاوس) عند تشغيل لعبة المعكوس
+        const globalGoalHint = document.getElementById('goal-hint-container');
+        if (globalGoalHint) {
+            globalGoalHint.style.display = 'none';
+        }
+        
         if (this.phase === 1) {
             this.renderPhase1(container);
         } else {
@@ -371,7 +377,7 @@ class InverseGame {
                     </div>
                 </div>
                 
-                <div class="inv-goal-hint">
+                <div class="inv-goal-hint" id="inv-goal-hint">
                     <div class="goal-title">🎯 الهدف: حوّل الجزء الأيسر إلى مصفوفة الوحدة I</div>
                 </div>
                 
@@ -395,6 +401,35 @@ class InverseGame {
                 ${this.renderAddModal()}
             </div>
         `;
+        
+        // إعداد الإخفاء التلقائي والضغط للإخفاء لتلميح الهدف
+        this.setupGoalHintBehavior();
+    }
+    
+    // إعداد سلوك تلميح الهدف (الضغط للإخفاء + الإخفاء التلقائي)
+    setupGoalHintBehavior() {
+        const goalHint = document.getElementById('inv-goal-hint');
+        if (!goalHint) return;
+        
+        // إزالة class الاختفاء إذا كان موجوداً
+        goalHint.classList.remove('fade-out');
+        
+        // إضافة الضغط للإخفاء
+        goalHint.onclick = () => {
+            goalHint.classList.add('fade-out');
+        };
+        
+        // إلغاء المؤقت السابق إن وجد
+        if (this.goalHintTimer) {
+            clearTimeout(this.goalHintTimer);
+        }
+        
+        // إخفاء تلقائي بعد 10 ثواني
+        this.goalHintTimer = setTimeout(() => {
+            if (goalHint) {
+                goalHint.classList.add('fade-out');
+            }
+        }, 10000);
     }
     
     renderAugmentedMatrix() {
