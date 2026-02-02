@@ -33,12 +33,22 @@
     box-sizing: border-box;
 }
 
+html {
+    touch-action: pan-y;
+    -webkit-overflow-scrolling: touch;
+}
+
 body {
     font-family: 'Tajawal', sans-serif;
     background: var(--bg-dark);
     color: var(--text-primary);
     min-height: 100vh;
     direction: ltr;
+    /* Enable single-finger scrolling on mobile */
+    touch-action: pan-y;
+    -webkit-overflow-scrolling: touch;
+    overflow-y: auto;
+    overflow-x: hidden;
 }
 
 /* النصوص العربية RTL */
@@ -90,6 +100,7 @@ body::before {
     display: none;
     min-height: 100vh;
     animation: fadeIn 0.4s ease;
+    touch-action: pan-y;
 }
 
 .screen.active {
@@ -5352,6 +5363,7 @@ body::before {
     background: rgba(239, 68, 68, 0.15) !important;
     border-radius: var(--radius-sm);
 }
+
 /* ============================================
    Drag-Drop Hint Banner
    ============================================ */
@@ -5397,8 +5409,15 @@ body::before {
 }
 
 @keyframes dragHintPulse {
-    0%, 100% { opacity: 1; }
-    50% { opacity: 0.7; }
+
+    0%,
+    100% {
+        opacity: 1;
+    }
+
+    50% {
+        opacity: 0.7;
+    }
 }
 
 .drag-tip {
@@ -5422,15 +5441,15 @@ body::before {
         margin-bottom: 10px;
         font-size: 0.85rem;
     }
-    
+
     .drag-hint-icon {
         font-size: 1.1rem;
     }
-    
+
     .drag-hint-text {
         font-size: 0.8rem;
     }
-    
+
     .drag-hint-close {
         padding: 4px 10px;
         font-size: 1rem;
@@ -5443,18 +5462,18 @@ body::before {
         gap: 5px;
         padding: 8px 10px;
     }
-    
+
     .drag-hint-text {
         font-size: 0.75rem;
         flex: 1 1 100%;
         text-align: center;
         order: 2;
     }
-    
+
     .drag-hint-icon {
         order: 1;
     }
-    
+
     .drag-hint-close {
         order: 1;
         margin-right: 0;
@@ -5484,7 +5503,7 @@ body::before {
    ============================================ */
 
 /* Prevent text selection on mobile */
-body, 
+body,
 .btn,
 .matrix-row,
 .matrix-cell,
@@ -5499,7 +5518,8 @@ body,
 }
 
 /* Allow selection only in input fields */
-input, textarea {
+input,
+textarea {
     -webkit-user-select: text;
     -moz-user-select: text;
     -ms-user-select: text;
@@ -5507,7 +5527,8 @@ input, textarea {
 }
 
 /* Prevent pull-to-refresh on mobile */
-html, body {
+html,
+body {
     overscroll-behavior: none;
 }
 
